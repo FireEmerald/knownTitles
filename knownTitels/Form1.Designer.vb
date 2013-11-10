@@ -25,7 +25,7 @@ Partial Class Form1
         Me.Button1 = New System.Windows.Forms.Button()
         Me.tbInput = New System.Windows.Forms.TextBox()
         Me.tbOutput = New System.Windows.Forms.TextBox()
-        Me.Button2 = New System.Windows.Forms.Button()
+        Me.btnListAllTitels = New System.Windows.Forms.Button()
         Me.tbMask = New System.Windows.Forms.TextBox()
         Me.Button3 = New System.Windows.Forms.Button()
         Me.Label1 = New System.Windows.Forms.Label()
@@ -59,18 +59,19 @@ Partial Class Form1
         Me.tbOutput.Location = New System.Drawing.Point(121, 12)
         Me.tbOutput.Multiline = True
         Me.tbOutput.Name = "tbOutput"
-        Me.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.tbOutput.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me.tbOutput.Size = New System.Drawing.Size(920, 365)
         Me.tbOutput.TabIndex = 4
+        Me.tbOutput.WordWrap = False
         '
-        'Button2
+        'btnListAllTitels
         '
-        Me.Button2.Location = New System.Drawing.Point(966, 383)
-        Me.Button2.Name = "Button2"
-        Me.Button2.Size = New System.Drawing.Size(75, 23)
-        Me.Button2.TabIndex = 5
-        Me.Button2.Text = "List All Titles"
-        Me.Button2.UseVisualStyleBackColor = True
+        Me.btnListAllTitels.Location = New System.Drawing.Point(966, 383)
+        Me.btnListAllTitels.Name = "btnListAllTitels"
+        Me.btnListAllTitels.Size = New System.Drawing.Size(75, 23)
+        Me.btnListAllTitels.TabIndex = 5
+        Me.btnListAllTitels.Text = "List All Titles"
+        Me.btnListAllTitels.UseVisualStyleBackColor = True
         '
         'tbMask
         '
@@ -163,7 +164,7 @@ Partial Class Form1
         Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.Button3)
         Me.Controls.Add(Me.tbMask)
-        Me.Controls.Add(Me.Button2)
+        Me.Controls.Add(Me.btnListAllTitels)
         Me.Controls.Add(Me.tbOutput)
         Me.Controls.Add(Me.tbInput)
         Me.Controls.Add(Me.Button1)
@@ -176,7 +177,7 @@ Partial Class Form1
     Friend WithEvents Button1 As System.Windows.Forms.Button
     Friend WithEvents tbInput As System.Windows.Forms.TextBox
     Friend WithEvents tbOutput As System.Windows.Forms.TextBox
-    Friend WithEvents Button2 As System.Windows.Forms.Button
+    Friend WithEvents btnListAllTitels As System.Windows.Forms.Button
     Friend WithEvents tbMask As System.Windows.Forms.TextBox
     Friend WithEvents Button3 As System.Windows.Forms.Button
     Friend WithEvents Label1 As System.Windows.Forms.Label

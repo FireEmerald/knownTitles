@@ -318,7 +318,13 @@ Public Class Form1
     'Private _177 As New CharTitle With {.TitleID = 177, .UnkRef = 0, .MaleTitle = "Wrathful Gladiator %s", .FemaleTitle = "Wrathful Gladiator %s", .InGameOrder = 142}
 #End Region
 
-    Private _TitleList As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _42, _43, _44, _45, _46, _47, _48, _53, _62, _63, _64, _71, _72, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111, _112, _113, _114, _115, _116, _117, _118, _119, _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, _130, _131, _132, _133, _134, _135, _137, _138, _139, _140, _141, _142, _143, _144, _145, _146, _147, _148, _149, _150, _151, _152, _153, _154, _155, _156, _157, _158, _159, _160, _161, _163, _164, _165, _166, _167, _168, _169, _170, _171, _172, _173, _174, _175, _176, _177})
+    Private _TitleList_All As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _42, _43, _44, _45, _46, _47, _48, _53, _62, _63, _64, _71, _72, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111, _112, _113, _114, _115, _116, _117, _118, _119, _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, _130, _131, _132, _133, _134, _135, _137, _138, _139, _140, _141, _142, _143, _144, _145, _146, _147, _148, _149, _150, _151, _152, _153, _154, _155, _156, _157, _158, _159, _160, _161, _163, _164, _165, _166, _167, _168, _169, _170, _171, _172, _173, _174, _175, _176, _177})
+
+    Private _TitleList_INT_0 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16})
+    Private _TitleList_INT_1 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _42, _43, _44, _45, _46, _47, _48, _53, _62, _63, _64, _71, _72, _74, _75, _76, _77, _78, _81})
+    Private _TitleList_INT_2 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_79, _80, _82, _83, _84, _85, _86, _87, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111, _112, _157})
+    Private _TitleList_INT_3 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_113, _114, _115, _116, _117, _118, _119, _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, _130, _131, _132, _133, _134, _135, _137, _138, _139, _140, _141, _142, _143, _144})
+    Private _TitleList_INT_4 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_145, _146, _147, _148, _149, _150, _151, _152, _153, _154, _155, _156, _158, _159, _160, _161, _163, _164, _165, _166, _167, _168, _169, _170, _171, _172, _173, _174, _175, _176, _177})
 
     Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
         Help()
@@ -364,7 +370,7 @@ Public Class Form1
                             Dim _Bits As List(Of UInteger) = GetBitsFromBitMask(CUInt(_Value)) '// Bits = Alle Titel wo der Charakter aktuell besitzt
                             Dim _GrantedBits As New List(Of UInteger)
 
-                            For Each _Title As CharTitle In _TitleList '// Wir nehmen einen Titel aus der Liste, 
+                            For Each _Title As CharTitle In _TitleList_All '// Wir nehmen einen Titel aus der Liste, 
                                 If _Title.IntID = 1 Then '// Wir prüfen erstmal, ob der zufällige Titel auch in die Kategorie INT_1 gehört.
                                     For Each _Bit In _Bits '// Dann schauen wir ob das Bit des zufälligen Titels, mit einem von dem Spieler übereinstimmt.
                                         If _Title.Bit = _Bit Then '// Der Spieler hat diesen zufällige Titel.
@@ -471,7 +477,7 @@ Public Class Form1
         tbOutput.Text = ""
         Dim _NewLine As Boolean = False
         Dim _FullList As New List(Of CharTitle)
-        For Each _Title As CharTitle In _TitleList
+        For Each _Title As CharTitle In _TitleList_All
             Dim _WhichIntegerDouble As Double = _Title.InGameOrder / 32
             Dim _WhichIntegerRounded As Integer = CInt(_WhichIntegerDouble)
             Dim _BitOfInteger As Integer = CInt(_Title.InGameOrder Mod 32)
@@ -490,13 +496,18 @@ Public Class Form1
             End If
             tbOutput.Text = tbOutput.Text + "BIT: " + CStr(_Title.Bit) + " | INT: " + CStr(_Title.IntID) + " (" + CStr(_WhichIntegerDouble) + ") | IntBit: " + CStr(_Title.BitOfInteger) + " | TitleID: " + CStr(_Title.TitleID) + " | UnkRef: " + CStr(_Title.UnkRef) + " | MaleTitle: " + _Title.MaleTitle + " | FemaleTitle: " + _Title.FemaleTitle + " | InGameOrder: " + CStr(_Title.InGameOrder)
         Next
-        _TitleList.Clear()
-        _TitleList.AddRange(_FullList)
+        _TitleList_All.Clear()
+        _TitleList_All.AddRange(_FullList)
 
         'Exit Sub
         '// Extension:
         tbOutput.Text = ""
-        For Each _Title In _TitleList
+        Dim _INT_0 As String = "Private _TitleList_INT_0 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
+        Dim _INT_1 As String = "Private _TitleList_INT_1 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
+        Dim _INT_2 As String = "Private _TitleList_INT_2 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
+        Dim _INT_3 As String = "Private _TitleList_INT_3 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
+        Dim _INT_4 As String = "Private _TitleList_INT_4 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
+        For Each _Title In _TitleList_All
             tbOutput.Text = tbOutput.Text + vbCrLf + "Private _" + CStr(_Title.TitleID) + " As New CharTitle" + _
                                                      " With {.TitleID = " + CStr(_Title.TitleID) + _
                                                      ", .UnkRef = " + CStr(_Title.UnkRef) + _
@@ -508,7 +519,26 @@ Public Class Form1
                                                      ", .BitOfInteger = " + CStr(_Title.BitOfInteger) + _
                                                      ", .Bit = " + CStr(_Title.Bit) + "}"
 
+            Select Case _Title.IntID
+                Case 0
+                    _INT_0 += "_" + CStr(_Title.TitleID) + ", "
+                Case 1
+                    _INT_1 += "_" + CStr(_Title.TitleID) + ", "
+                Case 2
+                    _INT_2 += "_" + CStr(_Title.TitleID) + ", "
+                Case 3
+                    _INT_3 += "_" + CStr(_Title.TitleID) + ", "
+                Case 4
+                    _INT_4 += "_" + CStr(_Title.TitleID) + ", "
+                Case Else
+                    MessageBox.Show("Error")
+            End Select
         Next
+        tbOutput.Text = tbOutput.Text + vbCrLf + _INT_0 + _
+                        vbCrLf + _INT_1 + _
+                        vbCrLf + _INT_2 + _
+                        vbCrLf + _INT_3 + _
+                        vbCrLf + _INT_4
     End Sub
 
     Private Sub Help()

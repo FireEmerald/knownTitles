@@ -11,7 +11,7 @@ Public Class StatusReportEArgs
     Private _Guid As Guid
 
     '// Sub New - Was an die Form übergeben werden soll.
-    Public Sub New(StatusMessage As String, PercentDone As Integer, Guid As Guid)
+    Public Sub New(PercentDone As Integer, StatusMessage As String, Guid As Guid)
         _StatusMessage = StatusMessage
         _PercentDone = PercentDone
         _Guid = Guid

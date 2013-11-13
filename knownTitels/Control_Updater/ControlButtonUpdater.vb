@@ -22,7 +22,7 @@ Public Class ControlButtonUpdater
         End Get
     End Property
 
-    Public Sub ChangeState(ByVal newState As Boolean)
+    Public Sub setState(ByVal newState As Boolean)
         _NewState = newState
         For Each _Control In _ControlsToUpdate
             _ControlToUpdate = _Control

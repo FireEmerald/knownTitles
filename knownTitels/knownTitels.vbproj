@@ -6,9 +6,9 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{60811CAE-BD6C-4AB8-9914-9BFCD744153F}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <StartupObject>knownTitels.My.MyApplication</StartupObject>
-    <RootNamespace>knownTitels</RootNamespace>
-    <AssemblyName>knownTitels</AssemblyName>
+    <StartupObject>knownTitles.My.MyApplication</StartupObject>
+    <RootNamespace>knownTitles</RootNamespace>
+    <AssemblyName>knownTitles</AssemblyName>
     <FileAlignment>512</FileAlignment>
     <MyType>WindowsForms</MyType>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
@@ -20,7 +20,7 @@
     <DefineDebug>true</DefineDebug>
     <DefineTrace>true</DefineTrace>
     <OutputPath>bin\Debug\</OutputPath>
-    <DocumentationFile>knownTitels.xml</DocumentationFile>
+    <DocumentationFile>knownTitles.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -30,7 +30,7 @@
     <DefineTrace>true</DefineTrace>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DocumentationFile>knownTitels.xml</DocumentationFile>
+    <DocumentationFile>knownTitles.xml</DocumentationFile>
     <NoWarn>42016,41999,42017,42018,42019,42032,42036,42020,42021,42022</NoWarn>
   </PropertyGroup>
   <PropertyGroup>
@@ -70,9 +70,12 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ControlButtonUpdater.vb" />
+    <Compile Include="Control_Updater\ControlButtonUpdater.vb" />
+    <Compile Include="Control_Updater\ControlStatusStripUpdater.vb" />
+    <Compile Include="Functions_Mod.vb" />
+    <Compile Include="Location_Mod.vb" />
     <Compile Include="Report_EArgs\CompletedReportEArgs.vb" />
-    <Compile Include="ControlTextUpdater.vb" />
+    <Compile Include="Control_Updater\ControlTextUpdater.vb" />
     <Compile Include="fmMain.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -82,8 +85,8 @@
     </Compile>
     <Compile Include="Report_EArgs\InlineReportEArgs.vb" />
     <Compile Include="Report_EArgs\StatusReportEArgs.vb" />
-    <Compile Include="MainClass.vb" />
-    <Compile Include="TitleDBC.vb" />
+    <Compile Include="Main_Cls.vb" />
+    <Compile Include="TitleDBC_Mod.vb" />
     <Compile Include="My Project\AssemblyInfo.vb" />
     <Compile Include="My Project\Application.Designer.vb">
       <AutoGen>True</AutoGen>

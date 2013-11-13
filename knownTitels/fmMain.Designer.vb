@@ -39,13 +39,13 @@ Partial Class fmMain
         Me.btnLogfilePath = New System.Windows.Forms.Button()
         Me.tbSQLQueryPath = New System.Windows.Forms.TextBox()
         Me.tbLogfilePath = New System.Windows.Forms.TextBox()
-        Me.cbExtendedTitels = New System.Windows.Forms.CheckBox()
+        Me.cbExtendedTitles = New System.Windows.Forms.CheckBox()
         Me.cbGenerateSQLQuery = New System.Windows.Forms.CheckBox()
         Me.cbLogToHarddrive = New System.Windows.Forms.CheckBox()
         Me.gbOutput = New System.Windows.Forms.GroupBox()
         Me.btnAdd = New System.Windows.Forms.Button()
         Me.btnRemove = New System.Windows.Forms.Button()
-        Me.StatusStrip1 = New System.Windows.Forms.StatusStrip()
+        Me.tsMain = New System.Windows.Forms.StatusStrip()
         Me.tsPbStatusPercent = New System.Windows.Forms.ToolStripProgressBar()
         Me.tsSlStatusPercent = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsSlStatusText = New System.Windows.Forms.ToolStripStatusLabel()
@@ -53,7 +53,7 @@ Partial Class fmMain
         Me.gbPlayerInput.SuspendLayout()
         Me.gbOptions.SuspendLayout()
         Me.gbOutput.SuspendLayout()
-        Me.StatusStrip1.SuspendLayout()
+        Me.tsMain.SuspendLayout()
         Me.SuspendLayout()
         '
         'tbPlayerInput
@@ -169,7 +169,7 @@ Partial Class fmMain
         Me.gbOptions.Controls.Add(Me.btnLogfilePath)
         Me.gbOptions.Controls.Add(Me.tbSQLQueryPath)
         Me.gbOptions.Controls.Add(Me.tbLogfilePath)
-        Me.gbOptions.Controls.Add(Me.cbExtendedTitels)
+        Me.gbOptions.Controls.Add(Me.cbExtendedTitles)
         Me.gbOptions.Controls.Add(Me.cbGenerateSQLQuery)
         Me.gbOptions.Controls.Add(Me.cbLogToHarddrive)
         Me.gbOptions.Controls.Add(Me.cbInlineReport)
@@ -225,15 +225,15 @@ Partial Class fmMain
         Me.tbLogfilePath.Size = New System.Drawing.Size(259, 20)
         Me.tbLogfilePath.TabIndex = 25
         '
-        'cbExtendedTitels
+        'cbExtendedTitles
         '
-        Me.cbExtendedTitels.AutoSize = True
-        Me.cbExtendedTitels.Location = New System.Drawing.Point(6, 18)
-        Me.cbExtendedTitels.Name = "cbExtendedTitels"
-        Me.cbExtendedTitels.Size = New System.Drawing.Size(135, 17)
-        Me.cbExtendedTitels.TabIndex = 24
-        Me.cbExtendedTitels.Text = "Enable Extended Titels"
-        Me.cbExtendedTitels.UseVisualStyleBackColor = True
+        Me.cbExtendedTitles.AutoSize = True
+        Me.cbExtendedTitles.Location = New System.Drawing.Point(6, 18)
+        Me.cbExtendedTitles.Name = "cbExtendedTitles"
+        Me.cbExtendedTitles.Size = New System.Drawing.Size(135, 17)
+        Me.cbExtendedTitles.TabIndex = 24
+        Me.cbExtendedTitles.Text = "Enable Extended Titels"
+        Me.cbExtendedTitles.UseVisualStyleBackColor = True
         '
         'cbGenerateSQLQuery
         '
@@ -284,16 +284,16 @@ Partial Class fmMain
         Me.btnRemove.Text = "Remove selected Titels"
         Me.btnRemove.UseVisualStyleBackColor = True
         '
-        'StatusStrip1
+        'tsMain
         '
-        Me.StatusStrip1.BackColor = System.Drawing.Color.White
-        Me.StatusStrip1.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsPbStatusPercent, Me.tsSlStatusPercent, Me.tsSlStatusText})
-        Me.StatusStrip1.Location = New System.Drawing.Point(0, 662)
-        Me.StatusStrip1.Name = "StatusStrip1"
-        Me.StatusStrip1.Size = New System.Drawing.Size(1095, 22)
-        Me.StatusStrip1.SizingGrip = False
-        Me.StatusStrip1.TabIndex = 24
-        Me.StatusStrip1.Text = "StatusStrip1"
+        Me.tsMain.BackColor = System.Drawing.Color.White
+        Me.tsMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.tsPbStatusPercent, Me.tsSlStatusPercent, Me.tsSlStatusText})
+        Me.tsMain.Location = New System.Drawing.Point(0, 662)
+        Me.tsMain.Name = "tsMain"
+        Me.tsMain.Size = New System.Drawing.Size(1095, 22)
+        Me.tsMain.SizingGrip = False
+        Me.tsMain.TabIndex = 24
+        Me.tsMain.Text = "StatusStrip1"
         '
         'tsPbStatusPercent
         '
@@ -319,7 +319,7 @@ Partial Class fmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.ClientSize = New System.Drawing.Size(1095, 684)
-        Me.Controls.Add(Me.StatusStrip1)
+        Me.Controls.Add(Me.tsMain)
         Me.Controls.Add(Me.btnRemove)
         Me.Controls.Add(Me.btnAdd)
         Me.Controls.Add(Me.gbOutput)
@@ -334,7 +334,7 @@ Partial Class fmMain
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
         Me.MaximizeBox = False
         Me.Name = "fmMain"
-        Me.Text = "kownTitels"
+        Me.Text = "kownTitles"
         Me.gbBannedAddedTitels.ResumeLayout(False)
         Me.gbPlayerInput.ResumeLayout(False)
         Me.gbPlayerInput.PerformLayout()
@@ -342,8 +342,8 @@ Partial Class fmMain
         Me.gbOptions.PerformLayout()
         Me.gbOutput.ResumeLayout(False)
         Me.gbOutput.PerformLayout()
-        Me.StatusStrip1.ResumeLayout(False)
-        Me.StatusStrip1.PerformLayout()
+        Me.tsMain.ResumeLayout(False)
+        Me.tsMain.PerformLayout()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -364,10 +364,10 @@ Partial Class fmMain
     Friend WithEvents btnRemove As System.Windows.Forms.Button
     Friend WithEvents cbGenerateSQLQuery As System.Windows.Forms.CheckBox
     Friend WithEvents cbLogToHarddrive As System.Windows.Forms.CheckBox
-    Friend WithEvents cbExtendedTitels As System.Windows.Forms.CheckBox
+    Friend WithEvents cbExtendedTitles As System.Windows.Forms.CheckBox
     Friend WithEvents btnLogfilePath As System.Windows.Forms.Button
     Friend WithEvents tbLogfilePath As System.Windows.Forms.TextBox
-    Friend WithEvents StatusStrip1 As System.Windows.Forms.StatusStrip
+    Friend WithEvents tsMain As System.Windows.Forms.StatusStrip
     Friend WithEvents tsPbStatusPercent As System.Windows.Forms.ToolStripProgressBar
     Friend WithEvents tsSlStatusPercent As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tsSlStatusText As System.Windows.Forms.ToolStripStatusLabel

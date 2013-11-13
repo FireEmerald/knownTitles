@@ -1,6 +1,9 @@
-﻿Module TitleDBC
+﻿Option Explicit On
+Option Strict On
 
-    '// Charactertitle from DBC
+Module TitleDBC_Mod
+
+    '// Charactertitles from DBC
 #Region "CharTitels from DBC"
     Private _1 As New CharTitle With {.TitleID = 1, .UnkRef = 5879, .MaleTitle = "Private %s", .FemaleTitle = "Private %s", .InGameOrder = 1, .IntID = 0, .IntID_Double = 0.03125, .BitOfInteger = 1, .Bit = 2}
     Private _2 As New CharTitle With {.TitleID = 2, .UnkRef = 5880, .MaleTitle = "Corporal %s", .FemaleTitle = "Corporal %s", .InGameOrder = 2, .IntID = 0, .IntID_Double = 0.0625, .BitOfInteger = 2, .Bit = 4}
@@ -146,7 +149,7 @@
     Private _177 As New CharTitle With {.TitleID = 177, .UnkRef = 0, .MaleTitle = "Wrathful Gladiator %s", .FemaleTitle = "Wrathful Gladiator %s", .InGameOrder = 142, .IntID = 4, .IntID_Double = 4.4375, .BitOfInteger = 14, .Bit = 16384}
 #End Region
 
-    '// List of CharTitels
+    '// List of CharTitles
     Public ReadOnly _TitleList_All As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _42, _43, _44, _45, _46, _47, _48, _53, _62, _63, _64, _71, _72, _74, _75, _76, _77, _78, _79, _80, _81, _82, _83, _84, _85, _86, _87, _89, _90, _91, _92, _93, _94, _95, _96, _97, _98, _99, _100, _101, _102, _103, _104, _105, _106, _107, _108, _109, _110, _111, _112, _113, _114, _115, _116, _117, _118, _119, _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, _130, _131, _132, _133, _134, _135, _137, _138, _139, _140, _141, _142, _143, _144, _145, _146, _147, _148, _149, _150, _151, _152, _153, _154, _155, _156, _157, _158, _159, _160, _161, _163, _164, _165, _166, _167, _168, _169, _170, _171, _172, _173, _174, _175, _176, _177})
 
     Public ReadOnly _TitleList_INT_0 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16})
@@ -155,65 +158,4 @@
     Public ReadOnly _TitleList_INT_3 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_113, _114, _115, _116, _117, _118, _119, _120, _121, _122, _123, _124, _125, _126, _127, _128, _129, _130, _131, _132, _133, _134, _135, _137, _138, _139, _140, _141, _142, _143, _144})
     Public ReadOnly _TitleList_INT_4 As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_145, _146, _147, _148, _149, _150, _151, _152, _153, _154, _155, _156, _158, _159, _160, _161, _163, _164, _165, _166, _167, _168, _169, _170, _171, _172, _173, _174, _175, _176, _177})
 
-    '''<summary>Bits einer Bitmask auslesen.</summary>
-    Public Function GetBitsFromBitMask(_BitMask As UInteger) As List(Of UInteger)
-        Dim _Bits As New List(Of UInteger)
-
-        For _i As Integer = 31 To 0 Step -1
-            If _BitMask - 2 ^ _i >= 0 Then
-                _BitMask = CUInt(_BitMask - 2 ^ _i)
-                _Bits.Add(CUInt(2 ^ _i))
-            End If
-        Next
-
-        Return _Bits
-    End Function
-
-    ''' <summary>Eine Character Structure in einen String umwandeln.</summary>
-    Public Function GeneratePrintCharakter(_Character As Character) As String
-        Return vbCrLf + "Name: " + _Character.Name + _
-                        " | Account ID: " + _Character.AccountID.ToString + _
-                        " | GUID: " + _Character.GUID.ToString + _
-                        " | INT_0: " + _Character.INT_0.ToString + _
-                        " | INT_1: " + _Character.INT_1.ToString + _
-                        " | INT_2: " + _Character.INT_2.ToString + _
-                        " | INT_3: " + _Character.INT_3.ToString + _
-                        " | INT_4: " + _Character.INT_4.ToString
-    End Function
-
-    ''' <summary>Generiert SQL Update Querys, anhand einer Character Full List und der Variable NothingChanged bei jedem Character.</summary>
-    Public Function GenerateSQLQuery(_CharacterFullList As List(Of Character)) As String
-        Dim _SQLQuery As String = ""
-        Dim _NewLine As Boolean = False
-        For Each _Char In _CharacterFullList
-            If Not _Char.NothingChanged Then
-                If _NewLine Then
-                    _SQLQuery += vbCrLf
-                Else
-                    _NewLine = True
-                End If
-                _SQLQuery += "UPDATE `characters` SET `knownTitles`=""" + _Char.INT_0.ToString + " " + _
-                                                                          _Char.INT_1.ToString + " " + _
-                                                                          _Char.INT_2.ToString + " " + _
-                                                                          _Char.INT_3.ToString + " " + _
-                                                                          _Char.INT_4.ToString + " " + _
-                                                                          _Char.INT_5.ToString + """ WHERE `guid`=" + _
-                                                                          _Char.GUID.ToString + "; -- Character: " + _Char.Name + " | Account ID: " + _Char.AccountID.ToString
-            Else
-                Continue For
-            End If
-        Next
-        Return _SQLQuery
-    End Function
-
-    Public Function GetDataFromClipboard() As String
-        Dim _Output As String = ""
-
-        If Clipboard.ContainsText Then
-            For Each _Row In Clipboard.GetText
-                MessageBox.Show(_Row)
-            Next
-        End If
-        Return _Output
-    End Function
 End Module

@@ -24,13 +24,13 @@ Public Structure CharTitle
     Dim Bit As Int64
 End Structure
 
-Public Class MainClass
+Public Class Main_Cls
 
 #Region "Deklarationen"
     '// Variablen
     Private _Log As String = ""
     Private _PlayerInput As String
-    Private _SelectedTitels As List(Of CharTitle)
+    Private _SelectedTitles As List(Of CharTitle)
 
     Private _LogfilePath As String = ""
     Private _SQLQueryPath As String = ""
@@ -55,31 +55,36 @@ Public Class MainClass
             Return _Guid
         End Get
     End Property
-    Private Property P_SelectedTitels As List(Of CharTitle)
+    Private Property P_SelectedTitles As List(Of CharTitle)
         Get
-            Return _SelectedTitels
+            Return _SelectedTitles
         End Get
         Set(value As List(Of CharTitle))
-            _SelectedTitels = value
+            _SelectedTitles = value
         End Set
     End Property
     Private Property P_PlayerInput As String
         Get
             Return _PlayerInput
         End Get
-        Set(value As String)
-            _PlayerInput = value
+        Set(_Value As String)
+            If _Value.EndsWith(vbCrLf) Then '// Prüfen ob die letzte Zeile in der Textbox leer war, falls ja, entfernen.
+                _PlayerInput = _Value.Substring(0, _Value.Length - 2)
+                If _Debug Then MessageBox.Show("Player Input EndsWith vbCrLf - Deleted")
+            Else
+                _PlayerInput = _Value
+            End If
         End Set
     End Property
 #End Region
 
     '// Sub New - Informationen die von der Form an die Klasse übergeben werden.
-    Public Sub New(SelectedTitels As List(Of CharTitle), PlayerInput As String, LogfilePath As String, SQLQueryPath As String, Debug As Boolean, InlineReport As Boolean, LogToHarddrive As Boolean, GenerateSQLQuery As Boolean)
-        P_SelectedTitels = SelectedTitels
+    Public Sub New(SelectedTitles As List(Of CharTitle), PlayerInput As String, LogfilePath As String, SQLQueryPath As String, Debug As Boolean, InlineReport As Boolean, LogToHarddrive As Boolean, GenerateSQLQuery As Boolean)
+        _Debug = Debug
+        P_SelectedTitles = SelectedTitles
         P_PlayerInput = PlayerInput
         _LogfilePath = LogfilePath
         _SQLQueryPath = SQLQueryPath
-        _Debug = Debug
         _InlineReport = InlineReport
         _LogToHarddrive = LogToHarddrive
         _GenerateSQLQuery = GenerateSQLQuery
@@ -91,6 +96,7 @@ Public Class MainClass
     End Sub
 
     Public Sub ProcessRemove()
+        RaiseEvent StatusReport(Me, New StatusReportEArgs(0, "Running...", _Guid))
         Dim _CharacterFullList As New List(Of Character)
 
         '// 1234 Roki 0 64 0 0 0
@@ -176,13 +182,13 @@ Public Class MainClass
                 For Each _Bit In _Bits '// Dann schauen wir ob das Bit des zufälligen Titels, mit einem von dem Spieler übereinstimmt.
                     If _Title.Bit = _Bit Then '// Der Spieler hat diesen zufälligen Titel.
                         '// Nun Prüfen wir ob der Titel zulässig ist oder nicht.
-                        Dim _NoBannedTitelsFound As Boolean = True
-                        For Each _BannedTitle In _SelectedTitels '// Dazu vergleichen wir das _Title.Bit mit einer Liste, gebannter Bits.
+                        Dim _NoBannedTitlesFound As Boolean = True
+                        For Each _BannedTitle In _SelectedTitles '// Dazu vergleichen wir das _Title.Bit mit einer Liste, gebannter Bits.
                             If _BannedTitle.IntID = _INT_ID Then '// Wir prüfen ob das gebannte Title Bit, zu INT_1 gehört.
                                 If CLng(_BannedTitle.Bit) = _Title.Bit Then '// Wir prüfen ob das Bit mit einem gebannten Bit übereinstimmt.
                                     If _Debug Then MessageBox.Show("GEBANNT: " + _BannedTitle.Bit.ToString + " = " + CStr(_Title.Bit))
                                     '// Das Bit ist gebannt. Wir müssen nicht weiter suchen und verlassen die For-Schleife.
-                                    _NoBannedTitelsFound = False
+                                    _NoBannedTitlesFound = False
                                     Exit For
                                 Else
                                     If _Debug Then MessageBox.Show("Nicht gebannt: " + _BannedTitle.Bit.ToString + " = " + CStr(_Title.Bit))
@@ -191,7 +197,7 @@ Public Class MainClass
                                 End If
                             End If
                         Next
-                        If _NoBannedTitelsFound Then '// Wir prüfen ob eine Übereinstimmung festgestellt wurde.
+                        If _NoBannedTitlesFound Then '// Wir prüfen ob eine Übereinstimmung festgestellt wurde.
                             '// Falls nicht, das Bit ist nicht gebannt.
                             AddInlineReport("GRANTED | BIT: " + CStr(_Title.Bit) + " | INT: " + CStr(_Title.IntID) + " | IntBit: " + CStr(_Title.BitOfInteger) + " | TitleID: " + CStr(_Title.TitleID) + " | UnkRef: " + CStr(_Title.UnkRef) + " | MaleTitle: " + _Title.MaleTitle + " | FemaleTitle: " + _Title.FemaleTitle + " | InGameOrder: " + CStr(_Title.InGameOrder))
                             _GrantedBits.Add(_Bit) '// Das nicht gebannte Bit, der Liste der nicht gebannten Bits hinzufügen.
@@ -204,17 +210,17 @@ Public Class MainClass
                 Next
             End If
         Next
-
-        Dim _GrantedBitmask As UInteger = Nothing
         '// Wir haben nun eine Liste mit nicht gebannten Bits.
-        For Each _GrantedBit In _GrantedBits '// Nun Addieren wir alle nicht gebannten Bits zu einer Bitmask.
+        Dim _GrantedBitmask As UInteger = Nothing
+        '// Nun Addieren wir alle nicht gebannten Bits zu einer Bitmask.
+        For Each _GrantedBit In _GrantedBits
             _GrantedBitmask += _GrantedBit
         Next
         Return _GrantedBitmask
     End Function
 
     Public Sub ProcessAdd()
-        
+
     End Sub
 
     Public Sub AddInlineReport(_Message As String)

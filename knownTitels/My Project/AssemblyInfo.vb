@@ -10,10 +10,10 @@ Imports System.Runtime.InteropServices
 
 ' Die Werte der Assemblyattribute überprüfen
 
-<Assembly: AssemblyTitle("Stormblade Tools")> 
-<Assembly: AssemblyDescription("knownTitels for TrinityCore")> 
+<Assembly: AssemblyTitle("knownTitles")> 
+<Assembly: AssemblyDescription("knownTitles for TrinityCore")> 
 <Assembly: AssemblyCompany("")> 
-<Assembly: AssemblyProduct("Stormblade Tools")> 
+<Assembly: AssemblyProduct("")> 
 <Assembly: AssemblyCopyright("Copyright © FireEmerald 2013")> 
 <Assembly: AssemblyTrademark("")> 
 

@@ -70,10 +70,16 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Clipboard_Cls.vb" />
     <Compile Include="Control_Updater\ControlButtonUpdater.vb" />
     <Compile Include="Control_Updater\ControlStatusStripUpdater.vb" />
+    <Compile Include="fmAbout.Designer.vb">
+      <DependentUpon>fmAbout.vb</DependentUpon>
+    </Compile>
+    <Compile Include="fmAbout.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Functions_Mod.vb" />
-    <Compile Include="Location_Mod.vb" />
     <Compile Include="Report_EArgs\CompletedReportEArgs.vb" />
     <Compile Include="Control_Updater\ControlTextUpdater.vb" />
     <Compile Include="fmMain.vb">
@@ -104,6 +110,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="fmAbout.resx">
+      <DependentUpon>fmAbout.vb</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="fmMain.resx">
       <DependentUpon>fmMain.vb</DependentUpon>
     </EmbeddedResource>
@@ -125,6 +134,9 @@
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
     </None>
     <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Resources\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

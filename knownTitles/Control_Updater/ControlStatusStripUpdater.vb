@@ -21,6 +21,15 @@ Public Class ControlStatusStripUpdater
         _tsLabel_TextStatus = Label_TextStatus
         _tsProgressBar = ProgressBar
     End Sub
+    Sub New(ProgressBar As Windows.Forms.ToolStripProgressBar,
+            Label_Percent As Windows.Forms.ToolStripLabel)
+        _tsLabel_Percent = Label_Percent
+        _tsProgressBar = ProgressBar
+    End Sub
+    Sub New(Label_TextStatus As Windows.Forms.ToolStripLabel)
+        _tsLabel_TextStatus = Label_TextStatus
+    End Sub
+
 
     Public Sub setAll(Percent As Integer, Text As String)
         _TextStatus = Text

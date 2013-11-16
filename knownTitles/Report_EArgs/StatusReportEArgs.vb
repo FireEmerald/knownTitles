@@ -16,6 +16,11 @@ Public Class StatusReportEArgs
         _PercentDone = PercentDone
         _Guid = Guid
     End Sub
+    Public Sub New(PercentDone As Integer, Guid As Guid)
+        _StatusMessage = ""
+        _PercentDone = PercentDone
+        _Guid = Guid
+    End Sub
 
     '// Propertys
     Public ReadOnly Property P_StatusMessage As String

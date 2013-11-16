@@ -1,0 +1,6 @@
+
+*.suo
+knownTitles/bin/
+knownTitles/obj/
+knownTitles/*.resx
+knownTitles/My Project/*.resx

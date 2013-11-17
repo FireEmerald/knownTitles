@@ -1,7 +1,7 @@
 
 *.suo
+*.resx
 knownTitles/bin/
 knownTitles/obj/
 knownTitles/Images/
 knownTitles/*.resx
-knownTitles/My\ Project/*.resx

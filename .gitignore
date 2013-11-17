@@ -1,6 +1,5 @@
 
 *.suo
-*.resx
 knownTitles/bin/
 knownTitles/obj/
 knownTitles/Images/

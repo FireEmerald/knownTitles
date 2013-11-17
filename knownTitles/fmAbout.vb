@@ -9,11 +9,11 @@
 
 
 #Region "Fenster Movement"
-    Private Sub Me_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs) Handles MyBase.MouseDown
+    Private Sub Me_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs) Handles PictureBox1.MouseDown
         _MouseDown = True
         mouseOffset = New Point(-e.X, -e.Y)
     End Sub
-    Private Sub Me_MouseMove(ByVal sender As Object, ByVal e As MouseEventArgs) Handles MyBase.MouseMove
+    Private Sub Me_MouseMove(ByVal sender As Object, ByVal e As MouseEventArgs) Handles PictureBox1.MouseMove
         If _MouseDown Then
             _MovedWhileDown = True
             If e.Button = MouseButtons.Left Then
@@ -25,7 +25,7 @@
             _MovedWhileDown = False
         End If
     End Sub
-    Private Sub Me_MouseUp(ByVal sender As Object, ByVal e As MouseEventArgs) Handles MyBase.MouseUp
+    Private Sub Me_MouseUp(ByVal sender As Object, ByVal e As MouseEventArgs) Handles PictureBox1.MouseUp
         If Not _MovedWhileDown Then
             Me.Hide()
         Else

@@ -149,6 +149,10 @@ Public Class fmMain
 #Region "Clipboard Event Handler"
     Private Sub ClipboardImport_Completed_Handler(_Content As String, _WrongContent As String, _WrongCount As Integer)
         '// Clipboard Content der Form hinzufügen.
+        If Not tbPlayerInput.Lines(tbPlayerInput.Lines.Count - 1) = "" Then
+            '// Verhindern dass zwei Charakterdaten in einer Zeile landen.
+            tbX_AddText(vbCrLf, tbPlayerInput)
+        End If
         tbX_AddText(_Content, tbPlayerInput)
 
         '// Prüfen ob falsche Einträge gefunden wurden.
@@ -256,11 +260,13 @@ Public Class fmMain
                         Process.Start(_Path)
                     Catch ex As Exception
                         MessageBox.Show(ex.ToString)
-                        Exit Sub
                     End Try
                 End If
             Case sender Is miInfo_About
-                fmAbout.Show()
+                Dim _fmAbout As New fmAbout
+                _fmAbout.StartPosition = FormStartPosition.Manual
+                _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
+                _fmAbout.Show()
             Case sender Is miLanguage_Save
                 If _Hashtable.Count = 0 Then
                     Select Case miLanguage_ComboBox.SelectedIndex

@@ -13,24 +13,24 @@ Option Explicit On
 
 
 Namespace My
-
+    
     'HINWEIS: Diese Datei wird automatisch generiert. Ändern Sie sie nicht direkt. Zum Ändern
     ' oder bei in dieser Datei auftretenden Buildfehlern wechseln Sie zum Projekt-Designer.
     ' (Wechseln Sie dazu zu den Projekteigenschaften, oder doppelklicken Sie auf den Knoten "Mein Projekt" im
     ' Projektmappen-Explorer). Nehmen Sie auf der Registerkarte "Anwendung" entsprechende Änderungen vor.
     '
     Partial Friend Class MyApplication
-
-        <Global.System.Diagnostics.DebuggerStepThroughAttribute()> _
+        
+        <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Public Sub New()
             MyBase.New(Global.Microsoft.VisualBasic.ApplicationServices.AuthenticationMode.Windows)
-            Me.IsSingleInstance = False
-            Me.EnableVisualStyles = True
-            Me.SaveMySettingsOnExit = True
+            Me.IsSingleInstance = false
+            Me.EnableVisualStyles = true
+            Me.SaveMySettingsOnExit = true
             Me.ShutDownStyle = Global.Microsoft.VisualBasic.ApplicationServices.ShutdownMode.AfterMainFormCloses
         End Sub
-
-        <Global.System.Diagnostics.DebuggerStepThroughAttribute()> _
+        
+        <Global.System.Diagnostics.DebuggerStepThroughAttribute()>  _
         Protected Overrides Sub OnCreateMainForm()
             Me.MainForm = Global.knownTitles.fmMain
         End Sub

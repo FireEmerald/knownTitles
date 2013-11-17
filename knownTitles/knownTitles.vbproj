@@ -2,6 +2,7 @@
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
+    <AppDesignerFolder>ProjectInfo</AppDesignerFolder>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{60811CAE-BD6C-4AB8-9914-9BFCD744153F}</ProjectGuid>
@@ -108,17 +109,17 @@
     <Compile Include="Report_EArgs\StatusReportEArgs.vb" />
     <Compile Include="Main_Cls.vb" />
     <Compile Include="TitleDBC_Mod.vb" />
-    <Compile Include="MyProject\AssemblyInfo.vb" />
-    <Compile Include="MyProject\Application.Designer.vb">
+    <Compile Include="ProjectInfo\AssemblyInfo.vb" />
+    <Compile Include="ProjectInfo\Application.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Application.myapp</DependentUpon>
     </Compile>
-    <Compile Include="MyProject\Resources.Designer.vb">
+    <Compile Include="ProjectInfo\Resources.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="MyProject\Settings.Designer.vb">
+    <Compile Include="ProjectInfo\Settings.Designer.vb">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
@@ -131,7 +132,7 @@
     <EmbeddedResource Include="fmMain.resx">
       <DependentUpon>fmMain.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MyProject\Resources.resx">
+    <EmbeddedResource Include="ProjectInfo\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.vb</LastGenOutput>
       <CustomToolNamespace>My.Resources</CustomToolNamespace>
@@ -139,11 +140,11 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="MyProject\Application.myapp">
+    <None Include="ProjectInfo\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-    <None Include="MyProject\Settings.settings">
+    <None Include="ProjectInfo\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <CustomToolNamespace>My</CustomToolNamespace>
       <LastGenOutput>Settings.Designer.vb</LastGenOutput>
@@ -173,6 +174,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\about_image.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ProjectInfo\Application.myapp">
+      <Generator>MyApplicationCodeGenerator</Generator>
+      <LastGenOutput>Application.Designer.vb</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

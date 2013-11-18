@@ -107,6 +107,16 @@ Module Functions_Mod
 
     ''' <summary>Entfernt alle Leeren Zeilen in der Textbox.</summary>
     Public Sub Remove_EmptyLines(_TextBox As Windows.Forms.TextBox)
+        Dim _Content As String = ""
+        For Each _Line In _TextBox.Lines
+            If _Line.EndsWith(" ") Then
+                _Content += _Line.Remove(_Line.Length - 1) + vbCrLf
+            Else
+                _Content += _Line + vbCrLf
+            End If
+        Next
+        _TextBox.Text = _Content
+
         _TextBox.Lines = (From s As String In _TextBox.Lines Where s.Length > 0 Select s).ToArray
         ReDim Preserve _TextBox.Lines(_TextBox.Lines.Count - 1)
     End Sub

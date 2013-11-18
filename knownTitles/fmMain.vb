@@ -40,14 +40,14 @@ Public Class fmMain
         btnAdd.Click,
         btnImportFromClipboard.Click,
         btnRemove.Click,
-        btnWhichTitle.Click,
+        btnLookup.Click,
         btnLogfilePath.Click,
         btnSQLQueryPath.Click
 
         Select Case True
             Case sender Is btnAdd
                 '// Titel hinzufügen
-                MessageBox.Show("Not implemented yet.", "Informatione", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("Not implemented yet.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Case sender Is btnImportFromClipboard
                 '// Von Zwischenablage importieren
                 If Clipboard.ContainsText Then
@@ -57,13 +57,15 @@ Public Class fmMain
                 '// Titel entfernen
                 tbLog.Text = ""
                 Remove_EmptyLines(tbPlayerInput)
-                Process_RemoveTitle_Start(GetSelectedTitles(clbTitlesInput, _Debug))
-            Case sender Is btnWhichTitle
+                Process_RemoveTitles_Start(GetSelectedTitles(clbTitlesInput, _Debug))
+            Case sender Is btnLookup
                 '// Titel auslesen
                 If _Debug Then
                     DebugGermanTitles()
                 Else
-                    MessageBox.Show("Not implemented yet.", "Informatione", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                    tbLog.Text = ""
+                    Remove_EmptyLines(tbPlayerInput)
+                    Process_LookupTitles_Start()
                 End If
             Case sender Is btnLogfilePath
                 '// Logfile Pfad festlegen
@@ -91,7 +93,24 @@ Public Class fmMain
         _ClipboardProcess_Thread.Start()
     End Sub
 
-    Private Sub Process_RemoveTitle_Start(_SelectedTitles As List(Of CharTitle))
+    Private Sub Process_LookupTitles_Start()
+        '// Das Task-Objekt erstellen.
+        Dim _MainProcess As New Main_Cls(tbPlayerInput.Text, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
+        AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
+        AddHandler _MainProcess.StatusReport, AddressOf StatusReport_Handler
+        AddHandler _MainProcess.CompletedReport, AddressOf CompletedReport_Handler
+
+        '// Startzeit festhalten & Buttons auf Form sperren
+        _StartTime = Date.Now
+        btnX_setState(False)
+
+        '// Den Thread erstellen.
+        Dim _MainProcess_Thread As New Thread(AddressOf _MainProcess.LookupProcess)
+        _MainProcess_Thread.Start()
+        _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
+    End Sub
+
+    Private Sub Process_RemoveTitles_Start(_SelectedTitles As List(Of CharTitle))
         '// Das Task-Objekt erstellen.
         Dim _MainProcess As New Main_Cls(_SelectedTitles, tbPlayerInput.Text, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
         AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
@@ -103,7 +122,7 @@ Public Class fmMain
         btnX_setState(False)
 
         '// Den Thread erstellen.
-        Dim _MainProcess_Thread As New Thread(AddressOf _MainProcess.ProcessRemove)
+        Dim _MainProcess_Thread As New Thread(AddressOf _MainProcess.RemoveProcess)
         _MainProcess_Thread.Start()
         _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
     End Sub
@@ -205,7 +224,7 @@ Public Class fmMain
     ''' <summary>Buttons auf der Form sperren oder entsperren.</summary>
     Public Sub btnX_setState(_State As Boolean)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnImportFromClipboard, btnRemove, btnWhichTitle}
+        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnImportFromClipboard, btnRemove, btnLookup}
         Dim _btnControl As New ControlButtonUpdater(_Buttons)
 
         '// Formelemente sperren / entsperren.
@@ -452,4 +471,8 @@ Public Class fmMain
     End Sub
 #End Region
 
+
+    Private Sub INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Click
+        INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.ForeColor = Color.Green
+    End Sub
 End Class

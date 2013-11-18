@@ -24,14 +24,13 @@ Partial Class fmMain
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(fmMain))
         Me.tbPlayerInput = New System.Windows.Forms.TextBox()
-        Me.btnWhichTitle = New System.Windows.Forms.Button()
+        Me.btnLookup = New System.Windows.Forms.Button()
         Me.tbLog = New System.Windows.Forms.TextBox()
         Me.cbDebug = New System.Windows.Forms.CheckBox()
         Me.clbTitlesInput = New System.Windows.Forms.CheckedListBox()
         Me.gbTitlesInput = New System.Windows.Forms.GroupBox()
         Me.gbPlayerInput = New System.Windows.Forms.GroupBox()
         Me.btnImportFromClipboard = New System.Windows.Forms.Button()
-        Me.Label1 = New System.Windows.Forms.Label()
         Me.cbInlineReport = New System.Windows.Forms.CheckBox()
         Me.gbOptions = New System.Windows.Forms.GroupBox()
         Me.Label2 = New System.Windows.Forms.Label()
@@ -55,9 +54,13 @@ Partial Class fmMain
         Me.miLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLanguage_ComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me.miLanguage_Save = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ImportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.miExit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_About = New System.Windows.Forms.ToolStripMenuItem()
+        Me.SelectSyntaxToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ABC00000ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.gbTitlesInput.SuspendLayout()
         Me.gbPlayerInput.SuspendLayout()
         Me.gbOptions.SuspendLayout()
@@ -79,14 +82,14 @@ Partial Class fmMain
         Me.tbPlayerInput.Text = "1234 1 Roki 0 192 0 0 0 0" & Global.Microsoft.VisualBasic.ChrW(13) & Global.Microsoft.VisualBasic.ChrW(10) & "5678 2 Loki 0 224 0 0 0 0"
         Me.tbPlayerInput.WordWrap = False
         '
-        'btnWhichTitle
+        'btnLookup
         '
-        Me.btnWhichTitle.Location = New System.Drawing.Point(906, 654)
-        Me.btnWhichTitle.Name = "btnWhichTitle"
-        Me.btnWhichTitle.Size = New System.Drawing.Size(174, 23)
-        Me.btnWhichTitle.TabIndex = 7
-        Me.btnWhichTitle.Text = "Which Titles does He/She has?"
-        Me.btnWhichTitle.UseVisualStyleBackColor = True
+        Me.btnLookup.Location = New System.Drawing.Point(945, 654)
+        Me.btnLookup.Name = "btnLookup"
+        Me.btnLookup.Size = New System.Drawing.Size(135, 23)
+        Me.btnLookup.TabIndex = 7
+        Me.btnLookup.Text = "Start Lookup"
+        Me.btnLookup.UseVisualStyleBackColor = True
         '
         'tbLog
         '
@@ -145,22 +148,12 @@ Partial Class fmMain
         '
         'btnImportFromClipboard
         '
-        Me.btnImportFromClipboard.Location = New System.Drawing.Point(641, 266)
+        Me.btnImportFromClipboard.Location = New System.Drawing.Point(647, 253)
         Me.btnImportFromClipboard.Name = "btnImportFromClipboard"
         Me.btnImportFromClipboard.Size = New System.Drawing.Size(125, 23)
         Me.btnImportFromClipboard.TabIndex = 17
         Me.btnImportFromClipboard.Text = "Import from Clipboard"
         Me.btnImportFromClipboard.UseVisualStyleBackColor = True
-        '
-        'Label1
-        '
-        Me.Label1.AutoSize = True
-        Me.Label1.Location = New System.Drawing.Point(268, 250)
-        Me.Label1.Name = "Label1"
-        Me.Label1.Size = New System.Drawing.Size(498, 13)
-        Me.Label1.TabIndex = 18
-        Me.Label1.Text = "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1," & _
-    " 'ABC', '0 0 0 0 0 0 ');"
         '
         'cbInlineReport
         '
@@ -325,7 +318,7 @@ Partial Class fmMain
         'msMain
         '
         Me.msMain.BackColor = System.Drawing.Color.White
-        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miLanguage, Me.miExit, Me.miInfo})
+        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miLanguage, Me.ImportToolStripMenuItem, Me.miExit, Me.miInfo})
         Me.msMain.Location = New System.Drawing.Point(0, 0)
         Me.msMain.Name = "msMain"
         Me.msMain.Size = New System.Drawing.Size(1095, 24)
@@ -371,6 +364,14 @@ Partial Class fmMain
         Me.miLanguage_Save.Size = New System.Drawing.Size(181, 22)
         Me.miLanguage_Save.Text = "Save"
         '
+        'ImportToolStripMenuItem
+        '
+        Me.ImportToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectSyntaxToolStripMenuItem})
+        Me.ImportToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
+        Me.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem"
+        Me.ImportToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
+        Me.ImportToolStripMenuItem.Text = "Import"
+        '
         'miExit
         '
         Me.miExit.ForeColor = System.Drawing.Color.Navy
@@ -393,6 +394,29 @@ Partial Class fmMain
         Me.miInfo_About.Size = New System.Drawing.Size(174, 22)
         Me.miInfo_About.Text = "About knownTitels"
         '
+        'SelectSyntaxToolStripMenuItem
+        '
+        Me.SelectSyntaxToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem, Me.ABC00000ToolStripMenuItem})
+        Me.SelectSyntaxToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
+        Me.SelectSyntaxToolStripMenuItem.Name = "SelectSyntaxToolStripMenuItem"
+        Me.SelectSyntaxToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
+        Me.SelectSyntaxToolStripMenuItem.Text = "Select Syntax"
+        '
+        'INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem
+        '
+        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
+        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Name = "INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem"
+        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Size = New System.Drawing.Size(597, 22)
+        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Text = "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1," & _
+    " 'ABC', '0 0 0 0 0 0 ');"
+        '
+        'ABC00000ToolStripMenuItem
+        '
+        Me.ABC00000ToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
+        Me.ABC00000ToolStripMenuItem.Name = "ABC00000ToolStripMenuItem"
+        Me.ABC00000ToolStripMenuItem.Size = New System.Drawing.Size(597, 22)
+        Me.ABC00000ToolStripMenuItem.Text = "1 1 ABC 0 0 0 0 0"
+        '
         'fmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
@@ -405,11 +429,10 @@ Partial Class fmMain
         Me.Controls.Add(Me.btnAdd)
         Me.Controls.Add(Me.gbLog)
         Me.Controls.Add(Me.gbOptions)
-        Me.Controls.Add(Me.Label1)
         Me.Controls.Add(Me.btnImportFromClipboard)
         Me.Controls.Add(Me.gbPlayerInput)
         Me.Controls.Add(Me.gbTitlesInput)
-        Me.Controls.Add(Me.btnWhichTitle)
+        Me.Controls.Add(Me.btnLookup)
         Me.ForeColor = System.Drawing.Color.Navy
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle
         Me.Icon = CType(resources.GetObject("$this.Icon"), System.Drawing.Icon)
@@ -433,14 +456,13 @@ Partial Class fmMain
 
     End Sub
     Friend WithEvents tbPlayerInput As System.Windows.Forms.TextBox
-    Friend WithEvents btnWhichTitle As System.Windows.Forms.Button
+    Friend WithEvents btnLookup As System.Windows.Forms.Button
     Friend WithEvents tbLog As System.Windows.Forms.TextBox
     Friend WithEvents cbDebug As System.Windows.Forms.CheckBox
     Friend WithEvents clbTitlesInput As System.Windows.Forms.CheckedListBox
     Friend WithEvents gbTitlesInput As System.Windows.Forms.GroupBox
     Friend WithEvents gbPlayerInput As System.Windows.Forms.GroupBox
     Friend WithEvents btnImportFromClipboard As System.Windows.Forms.Button
-    Friend WithEvents Label1 As System.Windows.Forms.Label
     Friend WithEvents cbInlineReport As System.Windows.Forms.CheckBox
     Friend WithEvents gbOptions As System.Windows.Forms.GroupBox
     Friend WithEvents gbLog As System.Windows.Forms.GroupBox
@@ -467,5 +489,9 @@ Partial Class fmMain
     Friend WithEvents miInfo As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miInfo_About As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Label2 As System.Windows.Forms.Label
+    Friend WithEvents ImportToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents SelectSyntaxToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ABC00000ToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
 
 End Class

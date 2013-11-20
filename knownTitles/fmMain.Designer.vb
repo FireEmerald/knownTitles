@@ -54,13 +54,13 @@ Partial Class fmMain
         Me.miLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLanguage_ComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me.miLanguage_Save = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ImportToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miImport = New System.Windows.Forms.ToolStripMenuItem()
+        Me.fr = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miSelectSyntax_0 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miSelectSyntax_1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miExit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_About = New System.Windows.Forms.ToolStripMenuItem()
-        Me.SelectSyntaxToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
-        Me.ABC00000ToolStripMenuItem = New System.Windows.Forms.ToolStripMenuItem()
         Me.gbTitlesInput.SuspendLayout()
         Me.gbPlayerInput.SuspendLayout()
         Me.gbOptions.SuspendLayout()
@@ -98,9 +98,10 @@ Partial Class fmMain
         Me.tbLog.MaxLength = 999999999
         Me.tbLog.Multiline = True
         Me.tbLog.Name = "tbLog"
-        Me.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Vertical
+        Me.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
         Me.tbLog.Size = New System.Drawing.Size(1056, 328)
         Me.tbLog.TabIndex = 9
+        Me.tbLog.WordWrap = False
         '
         'cbDebug
         '
@@ -318,7 +319,7 @@ Partial Class fmMain
         'msMain
         '
         Me.msMain.BackColor = System.Drawing.Color.White
-        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miLanguage, Me.ImportToolStripMenuItem, Me.miExit, Me.miInfo})
+        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miLanguage, Me.miImport, Me.miExit, Me.miInfo})
         Me.msMain.Location = New System.Drawing.Point(0, 0)
         Me.msMain.Name = "msMain"
         Me.msMain.Size = New System.Drawing.Size(1095, 24)
@@ -364,13 +365,36 @@ Partial Class fmMain
         Me.miLanguage_Save.Size = New System.Drawing.Size(181, 22)
         Me.miLanguage_Save.Text = "Save"
         '
-        'ImportToolStripMenuItem
+        'miImport
         '
-        Me.ImportToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.SelectSyntaxToolStripMenuItem})
-        Me.ImportToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
-        Me.ImportToolStripMenuItem.Name = "ImportToolStripMenuItem"
-        Me.ImportToolStripMenuItem.Size = New System.Drawing.Size(55, 20)
-        Me.ImportToolStripMenuItem.Text = "Import"
+        Me.miImport.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.fr})
+        Me.miImport.ForeColor = System.Drawing.Color.Navy
+        Me.miImport.Name = "miImport"
+        Me.miImport.Size = New System.Drawing.Size(55, 20)
+        Me.miImport.Text = "Import"
+        '
+        'fr
+        '
+        Me.fr.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSelectSyntax_0, Me.miSelectSyntax_1})
+        Me.fr.ForeColor = System.Drawing.Color.Navy
+        Me.fr.Name = "fr"
+        Me.fr.Size = New System.Drawing.Size(152, 22)
+        Me.fr.Text = "Select Syntax"
+        '
+        'miSelectSyntax_0
+        '
+        Me.miSelectSyntax_0.ForeColor = System.Drawing.Color.Navy
+        Me.miSelectSyntax_0.Name = "miSelectSyntax_0"
+        Me.miSelectSyntax_0.Size = New System.Drawing.Size(607, 22)
+        Me.miSelectSyntax_0.Text = """INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1" & _
+    ", 'ABC', '0 0 0 0 0 0 ');"""
+        '
+        'miSelectSyntax_1
+        '
+        Me.miSelectSyntax_1.ForeColor = System.Drawing.Color.Navy
+        Me.miSelectSyntax_1.Name = "miSelectSyntax_1"
+        Me.miSelectSyntax_1.Size = New System.Drawing.Size(607, 22)
+        Me.miSelectSyntax_1.Text = """1 1 ABC 0 0 0 0 0 """
         '
         'miExit
         '
@@ -392,30 +416,7 @@ Partial Class fmMain
         Me.miInfo_About.ForeColor = System.Drawing.Color.Navy
         Me.miInfo_About.Name = "miInfo_About"
         Me.miInfo_About.Size = New System.Drawing.Size(174, 22)
-        Me.miInfo_About.Text = "About knownTitels"
-        '
-        'SelectSyntaxToolStripMenuItem
-        '
-        Me.SelectSyntaxToolStripMenuItem.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem, Me.ABC00000ToolStripMenuItem})
-        Me.SelectSyntaxToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
-        Me.SelectSyntaxToolStripMenuItem.Name = "SelectSyntaxToolStripMenuItem"
-        Me.SelectSyntaxToolStripMenuItem.Size = New System.Drawing.Size(152, 22)
-        Me.SelectSyntaxToolStripMenuItem.Text = "Select Syntax"
-        '
-        'INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem
-        '
-        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
-        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Name = "INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem"
-        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Size = New System.Drawing.Size(597, 22)
-        Me.INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Text = "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1," & _
-    " 'ABC', '0 0 0 0 0 0 ');"
-        '
-        'ABC00000ToolStripMenuItem
-        '
-        Me.ABC00000ToolStripMenuItem.ForeColor = System.Drawing.Color.Navy
-        Me.ABC00000ToolStripMenuItem.Name = "ABC00000ToolStripMenuItem"
-        Me.ABC00000ToolStripMenuItem.Size = New System.Drawing.Size(597, 22)
-        Me.ABC00000ToolStripMenuItem.Text = "1 1 ABC 0 0 0 0 0"
+        Me.miInfo_About.Text = "About knownTitles"
         '
         'fmMain
         '
@@ -489,9 +490,9 @@ Partial Class fmMain
     Friend WithEvents miInfo As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miInfo_About As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents Label2 As System.Windows.Forms.Label
-    Friend WithEvents ImportToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents SelectSyntaxToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents ABC00000ToolStripMenuItem As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miImport As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents fr As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miSelectSyntax_0 As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miSelectSyntax_1 As System.Windows.Forms.ToolStripMenuItem
 
 End Class

@@ -2,6 +2,7 @@
 Option Strict On
 
 Imports System.Threading
+Imports System.Text.RegularExpressions
 
 '// Struktur für einen Charakter
 Public Structure Character
@@ -95,15 +96,17 @@ Public Class Main_Cls
     Public Sub LookupProcess()
         RaiseEvent StatusReport(Me, New StatusReportEArgs(0, "Running...", _Guid))
 
+        Dim _WrongCounter As Integer = 0
+
         Dim _ProgressCounter As Integer = 0
-        Dim _PlayerInput_Splitted As New List(Of String)(Split(_PlayerInput, vbCrLf))
+        Dim _PlayerInput_Splitted As New List(Of String)(Regex.Split(_PlayerInput, vbCrLf))
 
         '// 1234 Roki 0 64 0 0 0
         For _i As Integer = 0 To _PlayerInput_Splitted.Count - 1
             AddInlineReport("____________________________________________________________________________________" + vbCrLf + _
                             "// CHARACTER TITLE DATA" + vbCrLf)
 
-            Dim _SplittedCharacterInfo() As String = Split(_PlayerInput_Splitted(_i), " ")
+            Dim _SplittedCharacterInfo() As String = Regex.Split(_PlayerInput_Splitted(_i), " ")
             If _SplittedCharacterInfo.Length = 9 Then
                 Dim _ValueCounter As Integer = 0
 
@@ -164,23 +167,26 @@ Public Class Main_Cls
 
                 '// +1 zur Liste aller abgearbeiteter Charaktere hinzuzählen.
                 _ProgressCounter += 1
-
-                '// Aktualisierung der abgearbeiteten Charaktere.
-                RaiseEvent StatusReport(Me, New StatusReportEArgs(CInt((_ProgressCounter / _PlayerInput_Splitted.Count) * 100), "Running... " + _ProgressCounter.ToString + " of " + _PlayerInput_Splitted.Count.ToString, _Guid))
             Else
                 Static _IgnoreWrongValues As Boolean = False
 
+                '// +1 zur Liste aller abgearbeiteter Charaktere hinzuzählen.
+                _WrongCounter += 1
+
                 '// Fehler bei der Länge des Charakter Input.
                 If _IgnoreWrongValues = False Then
-                    Select Case MessageBox.Show("The character input contains lines with a wrong syntax." + vbCrLf + "Affected line: """ + _PlayerInput_Splitted(_i) + """" + vbCrLf + vbCrLf + "This character will be ignored!" + vbCrLf + "Would you like to hide this warning during the current process?", "Warning: Wrong character syntax.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                    Select Case MessageBox.Show("The character input contains lines with a wrong syntax." + vbCrLf + "Line " + (_i + 1).ToString + " affected: """ + _PlayerInput_Splitted(_i) + """" + vbCrLf + vbCrLf + "This character will be ignored!" + vbCrLf + "Would you like to hide this warning during the current process?", "Warning: Wrong character syntax.", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
                         Case DialogResult.Yes
                             _IgnoreWrongValues = True
                         Case DialogResult.No
                     End Select
                 End If
 
-                AddInlineReport("WARNING | Wrong character syntax! | Affected line: """ + _PlayerInput_Splitted(_i) + """")
+                AddInlineReport("WARNING | Wrong character syntax! | Line " + (_i + 1).ToString + " affected: """ + _PlayerInput_Splitted(_i) + """")
             End If
+
+            '// Aktualisierung der abgearbeiteten Charaktere.
+            RaiseEvent StatusReport(Me, New StatusReportEArgs(CInt(((_ProgressCounter + _WrongCounter) / _PlayerInput_Splitted.Count) * 100), "Running... " + (_ProgressCounter + _WrongCounter).ToString + " of " + _PlayerInput_Splitted.Count.ToString + "  | Syntax error: " + _WrongCounter.ToString, _Guid))
         Next
 
         '// Logfile Lokal speichern, falls dies zuvor ausgewählt wurde.
@@ -214,15 +220,18 @@ Public Class Main_Cls
 
     Public Sub RemoveProcess()
         RaiseEvent StatusReport(Me, New StatusReportEArgs(0, "Running...", _Guid))
+
+        Dim _WrongCounter As Integer = 0
+
         Dim _CharacterFullList As New List(Of Character)
-        Dim _PlayerInput_Splitted As New List(Of String)(Split(_PlayerInput, vbCrLf))
+        Dim _PlayerInput_Splitted As New List(Of String)(Regex.Split(_PlayerInput, vbCrLf))
 
         '// 1234 Roki 0 64 0 0 0
         For Each _CharacterInfo In _PlayerInput_Splitted
 
             AddInlineReport("____________________________________________________________________________________" + vbCrLf + _
                             "// CHARACTER TITLE DATA" + vbCrLf)
-            Dim _SplittedCharacterInfo() As String = Split(_CharacterInfo)
+            Dim _SplittedCharacterInfo() As String = Regex.Split(_CharacterInfo, " ")
             If _SplittedCharacterInfo.Length = 9 Then
                 Dim _ValueCounter As Integer = 0
                 Dim _Character_GUID As Integer = 0

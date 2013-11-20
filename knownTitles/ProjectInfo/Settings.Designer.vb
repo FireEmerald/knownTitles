@@ -65,6 +65,18 @@ Namespace My
                 Me("Language") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("0")>  _
+        Public Property ClipboardSyntax() As Integer
+            Get
+                Return CType(Me("ClipboardSyntax"),Integer)
+            End Get
+            Set
+                Me("ClipboardSyntax") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

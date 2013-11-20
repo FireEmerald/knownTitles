@@ -57,7 +57,8 @@ Public Class fmMain
                 '// Titel entfernen
                 tbLog.Text = ""
                 Remove_EmptyLines(tbPlayerInput)
-                Process_RemoveTitles_Start(GetSelectedTitles(clbTitlesInput, _Debug))
+
+                Process_ValidatePlayerInput_Start(tbPlayerInput.Text, ProcID.PROCESS_REMOVE)
             Case sender Is btnLookup
                 '// Titel auslesen
                 If _Debug Then
@@ -65,7 +66,8 @@ Public Class fmMain
                 Else
                     tbLog.Text = ""
                     Remove_EmptyLines(tbPlayerInput)
-                    Process_LookupTitles_Start()
+
+                    Process_ValidatePlayerInput_Start(tbPlayerInput.Text, ProcID.PROCESS_LOOKUP)
                 End If
             Case sender Is btnLogfilePath
                 '// Logfile Pfad festlegen
@@ -82,6 +84,7 @@ Public Class fmMain
         End Select
     End Sub
 
+#Region "Prozesse"
     Private Sub Process_GetClipboardContent_Start(ClipboardContent As String)
         '// Das Task-Objekt erstellen.
         Dim _ClipboardProcess As New Clipboard_Cls(ClipboardContent, _Debug)
@@ -91,11 +94,12 @@ Public Class fmMain
         '// Den Thread erstellen.
         Dim _ClipboardProcess_Thread As New Thread(AddressOf _ClipboardProcess.GetDataFromClipboard)
         _ClipboardProcess_Thread.Start()
+        _Hashtable.Add(_ClipboardProcess.P_Guid.ToString, _ClipboardProcess_Thread)
     End Sub
 
-    Private Sub Process_LookupTitles_Start()
+    Private Sub Process_LookupTitles_Start(_ValidatedPlayerInput As String)
         '// Das Task-Objekt erstellen.
-        Dim _MainProcess As New Main_Cls(tbPlayerInput.Text, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
+        Dim _MainProcess As New Main_Cls(_ValidatedPlayerInput, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
         AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
         AddHandler _MainProcess.StatusReport, AddressOf StatusReport_Handler
         AddHandler _MainProcess.CompletedReport, AddressOf CompletedReport_Handler
@@ -110,9 +114,9 @@ Public Class fmMain
         _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
     End Sub
 
-    Private Sub Process_RemoveTitles_Start(_SelectedTitles As List(Of CharTitle))
+    Private Sub Process_RemoveTitles_Start(_SelectedTitles As List(Of CharTitle), _ValidatedPlayerInput As String)
         '// Das Task-Objekt erstellen.
-        Dim _MainProcess As New Main_Cls(_SelectedTitles, tbPlayerInput.Text, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
+        Dim _MainProcess As New Main_Cls(_SelectedTitles, _ValidatedPlayerInput, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
         AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
         AddHandler _MainProcess.StatusReport, AddressOf StatusReport_Handler
         AddHandler _MainProcess.CompletedReport, AddressOf CompletedReport_Handler
@@ -126,6 +130,58 @@ Public Class fmMain
         _MainProcess_Thread.Start()
         _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
     End Sub
+
+    Private Sub Process_ValidatePlayerInput_Start(_PlayerInput As String, _ProcessID As Integer)
+        '// Das Task-Objekt erstellen.
+        Dim _ValidateProcess As New Validate_Cls(_PlayerInput, _ProcessID)
+        AddHandler _ValidateProcess.StatusReport, AddressOf StatusReport_Handler
+        AddHandler _ValidateProcess.Validate_Completed, AddressOf Validate_Completed_Handler
+
+        '// Den Thread erstellen.
+        Dim _ValidateProcess_Thread As New Thread(AddressOf _ValidateProcess.Validate_PlayerInput)
+        _ValidateProcess_Thread.Start()
+        _Hashtable.Add(_ValidateProcess.P_Guid.ToString, _ValidateProcess_Thread)
+    End Sub
+#End Region
+
+#Region "Clipboard Event Handler"
+    Private Sub ClipboardImport_Completed_Handler(_Content As String, _WrongContent As String, _WrongCount As Integer, _Guid As Guid)
+        '// Clipboard Content der Form hinzufügen.
+        '// Prüfen ob die TextBox leer ist, denn dann sind keine Lines vorhanden!
+        If Not tbPlayerInput.Text = "" AndAlso
+           Not tbPlayerInput.Lines(tbPlayerInput.Lines.Count - 1) = "" Then
+
+            '// Verhindern dass zwei Charakterdaten in einer Zeile landen.
+            tbX_AddText(vbCrLf, tbPlayerInput)
+        End If
+        tbX_AddText(_Content, tbPlayerInput)
+
+        '// Prüfen ob falsche Einträge gefunden wurden.
+        If _WrongCount = 0 Then
+            tsMain_setAll(100, "Done!")
+        Else
+            tsMain_setAll(100, "Done!  | " + _WrongCount.ToString + " wrong entry(s) found!")
+            Select Case MessageBox.Show(_WrongCount.ToString + " wrong entry(s) found!" + vbCrLf + "Would you like to see them?", "Wrong format found!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                Case Windows.Forms.DialogResult.Yes
+                    If _WrongCount > 50 Then
+                        Try
+                            My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt", _WrongContent, False)
+                            Process.Start(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt")
+                        Catch ex As Exception
+                            MessageBox.Show(ex.ToString, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                        End Try
+                    Else
+                        MessageBox.Show(_WrongContent, "Wrong values.", MessageBoxButtons.OK, MessageBoxIcon.None)
+                    End If
+            End Select
+        End If
+
+        '// Das Task-Objekt löschen.
+        SyncLock _Hashtable
+            _Hashtable.Remove(_Guid.ToString)
+        End SyncLock
+    End Sub
+#End Region
 
 #Region "Main Event Handler"
     Private Sub InlineReport_Handler(sender As Object, e As InlineReportEArgs)
@@ -165,34 +221,11 @@ Public Class fmMain
     End Sub
 #End Region
 
-#Region "Clipboard Event Handler"
-    Private Sub ClipboardImport_Completed_Handler(_Content As String, _WrongContent As String, _WrongCount As Integer)
-        '// Clipboard Content der Form hinzufügen.
-        If Not tbPlayerInput.Lines(tbPlayerInput.Lines.Count - 1) = "" Then
-            '// Verhindern dass zwei Charakterdaten in einer Zeile landen.
-            tbX_AddText(vbCrLf, tbPlayerInput)
-        End If
-        tbX_AddText(_Content, tbPlayerInput)
+#Region "Validate Event Handler"
+    Private Sub Validate_Completed_Handler(_ValidatedPlayerInput As String, _WrongContent As String, _WrongCount As Integer, _Guid As Guid)
 
-        '// Prüfen ob falsche Einträge gefunden wurden.
-        If _WrongCount = 0 Then
-            tsMain_setAll(100, "Done!")
-        Else
-            tsMain_setAll(100, "Done!  | " + _WrongCount.ToString + " wrong entry(s) found!")
-            Select Case MessageBox.Show(_WrongCount.ToString + " wrong entry(s) found!" + vbCrLf + "Would you like to see them?", "Wrong format found!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                Case Windows.Forms.DialogResult.Yes
-                    If _WrongCount > 50 Then
-                        Try
-                            My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt", _WrongContent, False)
-                            Process.Start(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt")
-                        Catch ex As Exception
-                            MessageBox.Show(ex.ToString, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                        End Try
-                    Else
-                        MessageBox.Show(_WrongContent, "Wrong values.", MessageBoxButtons.OK, MessageBoxIcon.None)
-                    End If
-            End Select
-        End If
+        'Process_LookupTitles_Start()
+        'Process_RemoveTitles_Start(GetSelectedTitles(clbTitlesInput, _Debug))
     End Sub
 #End Region
 
@@ -285,7 +318,7 @@ Public Class fmMain
                 Dim _fmAbout As New fmAbout
                 _fmAbout.StartPosition = FormStartPosition.Manual
                 _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
-                _fmAbout.Show()
+                _fmAbout.ShowDialog()
             Case sender Is miLanguage_Save
                 If _Hashtable.Count = 0 Then
                     Select Case miLanguage_ComboBox.SelectedIndex
@@ -388,6 +421,7 @@ Public Class fmMain
         _CD_tbLog = New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
 
         ChangeLanguage(My.Settings.Language)
+        Refresh_VisualSelectedSyntax()
     End Sub
 
     Private Sub ChangeLanguage(_NewLanguageID As Integer)
@@ -471,8 +505,40 @@ Public Class fmMain
     End Sub
 #End Region
 
+    Private Sub SelectSyntax_Handler(sender As Object, e As EventArgs) Handles _
+        miSelectSyntax_0.MouseDown,
+        miSelectSyntax_1.Click
 
-    Private Sub INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem_Click(sender As Object, e As EventArgs) Handles INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.Click
-        INSERTINTOcharactersguidaccountnameknownTitlesVALUES11ABC000000ToolStripMenuItem.ForeColor = Color.Green
+        Dim _ClipboardSyntax As Integer
+        Select Case True
+            Case sender Is miSelectSyntax_0 '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
+                _ClipboardSyntax = 0
+            Case sender Is miSelectSyntax_1 '// "1 1 ABC 0 0 0 0 0 "
+                _ClipboardSyntax = 1
+        End Select
+        '// Speichern und erneuern der abgelegten Variable
+        My.Settings.ClipboardSyntax = _ClipboardSyntax
+        My.Settings.Save()
+        My.Settings.Reload()
+        '// Visuelle Anpassung an neues ausgewählten Element
+        Refresh_VisualSelectedSyntax()
     End Sub
+
+    Private Sub Refresh_VisualSelectedSyntax()
+        Select Case My.Settings.ClipboardSyntax
+            Case 0  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
+                miSelectSyntax_1.ForeColor = Color.Navy
+                miSelectSyntax_1.CheckState = CheckState.Unchecked
+
+                miSelectSyntax_0.ForeColor = Color.Green
+                miSelectSyntax_0.CheckState = CheckState.Checked
+            Case 1 '// "1 1 ABC 0 0 0 0 0 "
+                miSelectSyntax_0.ForeColor = Color.Navy
+                miSelectSyntax_0.CheckState = CheckState.Unchecked
+
+                miSelectSyntax_1.ForeColor = Color.Green
+                miSelectSyntax_1.CheckState = CheckState.Checked
+        End Select
+    End Sub
+
 End Class

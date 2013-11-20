@@ -124,6 +124,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Validate_Cls.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="fmAbout.resx">
@@ -168,7 +169,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <None Include="Images\about_image.png" />
   </ItemGroup>

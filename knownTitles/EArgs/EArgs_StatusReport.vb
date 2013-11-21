@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-Public Class StatusReportEArgs
+Public Class EArgs_StatusReport
     '// Vererbung
     Inherits EventArgs
 

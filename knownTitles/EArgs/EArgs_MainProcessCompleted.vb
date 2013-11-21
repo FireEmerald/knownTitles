@@ -1,20 +1,23 @@
 ﻿Option Explicit On
 Option Strict On
 
-Public Class CompletedReportEArgs
+Public Class EArgs_MainProcessCompleted
     '// Vererbung
     Inherits EventArgs
+
+    '// Der Hauptprozess
+    Private _MainProcess As New MainProcessing
 
     '// Variablen
     Private _Log As String
     Private _InlineReport As Boolean
-    Private _Guid As Guid
 
     '// Sub New - Was an die Form übergeben werden soll.
-    Sub New(Log As String, InlineReport As Boolean, Guid As Guid)
+    Sub New(Log As String, InlineReport As Boolean, MainProcess As MainProcessing)
         _Log = Log
         _InlineReport = InlineReport
-        _Guid = Guid
+
+        _MainProcess = MainProcess
     End Sub
 
     '// Propertys
@@ -28,9 +31,9 @@ Public Class CompletedReportEArgs
             Return _InlineReport
         End Get
     End Property
-    Public ReadOnly Property P_Guid As Guid
+    Public ReadOnly Property P_MainProcess As MainProcessing
         Get
-            Return _Guid
+            Return _MainProcess
         End Get
     End Property
 

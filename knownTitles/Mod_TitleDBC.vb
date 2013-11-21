@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-Module TitleDBC_Mod
+Module Mod_TitleDBC
 
 #Region "Language Deklarationen"
     Public _LANG_TitelList_All As List(Of CharTitle)

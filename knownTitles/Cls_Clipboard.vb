@@ -3,7 +3,7 @@ Option Strict On
 
 Imports System.Text.RegularExpressions
 
-Public Class Clipboard_Cls
+Public Class Cls_Clipboard
 
 #Region "Deklarationen"
     '// Variablen
@@ -11,8 +11,8 @@ Public Class Clipboard_Cls
     Private _ClipboardContent As String = ""
 
     '// Events
-    Public Event StatusReport(sender As Object, e As StatusReportEArgs)
-    Public Event ClipboardImport_Completed(_Content As String, _WrongContent As String, _WrongCount As Integer, _Guid As Guid)
+    Public Event StatusReport(sender As Object, e As EArgs_StatusReport)
+    Public Event ClipboardImport_Completed(sender As Object, e As EArgs_ValidationProcessCompleted)
 
     '// Ein eindeutiger Bezeichner für diesen Task.
     Private _Guid As Guid = Guid.NewGuid()
@@ -33,11 +33,12 @@ Public Class Clipboard_Cls
 
     ''' <summary>Gibt den Text aus der Zwischenablage je nach Syntax gekürzt zurück.</summary>
     Public Sub GetDataFromClipboard()
-        RaiseEvent StatusReport(Me, New StatusReportEArgs(0, "Running...", _Guid))
+        RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Running...", _Guid))
 
-        Dim _Content As String = ""
-        Dim _WrongCount As Integer = 0
-        Dim _WrongContent As String = ""
+        Dim _ValidatedClipboardContent As String = ""
+        Dim _ErrorProcess As New ErrorProcessing With {.ID = ErrorProcessingID.CLIPBOARD_IMPORT_VALIDATION,
+                                                       .WrongContent = "",
+                                                       .WrongCounter = 0}
 
         '// Wir splitten den Text bei allen vbCrLf und prüfen ob die Syntax passt.
         Dim _ClipboardLines() As String = Regex.Split(_ClipboardContent, vbCrLf)
@@ -49,32 +50,34 @@ Public Class Clipboard_Cls
                         If _ClipboardLines(_i).Contains("INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (") Then
                             Dim _ToCheck As String = (_ClipboardLines(_i).Substring(76, _ClipboardLines(_i).Length - 80).Replace(",", "").Replace("'", ""))
                             If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
-                                _Content += _ToCheck + vbCrLf
+                                _ValidatedClipboardContent += _ToCheck + vbCrLf
                                 If _Debug Then MessageBox.Show("Clipboard Line Added: """ + _ToCheck + """")
                             Else
-                                _WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                                _WrongCount += 1
+                                _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
+                                _ErrorProcess.WrongCounter += 1
                             End If
                         Else
-                            _WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                            _WrongCount += 1
+                            _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
+                            _ErrorProcess.WrongCounter += 1
                         End If
                     Case 1 '// "1 1 ABC 0 0 0 0 0 "
-                        If Regex.IsMatch(_ClipboardLines(_i), "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0 ", RegexOptions.None) Then
-                            Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 2)
+                        If Regex.IsMatch(_ClipboardLines(_i), "^[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0 $", RegexOptions.None) Then
+                            Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 1)
 
-                            _Content += _Checked + vbCrLf
+                            _ValidatedClipboardContent += _Checked + vbCrLf
                             If _Debug Then MessageBox.Show("Clipboard Line Added: """ + _Checked + """")
                         Else
-                            _WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                            _WrongCount += 1
+                            _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
+                            _ErrorProcess.WrongCounter += 1
                         End If
                 End Select
             End If
-            RaiseEvent StatusReport(Me, New StatusReportEArgs(CInt(((_i + 1) / _ClipboardLines.Count) * 100), "Running... " + (_i + 1).ToString + " of " + _ClipboardLines.Count.ToString, _Guid))
+
+            '// Statusbar aktualisieren.
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(CInt(((_i + 1) / _ClipboardLines.Count) * 100), "Import running... " + (_i + 1).ToString + " of " + _ClipboardLines.Count.ToString + "  | Syntax error: " + _ErrorProcess.WrongCounter.ToString, _Guid))
         Next
         '// Das letzte vbCrLf muss nicht gelöscht werden.
 
-        RaiseEvent ClipboardImport_Completed(_Content, _WrongContent, _WrongCount, _Guid)
+        RaiseEvent ClipboardImport_Completed(Me, New EArgs_ValidationProcessCompleted(_ValidatedClipboardContent, _ErrorProcess, _Guid))
     End Sub
 End Class

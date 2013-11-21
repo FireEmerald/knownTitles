@@ -3,7 +3,7 @@ Option Strict On
 
 Imports System.Text.RegularExpressions
 
-Module Functions_Mod
+Module Mod_Functions
     '''<summary>Bits einer Bitmask auslesen.</summary>
     Public Function GetBitsFromBitMask(_BitMask As UInteger) As List(Of UInteger)
         Dim _Bits As New List(Of UInteger)

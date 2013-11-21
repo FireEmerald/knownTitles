@@ -58,17 +58,15 @@ Public Class fmMain
                 tbLog.Text = ""
                 Remove_EmptyLines(tbPlayerInput)
 
-                Process_ValidatePlayerInput_Start(tbPlayerInput.Text, ProcID.PROCESS_REMOVE)
+                Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_REMOVE,
+                                                                           .PlayerInput = tbPlayerInput.Text})
             Case sender Is btnLookup
                 '// Titel auslesen
-                If _Debug Then
-                    DebugGermanTitles()
-                Else
-                    tbLog.Text = ""
-                    Remove_EmptyLines(tbPlayerInput)
+                tbLog.Text = ""
+                Remove_EmptyLines(tbPlayerInput)
 
-                    Process_ValidatePlayerInput_Start(tbPlayerInput.Text, ProcID.PROCESS_LOOKUP)
-                End If
+                Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_LOOKUP,
+                                                                           .PlayerInput = tbPlayerInput.Text})
             Case sender Is btnLogfilePath
                 '// Logfile Pfad festlegen
                 Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
@@ -84,12 +82,15 @@ Public Class fmMain
         End Select
     End Sub
 
-#Region "Prozesse"
+#Region "Prozesse starten"
     Private Sub Process_GetClipboardContent_Start(ClipboardContent As String)
         '// Das Task-Objekt erstellen.
-        Dim _ClipboardProcess As New Clipboard_Cls(ClipboardContent, _Debug)
+        Dim _ClipboardProcess As New Cls_Clipboard(ClipboardContent, _Debug)
         AddHandler _ClipboardProcess.StatusReport, AddressOf StatusReport_Handler
         AddHandler _ClipboardProcess.ClipboardImport_Completed, AddressOf ClipboardImport_Completed_Handler
+
+        '// Buttons auf der Form sperren
+        btnX_setState(False)
 
         '// Den Thread erstellen.
         Dim _ClipboardProcess_Thread As New Thread(AddressOf _ClipboardProcess.GetDataFromClipboard)
@@ -97,55 +98,55 @@ Public Class fmMain
         _Hashtable.Add(_ClipboardProcess.P_Guid.ToString, _ClipboardProcess_Thread)
     End Sub
 
-    Private Sub Process_LookupTitles_Start(_ValidatedPlayerInput As String)
+    Private Sub Process_LookupTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _MainProcess As New Main_Cls(_ValidatedPlayerInput, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
-        AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
-        AddHandler _MainProcess.StatusReport, AddressOf StatusReport_Handler
-        AddHandler _MainProcess.CompletedReport, AddressOf CompletedReport_Handler
+        Dim _Process As New Cls_Main(_MainProcess, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
+        AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
+        AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
+        AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
         '// Startzeit festhalten & Buttons auf Form sperren
         _StartTime = Date.Now
         btnX_setState(False)
 
         '// Den Thread erstellen.
-        Dim _MainProcess_Thread As New Thread(AddressOf _MainProcess.LookupProcess)
-        _MainProcess_Thread.Start()
-        _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
+        Dim _Process_Thread As New Thread(AddressOf _Process.Lookup)
+        _Process_Thread.Start()
+        _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
     End Sub
 
-    Private Sub Process_RemoveTitles_Start(_SelectedTitles As List(Of CharTitle), _ValidatedPlayerInput As String)
+    Private Sub Process_RemoveTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _MainProcess As New Main_Cls(_SelectedTitles, _ValidatedPlayerInput, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
-        AddHandler _MainProcess.InlineReport, AddressOf InlineReport_Handler
-        AddHandler _MainProcess.StatusReport, AddressOf StatusReport_Handler
-        AddHandler _MainProcess.CompletedReport, AddressOf CompletedReport_Handler
+        Dim _Process As New Cls_Main(_MainProcess, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
+        AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
+        AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
+        AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
         '// Startzeit festhalten & Buttons auf der Form sperren
         _StartTime = Date.Now
         btnX_setState(False)
 
         '// Den Thread erstellen.
-        Dim _MainProcess_Thread As New Thread(AddressOf _MainProcess.RemoveProcess)
-        _MainProcess_Thread.Start()
-        _Hashtable.Add(_MainProcess.P_Guid.ToString, _MainProcess_Thread)
+        Dim _Process_Thread As New Thread(AddressOf _Process.Remove)
+        _Process_Thread.Start()
+        _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
     End Sub
 
-    Private Sub Process_ValidatePlayerInput_Start(_PlayerInput As String, _ProcessID As Integer)
+    Private Sub Process_ValidatePlayerInput_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _ValidateProcess As New Validate_Cls(_PlayerInput, _ProcessID)
+        Dim _ValidateProcess As New Cls_Main_Validate(_MainProcess)
         AddHandler _ValidateProcess.StatusReport, AddressOf StatusReport_Handler
-        AddHandler _ValidateProcess.Validate_Completed, AddressOf Validate_Completed_Handler
+        AddHandler _ValidateProcess.MainProcess_ValidationCompleted, AddressOf MainProcess_ValidationCompleted_Handler
 
         '// Den Thread erstellen.
         Dim _ValidateProcess_Thread As New Thread(AddressOf _ValidateProcess.Validate_PlayerInput)
         _ValidateProcess_Thread.Start()
-        _Hashtable.Add(_ValidateProcess.P_Guid.ToString, _ValidateProcess_Thread)
+        _Hashtable.Add(_ValidateProcess.P_MainProcess_Guid.ToString, _ValidateProcess_Thread)
     End Sub
 #End Region
 
 #Region "Clipboard Event Handler"
-    Private Sub ClipboardImport_Completed_Handler(_Content As String, _WrongContent As String, _WrongCount As Integer, _Guid As Guid)
+    Private Sub ClipboardImport_Completed_Handler(sender As Object, e As EArgs_ValidationProcessCompleted)
         '// Clipboard Content der Form hinzufügen.
         '// Prüfen ob die TextBox leer ist, denn dann sind keine Lines vorhanden!
         If Not tbPlayerInput.Text = "" AndAlso
@@ -154,42 +155,28 @@ Public Class fmMain
             '// Verhindern dass zwei Charakterdaten in einer Zeile landen.
             tbX_AddText(vbCrLf, tbPlayerInput)
         End If
-        tbX_AddText(_Content, tbPlayerInput)
+        tbX_AddText(e.P_ValidatedClipboardContent, tbPlayerInput)
 
-        '// Prüfen ob falsche Einträge gefunden wurden.
-        If _WrongCount = 0 Then
-            tsMain_setAll(100, "Done!")
-        Else
-            tsMain_setAll(100, "Done!  | " + _WrongCount.ToString + " wrong entry(s) found!")
-            Select Case MessageBox.Show(_WrongCount.ToString + " wrong entry(s) found!" + vbCrLf + "Would you like to see them?", "Wrong format found!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
-                Case Windows.Forms.DialogResult.Yes
-                    If _WrongCount > 50 Then
-                        Try
-                            My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt", _WrongContent, False)
-                            Process.Start(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_WrongValues.txt")
-                        Catch ex As Exception
-                            MessageBox.Show(ex.ToString, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
-                        End Try
-                    Else
-                        MessageBox.Show(_WrongContent, "Wrong values.", MessageBoxButtons.OK, MessageBoxIcon.None)
-                    End If
-            End Select
-        End If
+        '// Anzeigen ob falsche Einträge gefunden wurden.
+        DoErrorProcessing(e)
+
+        '// Buttons auf der Form entsperren
+        btnX_setState(True)
 
         '// Das Task-Objekt löschen.
         SyncLock _Hashtable
-            _Hashtable.Remove(_Guid.ToString)
+            _Hashtable.Remove(e.P_Guid.ToString)
         End SyncLock
     End Sub
 #End Region
 
-#Region "Main Event Handler"
-    Private Sub InlineReport_Handler(sender As Object, e As InlineReportEArgs)
+#Region "MainProcess Event Handler"
+    Private Sub InlineReport_Handler(sender As Object, e As EArgs_InlineReport)
         '// Eine thread-sichere Aktualisierung durchführen.
         tbX_AddText(e.P_LogMessage + vbCrLf, tbLog)
     End Sub
 
-    Private Sub StatusReport_Handler(sender As Object, e As StatusReportEArgs)
+    Private Sub StatusReport_Handler(sender As Object, e As EArgs_StatusReport)
         '// Eine thread-sichere Aktualisierung durchführen.
         If e.P_StatusMessage = "" Then
             tsMain_setPercent(e.P_PercentDone)
@@ -198,13 +185,13 @@ Public Class fmMain
         End If
     End Sub
 
-    Private Sub CompletedReport_Handler(sender As Object, e As CompletedReportEArgs)
+    Private Sub MainProcess_Completed_Handler(sender As Object, e As EArgs_MainProcessCompleted)
         '// Abschließende Informationen anzeigen.
         Dim _ProgressTime As TimeSpan = (Date.Now - _StartTime)
 
         If Not e.P_InlineReport Then
             tbX_AddText(e.P_Log + vbCrLf + _
-                                   "Thread GUID: " + e.P_Guid.ToString + ")" + _
+                                   "Thread GUID: " + e.P_MainProcess.Guid.ToString + ")" + _
                                    " | Start: " + _StartTime.ToString + _
                                    " | Finished: " + Date.Now.ToString + _
                                    " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds), tbLog)
@@ -216,16 +203,33 @@ Public Class fmMain
 
         '// Das Task-Objekt löschen.
         SyncLock _Hashtable
-            _Hashtable.Remove(e.P_Guid.ToString)
+            _Hashtable.Remove(e.P_MainProcess.Guid.ToString)
         End SyncLock
     End Sub
 #End Region
 
-#Region "Validate Event Handler"
-    Private Sub Validate_Completed_Handler(_ValidatedPlayerInput As String, _WrongContent As String, _WrongCount As Integer, _Guid As Guid)
+#Region "MainProcess Validate Event Handler"
+    Private Sub MainProcess_ValidationCompleted_Handler(sender As Object, e As EArgs_ValidationProcessCompleted)
+        '// Anzeigen ob falsche Einträge gefunden wurden.
+        If DoErrorProcessing(e) Then
+            '// Falls ja, wird kein Prozess gestartet!
+            Select Case e.P_MainProcess.ID
+                Case MainProcessingID.PROCESS_ADD
 
-        'Process_LookupTitles_Start()
-        'Process_RemoveTitles_Start(GetSelectedTitles(clbTitlesInput, _Debug))
+                Case MainProcessingID.PROCESS_LOOKUP
+                    Process_LookupTitles_Start(e.P_MainProcess)
+                Case MainProcessingID.PROCESS_REMOVE
+                    Dim _MainProcess As New MainProcessing With {.ID = e.P_MainProcess.ID,
+                                                                 .SelectedTitles = GetSelectedTitles(clbTitlesInput, _Debug),
+                                                                 .ValidatedPlayerInput = e.P_MainProcess.ValidatedPlayerInput}
+                    Process_RemoveTitles_Start(_MainProcess)
+            End Select
+        End If
+
+        '// Das Task-Objekt löschen.
+        SyncLock _Hashtable
+            _Hashtable.Remove(e.P_MainProcess.Guid.ToString)
+        End SyncLock
     End Sub
 #End Region
 
@@ -291,6 +295,41 @@ Public Class fmMain
     End Sub
 #End Region
 
+#Region "ErrorProcessing"
+    Private Function DoErrorProcessing(e As EArgs_ValidationProcessCompleted) As Boolean
+        Dim _ErrorProcessMsg As String = ""
+
+        Select Case e.P_ErrorProcess.ID
+            Case ErrorProcessingID.CLIPBOARD_IMPORT_VALIDATION
+                _ErrorProcessMsg = "Import"
+            Case ErrorProcessingID.MAIN_PROCESS_VALIDATION
+                _ErrorProcessMsg = "Validation"
+            Case ErrorProcessingID.MAIN_PROCESS_INLINE
+                _ErrorProcessMsg = "Process"
+        End Select
+
+        If e.P_ErrorProcess.WrongCounter = 0 Then
+            tsMain_setAll(100, _ErrorProcessMsg + " done!")
+            Return True
+        Else
+            tsMain_setAll(100, _ErrorProcessMsg + " done!  | " + e.P_ErrorProcess.WrongCounter.ToString + " wrong entry(s) found!")
+            Select Case MessageBox.Show(e.P_ErrorProcess.WrongCounter.ToString + " wrong entry(s) found!" + vbCrLf + "Would you like to see them?", "Wrong format found!", MessageBoxButtons.YesNo, MessageBoxIcon.Warning)
+                Case Windows.Forms.DialogResult.Yes
+                    If e.P_ErrorProcess.WrongCounter > 50 Then
+                        Try
+                            My.Computer.FileSystem.WriteAllText(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_" + _ErrorProcessMsg + "WrongEntrys.txt", e.P_ErrorProcess.WrongContent, False)
+                            Process.Start(My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_" + _ErrorProcessMsg + "WrongEntrys.txt")
+                        Catch ex As Exception
+                            MessageBox.Show(ex.ToString, "Exception", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+                        End Try
+                    Else
+                        MessageBox.Show(e.P_ErrorProcess.WrongContent, "Wrong values.", MessageBoxButtons.OK, MessageBoxIcon.None)
+                    End If
+            End Select
+            Return False
+        End If
+    End Function
+#End Region
 
     '// Verwaltung der oberen Menüleiste
     Private Sub Menu_ClickedHandler(sender As Object, e As EventArgs) Handles _
@@ -301,10 +340,11 @@ Public Class fmMain
 
         Select Case True
             Case sender Is miExit
+                '// Programm beenden.
                 CancelAllThreads()
                 Application.Exit()
             Case sender Is miFile_SaveLogfile
-                '// Logfile Pfad festlegen
+                '// Logfile Pfad festlegen und speichern.
                 Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
                 If Not _Path = "" Then
                     Try
@@ -315,11 +355,13 @@ Public Class fmMain
                     End Try
                 End If
             Case sender Is miInfo_About
+                '// Über das Programm.
                 Dim _fmAbout As New fmAbout
                 _fmAbout.StartPosition = FormStartPosition.Manual
                 _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
                 _fmAbout.ShowDialog()
             Case sender Is miLanguage_Save
+                '// Sprache ändern.
                 If _Hashtable.Count = 0 Then
                     Select Case miLanguage_ComboBox.SelectedIndex
                         Case 0 '// English
@@ -331,6 +373,48 @@ Public Class fmMain
                     MessageBox.Show("You can't change the language, while processing..." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
                 End If
         End Select
+    End Sub
+
+    '// Form Load - Diverse Sachen laden.
+    Private Sub fmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
+        tbLogfilePath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Log.txt"
+        tbSQLQueryPath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Query.sql"
+        miLanguage_ComboBox.SelectedIndex = My.Settings.Language
+        tsPbStatusPercent.Maximum = 100
+
+        _CD_gbPlayerInput = New ControlData With {.Control = gbPlayerInput, .Location = gbPlayerInput.Location, .Size = gbPlayerInput.Size}
+        _CD_tbPlayerInput = New ControlData With {.Control = tbPlayerInput, .Location = tbPlayerInput.Location, .Size = tbPlayerInput.Size}
+        _CD_gbTitlesInput = New ControlData With {.Control = gbTitlesInput, .Location = gbTitlesInput.Location, .Size = gbTitlesInput.Size}
+        _CD_clbTitlesInput = New ControlData With {.Control = clbTitlesInput, .Location = clbTitlesInput.Location, .Size = clbTitlesInput.Size}
+        _CD_gbLog = New ControlData With {.Control = gbLog, .Location = gbLog.Location, .Size = gbLog.Size}
+        _CD_tbLog = New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
+
+        ChangeLanguage(My.Settings.Language)
+        Refresh_VisualSelectedSyntax()
+    End Sub
+
+    Private Sub ChangeLanguage(_NewLanguageID As Integer)
+        Select Case _NewLanguageID
+            Case 0 '// English
+                _LANG_TitelList_All = _TitleList_All_ENG
+                _LANG_TitleList_INT_0 = _TitleList_INT_0_ENG
+                _LANG_TitleList_INT_1 = _TitleList_INT_1_ENG
+                _LANG_TitleList_INT_2 = _TitleList_INT_2_ENG
+                _LANG_TitleList_INT_3 = _TitleList_INT_3_ENG
+                _LANG_TitleList_INT_4 = _TitleList_INT_4_ENG
+            Case 1 '// German
+                _LANG_TitelList_All = _TitleList_All_GER
+                _LANG_TitleList_INT_0 = _TitleList_INT_0_GER
+                _LANG_TitleList_INT_1 = _TitleList_INT_1_GER
+                _LANG_TitleList_INT_2 = _TitleList_INT_2_GER
+                _LANG_TitleList_INT_3 = _TitleList_INT_3_GER
+                _LANG_TitleList_INT_4 = _TitleList_INT_4_GER
+        End Select
+        '// Reloads aufrufen um Elemente an neue Sprache anzupassen
+        Reload_TitlesInput(CBool(cbExtendedTitles.CheckState))
+
+        My.Settings.Language = _NewLanguageID
+        My.Settings.Save()
     End Sub
 
 #Region "Checkbox Handler"
@@ -406,105 +490,7 @@ Public Class fmMain
     End Sub
 #End Region
 
-    '// Form Load - Diverse Sachen laden.
-    Private Sub fmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
-        tbLogfilePath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Log.txt"
-        tbSQLQueryPath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Query.sql"
-        miLanguage_ComboBox.SelectedIndex = My.Settings.Language
-        tsPbStatusPercent.Maximum = 100
-
-        _CD_gbPlayerInput = New ControlData With {.Control = gbPlayerInput, .Location = gbPlayerInput.Location, .Size = gbPlayerInput.Size}
-        _CD_tbPlayerInput = New ControlData With {.Control = tbPlayerInput, .Location = tbPlayerInput.Location, .Size = tbPlayerInput.Size}
-        _CD_gbTitlesInput = New ControlData With {.Control = gbTitlesInput, .Location = gbTitlesInput.Location, .Size = gbTitlesInput.Size}
-        _CD_clbTitlesInput = New ControlData With {.Control = clbTitlesInput, .Location = clbTitlesInput.Location, .Size = clbTitlesInput.Size}
-        _CD_gbLog = New ControlData With {.Control = gbLog, .Location = gbLog.Location, .Size = gbLog.Size}
-        _CD_tbLog = New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
-
-        ChangeLanguage(My.Settings.Language)
-        Refresh_VisualSelectedSyntax()
-    End Sub
-
-    Private Sub ChangeLanguage(_NewLanguageID As Integer)
-        Select Case _NewLanguageID
-            Case 0 '// English
-                _LANG_TitelList_All = _TitleList_All_ENG
-                _LANG_TitleList_INT_0 = _TitleList_INT_0_ENG
-                _LANG_TitleList_INT_1 = _TitleList_INT_1_ENG
-                _LANG_TitleList_INT_2 = _TitleList_INT_2_ENG
-                _LANG_TitleList_INT_3 = _TitleList_INT_3_ENG
-                _LANG_TitleList_INT_4 = _TitleList_INT_4_ENG
-            Case 1 '// German
-                _LANG_TitelList_All = _TitleList_All_GER
-                _LANG_TitleList_INT_0 = _TitleList_INT_0_GER
-                _LANG_TitleList_INT_1 = _TitleList_INT_1_GER
-                _LANG_TitleList_INT_2 = _TitleList_INT_2_GER
-                _LANG_TitleList_INT_3 = _TitleList_INT_3_GER
-                _LANG_TitleList_INT_4 = _TitleList_INT_4_GER
-        End Select
-        '// Reloads aufrufen um Elemente an neue Sprache anzupassen
-        Reload_TitlesInput(CBool(cbExtendedTitles.CheckState))
-
-        My.Settings.Language = _NewLanguageID
-        My.Settings.Save()
-    End Sub
-
-#Region "Debug Subs"
-    Private Sub DebugGermanTitles()
-        Dim _Out As String = ""
-        Dim _List As String = "Public ReadOnly _TitleList_All_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        Dim _Counter As Integer = 0
-        For Each _Line In tbPlayerInput.Lines
-            Select Case _Counter
-                Case 0
-                    _Out += "Private _" + _Line + "_GER As New CharTitle With {.TitleID = " + _Line
-                    _List += "_" + _Line + "_GER, "
-                Case 1
-                    _Out += ", .IntID = " + _Line
-                Case 2
-                    _Out += ", .DBValue = """ + _Line + """"
-                Case 3
-                    _Out += ", .Bit = " + _Line
-                Case 4
-                    If _Line.EndsWith(" ") Then MessageBox.Show("""" + _Line + """ EndsWith Leerzeichen!")
-                    _Out += ", .MaleTitle = """ + _Line + """}" + vbCrLf
-                    _Counter = 0
-                    Continue For
-            End Select
-            If _Line.EndsWith(" ") Then MessageBox.Show("""" + _Line + """ EndsWith Leerzeichen!")
-            _Counter += 1
-        Next
-        Dim _List_0 As String = "Public ReadOnly _TitleList_INT_0_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        Dim _List_1 As String = "Public ReadOnly _TitleList_INT_1_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        Dim _List_2 As String = "Public ReadOnly _TitleList_INT_2_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        Dim _List_3 As String = "Public ReadOnly _TitleList_INT_3_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        Dim _List_4 As String = "Public ReadOnly _TitleList_INT_4_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {"
-        For Each _Title In _TitleList_All_GER
-            Select Case _Title.IntID
-                Case 0
-                    _List_0 += "_" + _Title.TitleID.ToString + "_GER, "
-                Case 1
-                    _List_1 += "_" + _Title.TitleID.ToString + "_GER, "
-                Case 2
-                    _List_2 += "_" + _Title.TitleID.ToString + "_GER, "
-                Case 3
-                    _List_3 += "_" + _Title.TitleID.ToString + "_GER, "
-                Case 4
-                    _List_4 += "_" + _Title.TitleID.ToString + "_GER, "
-                Case Else
-                    MessageBox.Show("ERROR")
-            End Select
-        Next
-        tbLog.Text = ""
-        tbLog.Text = _Out + vbCrLf +
-                              _List + "})" + vbCrLf +
-                              _List_0 + "})" + vbCrLf +
-                              _List_1 + "})" + vbCrLf +
-                              _List_2 + "})" + vbCrLf +
-                              _List_3 + "})" + vbCrLf +
-                              _List_4 + "})"
-    End Sub
-#End Region
-
+#Region "Clipboard Import Handler"
     Private Sub SelectSyntax_Handler(sender As Object, e As EventArgs) Handles _
         miSelectSyntax_0.MouseDown,
         miSelectSyntax_1.Click
@@ -540,5 +526,6 @@ Public Class fmMain
                 miSelectSyntax_1.CheckState = CheckState.Checked
         End Select
     End Sub
+#End Region
 
 End Class

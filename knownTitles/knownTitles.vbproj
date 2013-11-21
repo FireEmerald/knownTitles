@@ -86,18 +86,19 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Clipboard_Cls.vb" />
-    <Compile Include="Control_Updater\ControlButtonUpdater.vb" />
-    <Compile Include="Control_Updater\ControlStatusStripUpdater.vb" />
+    <Compile Include="Cls_Clipboard.vb" />
+    <Compile Include="Updater\ControlButtonUpdater.vb" />
+    <Compile Include="Updater\ControlStatusStripUpdater.vb" />
     <Compile Include="fmAbout.Designer.vb">
       <DependentUpon>fmAbout.vb</DependentUpon>
     </Compile>
     <Compile Include="fmAbout.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Functions_Mod.vb" />
-    <Compile Include="Report_EArgs\CompletedReportEArgs.vb" />
-    <Compile Include="Control_Updater\ControlTextUpdater.vb" />
+    <Compile Include="Mod_Functions.vb" />
+    <Compile Include="EArgs\EArgs_ValidationProcessCompleted.vb" />
+    <Compile Include="EArgs\EArgs_MainProcessCompleted.vb" />
+    <Compile Include="Updater\ControlTextUpdater.vb" />
     <Compile Include="fmMain.vb">
       <SubType>Form</SubType>
     </Compile>
@@ -105,10 +106,10 @@
       <DependentUpon>fmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Report_EArgs\InlineReportEArgs.vb" />
-    <Compile Include="Report_EArgs\StatusReportEArgs.vb" />
-    <Compile Include="Main_Cls.vb" />
-    <Compile Include="TitleDBC_Mod.vb" />
+    <Compile Include="EArgs\EArgs_InlineReport.vb" />
+    <Compile Include="EArgs\EArgs_StatusReport.vb" />
+    <Compile Include="Cls_Main.vb" />
+    <Compile Include="Mod_TitleDBC.vb" />
     <Compile Include="ProjectInfo\AssemblyInfo.vb" />
     <Compile Include="ProjectInfo\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -124,7 +125,7 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Validate_Cls.vb" />
+    <Compile Include="Cls_Main_Validate.vb" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="fmAbout.resx">
@@ -168,9 +169,6 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\about_image.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\about_image.png" />

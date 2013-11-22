@@ -1,6 +1,8 @@
 ﻿Option Explicit On
 Option Strict On
 
+Imports System.Text
+
 Public Class EArgs_MainProcessCompleted
     '// Vererbung
     Inherits EventArgs
@@ -9,11 +11,11 @@ Public Class EArgs_MainProcessCompleted
     Private _MainProcess As New MainProcessing
 
     '// Variablen
-    Private _Log As String
+    Private _Log As StringBuilder
     Private _InlineReport As Boolean
 
     '// Sub New - Was an die Form übergeben werden soll.
-    Sub New(Log As String, InlineReport As Boolean, MainProcess As MainProcessing)
+    Sub New(Log As StringBuilder, InlineReport As Boolean, MainProcess As MainProcessing)
         _Log = Log
         _InlineReport = InlineReport
 
@@ -21,7 +23,7 @@ Public Class EArgs_MainProcessCompleted
     End Sub
 
     '// Propertys
-    Public ReadOnly Property P_Log As String
+    Public ReadOnly Property P_Log As StringBuilder
         Get
             Return _Log
         End Get

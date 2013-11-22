@@ -171,6 +171,9 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Images\about_image.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Resources\about_image.png" />
   </ItemGroup>
   <ItemGroup>

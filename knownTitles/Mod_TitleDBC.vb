@@ -13,7 +13,7 @@ Module Mod_TitleDBC
 #End Region
 
     '// Charactertitles from DBC - ENGLISCH
-#Region "CharTitles from DBC"
+#Region "CharTitles from DBC [ENG]"
     Private _1_ENG As New CharTitle With {.TitleID = 1, .InGameOrder = 1, .IntID = 0, .BitOfInteger = 1, .Bit = 2, .DBValue = "2 0 0 0 0 0", .IntID_Double = 0.03125, .UnkRef = 5879, .MaleTitle = "Private %s", .FemaleTitle = "Private %s"}
     Private _2_ENG As New CharTitle With {.TitleID = 2, .InGameOrder = 2, .IntID = 0, .BitOfInteger = 2, .Bit = 4, .DBValue = "4 0 0 0 0 0", .IntID_Double = 0.0625, .UnkRef = 5880, .MaleTitle = "Corporal %s", .FemaleTitle = "Corporal %s"}
     Private _3_ENG As New CharTitle With {.TitleID = 3, .InGameOrder = 3, .IntID = 0, .BitOfInteger = 3, .Bit = 8, .DBValue = "8 0 0 0 0 0", .IntID_Double = 0.09375, .UnkRef = 5881, .MaleTitle = "Sergeant %s", .FemaleTitle = "Sergeant %s"}

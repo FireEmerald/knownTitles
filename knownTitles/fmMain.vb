@@ -190,12 +190,13 @@ Public Class fmMain
         Dim _ProgressTime As TimeSpan = (Date.Now - _StartTime)
 
         If Not e.P_InlineReport Then
-            tbX_AddText(e.P_Log + vbCrLf + _
-                                   "Thread GUID: " + e.P_MainProcess.Guid.ToString + ")" + _
-                                   " | Start: " + _StartTime.ToString + _
-                                   " | Finished: " + Date.Now.ToString + _
-                                   " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds), tbLog)
+            tbX_AddText(e.P_Log.ToString + vbCrLf + _
+                                        "Thread GUID: " + e.P_MainProcess.Guid.ToString + ")" + _
+                                        " | Start: " + _StartTime.ToString + _
+                                        " | Finished: " + Date.Now.ToString + _
+                                        " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds), tbLog)
         End If
+
         '// ToolStrip aktualisieren.
         tsMain_setAll(100, "Done!" + String.Format("  | Elapsed: {0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds))
         '// Buttons auf der Form entsperren.
@@ -359,7 +360,7 @@ Public Class fmMain
                 Dim _fmAbout As New fmAbout
                 _fmAbout.StartPosition = FormStartPosition.Manual
                 _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
-                _fmAbout.ShowDialog()
+                _fmAbout.Show()
             Case sender Is miLanguage_Save
                 '// Sprache ändern.
                 If _Hashtable.Count = 0 Then

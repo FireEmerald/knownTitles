@@ -50,6 +50,10 @@ Public Class Cls_Main_Validate
                                                        .WrongContent = "",
                                                        .WrongCounter = 0}
 
+        _MainProcess.ValidatedPlayerInput = _MainProcess.PlayerInput
+        RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
+        Return
+
         Dim _ProgressCounter As Integer = 0
 
         Dim _SplittedPlayerInput() As String = Regex.Split(_MainProcess.PlayerInput, vbCrLf)

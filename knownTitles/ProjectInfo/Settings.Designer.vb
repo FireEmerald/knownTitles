@@ -77,6 +77,66 @@ Namespace My
                 Me("ClipboardSyntax") = value
             End Set
         End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property DebugMode() As Boolean
+            Get
+                Return CType(Me("DebugMode"),Boolean)
+            End Get
+            Set
+                Me("DebugMode") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property ExtendedTitles() As Boolean
+            Get
+                Return CType(Me("ExtendedTitles"),Boolean)
+            End Get
+            Set
+                Me("ExtendedTitles") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property InlineReports() As Boolean
+            Get
+                Return CType(Me("InlineReports"),Boolean)
+            End Get
+            Set
+                Me("InlineReports") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property LogfileToHDD() As Boolean
+            Get
+                Return CType(Me("LogfileToHDD"),Boolean)
+            End Get
+            Set
+                Me("LogfileToHDD") = value
+            End Set
+        End Property
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
+        Public Property SQLQueryToHDD() As Boolean
+            Get
+                Return CType(Me("SQLQueryToHDD"),Boolean)
+            End Get
+            Set
+                Me("SQLQueryToHDD") = value
+            End Set
+        End Property
     End Class
 End Namespace
 

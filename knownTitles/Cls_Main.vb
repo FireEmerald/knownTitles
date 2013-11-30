@@ -28,10 +28,6 @@ Public Structure CharTitle
     Dim DBValue As String
 End Structure
 
-Public Structure BanannenStruc
-
-End Structure
-
 Public Class Cls_Main
 
 #Region "Deklarationen"
@@ -49,6 +45,21 @@ Public Class Cls_Main
     Public Event InlineReport(sender As Object, e As EArgs_InlineReport)
     Public Event StatusReport(sender As Object, e As EArgs_StatusReport)
     Public Event MainProcess_Completed(sender As Object, e As EArgs_MainProcessCompleted)
+
+#Region "Enums FieldID"
+    Private Enum FieldID
+        GUID = 0
+        AccountID = 1
+        Name = 2
+        Int_0 = 3
+        Int_1 = 4
+        Int_2 = 5
+        Int_3 = 6
+        Int_4 = 7
+        Int_5 = 8
+        Maximum = 9
+    End Enum
+#End Region
 #End Region
 
     '// Properties
@@ -79,7 +90,7 @@ Public Class Cls_Main
         _LogToHarddrive = LogToHarddrive
     End Sub
 
-    ' Diese Methode wird im neuen Thread ausgeführt.
+#Region "LOOKUP CONTENT"
     Public Sub Lookup()
         RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Running...", _MainProcess.Guid))
 
@@ -107,42 +118,37 @@ Public Class Cls_Main
                             _Char.Name = _Value
                         Case 3 '// INT_0
                             If _Value = "0" Then
-                                '// Wenn keine Titel vorhanden sind, brauchen wir nach keinen suchen.
-                                _Char.INT_0 = 0
+                                _Char.INT_0 = 0 '// Keine Titel vorhanden.
                             Else
-                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(0, _Value, _LANG_TitleList_INT_0))
+                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(0, _Value, _TitleList_INT_0))
                                 _Char.INT_0 = CUInt(_Value)
                             End If
                         Case 4 '// INT_1
                             If _Value = "0" Then
-                                '// Wenn keine Titel vorhanden sind, brauchen wir nach keinen suchen.
-                                _Char.INT_1 = 0
+                                _Char.INT_1 = 0 '// Keine Titel vorhanden.
                             Else
-                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(1, _Value, _LANG_TitleList_INT_1))
+                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(1, _Value, _TitleList_INT_1))
                                 _Char.INT_1 = CUInt(_Value)
                             End If
                         Case 5 '// INT_2
                             If _Value = "0" Then
-                                '// Wenn keine Titel vorhanden sind, brauchen wir nach keinen suchen.
-                                _Char.INT_2 = 0
+                                _Char.INT_2 = 0 '// Keine Titel vorhanden.
                             Else
-                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(2, _Value, _LANG_TitleList_INT_2))
+                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(2, _Value, _TitleList_INT_2))
                                 _Char.INT_2 = CUInt(_Value)
                             End If
                         Case 6 '// INT_3
                             If _Value = "0" Then
-                                '// Wenn keine Titel vorhanden sind, brauchen wir nach keinen suchen.
-                                _Char.INT_3 = 0
+                                _Char.INT_3 = 0 '// Keine Titel vorhanden.
                             Else
-                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(3, _Value, _LANG_TitleList_INT_3))
+                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(3, _Value, _TitleList_INT_3))
                                 _Char.INT_3 = CUInt(_Value)
                             End If
                         Case 7 '// INT_4
                             If _Value = "0" Then
-                                '// Wenn keine Titel vorhanden sind, brauchen wir nach keinen suchen.
-                                _Char.INT_4 = 0
+                                _Char.INT_4 = 0 '// Keine Titel vorhanden.
                             Else
-                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(4, _Value, _LANG_TitleList_INT_4))
+                                GenerateLogFromFoundTitles(GetTitlesFromIntValue(4, _Value, _TitleList_INT_4))
                                 _Char.INT_4 = CUInt(_Value)
                             End If
                         Case 8 '// INT_5
@@ -176,19 +182,21 @@ Public Class Cls_Main
     End Sub
 
     Private Sub GenerateLogFromFoundTitles(_FoundTitles As List(Of CharTitle))
+        '// Für jeden gefundenen Titel einen Inline Report ausgeben.
         For Each _FoundTitle In _FoundTitles
             AddInlineReport("FOUND | BIT: " + _FoundTitle.Bit.ToString + " | INT: " + _FoundTitle.IntID.ToString + " | IntBit: " + _FoundTitle.BitOfInteger.ToString + " | TitleID: " + _FoundTitle.TitleID.ToString + " | UnkRef: " + _FoundTitle.UnkRef.ToString + " | MaleTitle: " + _FoundTitle.MaleTitle + " | FemaleTitle: " + _FoundTitle.FemaleTitle + " | InGameOrder: " + _FoundTitle.InGameOrder.ToString)
         Next
     End Sub
+#End Region
 
+    ''' <summary>Aus einer Bitmask, alle Titel, als Liste ausgeben lassen.</summary>
     Private Function GetTitlesFromIntValue(_IntID As Integer, _IntValue As String, _Available_TitleList As List(Of CharTitle)) As List(Of CharTitle)
         '// Titel Bits der Bitmask auslesen.
         Dim _CharacterTitleBits As List(Of UInteger) = GetBitsFromBitMask(CUInt(_IntValue))
         '// Speichern der Titel für den Spieler.
         Dim _FoundTitles As New List(Of CharTitle)
-        '// Falls die Bitmask vorhanden ist, aber keine Bitmask ist.
-        If _CharacterTitleBits.Count = 0 Then
-            'TODO MÖGLICHER CRASH !
+
+        If _CharacterTitleBits.Count = 0 Then '// Keine Bits gefunden.
             Return _FoundTitles
         End If
 
@@ -201,6 +209,138 @@ Public Class Cls_Main
         Return _FoundTitles
     End Function
 
+#Region "REMOVE CONTENT"
+    Public Sub Remove()
+        RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Process running ...", _MainProcess.Guid))
+
+        Dim _CheckedCharacterList As New List(Of Character)
+
+        Dim _PlayerInfo_Splitted As New List(Of String)(Regex.Split(_MainProcess.ValidatedPlayerInput, vbCrLf))
+
+        '// 1234 Roki 0 64 0 0 0
+        For _i As Integer = 0 To _PlayerInfo_Splitted.Count - 1
+            AddInlineReport("____________________________________________________________________________________" + vbCrLf + _
+                            "// CHARACTER TITLE DATA" + vbCrLf)
+
+            '// Neuen Charakter erstellen
+            Dim _CurrentCharacter As New Character With {.NothingChanged = True,
+                                                         .ChangedTitles = New List(Of CharTitle)}
+
+            Dim _SinglePlayerInfo() As String = Regex.Split(_PlayerInfo_Splitted(_i), " ")
+
+            If _SinglePlayerInfo.Length = FieldID.Maximum Then
+
+                For _FieldID As Integer = FieldID.GUID To FieldID.Maximum
+                    Select Case _FieldID
+                        Case FieldID.GUID
+                            _CurrentCharacter.GUID = CInt(_SinglePlayerInfo(_FieldID))
+                        Case FieldID.AccountID
+                            _CurrentCharacter.AccountID = CInt(_SinglePlayerInfo(_FieldID))
+                        Case FieldID.Name
+                            _CurrentCharacter.Name = _SinglePlayerInfo(_FieldID)
+                        Case FieldID.Int_0
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Bitmask errechnen und Titel entfernen.
+                            If _SinglePlayerInfo(_FieldID) = "0" Then
+                                _CurrentCharacter.INT_0 = 0
+                            Else
+                                _CurrentCharacter.INT_0 = GetGrantedBitmask(GetTitlesFromIntValue(0, _SinglePlayerInfo(_FieldID), _TitleList_INT_0),
+                                                                            _CurrentCharacter,
+                                                                            _TitleList_INT_0)
+                            End If
+                        Case FieldID.Int_1
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Bitmask errechnen und Titel entfernen.
+                            If _SinglePlayerInfo(_FieldID) = "0" Then
+                                _CurrentCharacter.INT_1 = 0
+                            Else
+                                _CurrentCharacter.INT_1 = GetGrantedBitmask(GetTitlesFromIntValue(1, _SinglePlayerInfo(_FieldID), _TitleList_INT_1),
+                                                                            _CurrentCharacter,
+                                                                            _TitleList_INT_1)
+                            End If
+
+                        Case FieldID.Int_2
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Bitmask errechnen und Titel entfernen.
+                            If _SinglePlayerInfo(_FieldID) = "0" Then
+                                _CurrentCharacter.INT_2 = 0
+                            Else
+                                _CurrentCharacter.INT_2 = GetGrantedBitmask(GetTitlesFromIntValue(2, _SinglePlayerInfo(_FieldID), _TitleList_INT_2),
+                                                                            _CurrentCharacter,
+                                                                            _TitleList_INT_2)
+                            End If
+
+                        Case FieldID.Int_3
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Bitmask errechnen und Titel entfernen.
+                            If _SinglePlayerInfo(_FieldID) = "0" Then
+                                _CurrentCharacter.INT_3 = 0
+                            Else
+                                _CurrentCharacter.INT_3 = GetGrantedBitmask(GetTitlesFromIntValue(3, _SinglePlayerInfo(_FieldID), _TitleList_INT_3),
+                                                                            _CurrentCharacter,
+                                                                            _TitleList_INT_3)
+                            End If
+
+                        Case FieldID.Int_4
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Bitmask errechnen und Titel entfernen.
+                            If _SinglePlayerInfo(_FieldID) = "0" Then
+                                _CurrentCharacter.INT_4 = 0
+                            Else
+                                _CurrentCharacter.INT_4 = GetGrantedBitmask(GetTitlesFromIntValue(4, _SinglePlayerInfo(_FieldID), _TitleList_INT_4),
+                                                                            _CurrentCharacter,
+                                                                            _TitleList_INT_4)
+                            End If
+
+                        Case FieldID.Int_5
+                            _CurrentCharacter.BitmaskBackup += _SinglePlayerInfo(_FieldID) + " "
+
+                            '// Int 5 enthält nie einen Titel.
+                            _CurrentCharacter.INT_5 = CUInt(_SinglePlayerInfo(_FieldID))
+
+                    End Select
+                Next
+
+                '// Charakterdaten generieren und ausgeben.
+                AddInlineReport(GeneratePrintCharakter(_CurrentCharacter))
+
+                If _GenerateSQLQuery Then
+                    '// Charakter zur Liste alle abgearbeiteten Chars hinzuzählen.
+                    _CheckedCharacterList.Add(_CurrentCharacter)
+                End If
+            Else
+                '// Fehler bei der Länge des Charakter Input / dürfte normal nie vorkommen!
+                MessageBox.Show("The character input contains a line with a wrong syntax." + vbCrLf + "Line " + (_i + 1).ToString + " affected: """ + _PlayerInfo_Splitted(_i) + """" + vbCrLf + vbCrLf + "Take a closer look at this character!" + vbCrLf + "The current process will be canceled now.", "Error: Wrong character syntax.", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_Log, _InlineReport, _MainProcess))
+                Return
+            End If
+
+            '// Aktualisierung der abgearbeiteten Charaktere.
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(CInt(((_i + 1) / _PlayerInfo_Splitted.Count) * 100), "Process running... " + (_i + 1).ToString + " of " + _PlayerInfo_Splitted.Count.ToString, _MainProcess.Guid))
+        Next
+
+        '// Logfile Lokal speichern, falls dies zuvor ausgewählt wurde.
+        If _LogToHarddrive Then
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Save log to hard disk...", _MainProcess.Guid))
+            My.Computer.FileSystem.WriteAllText(_LogfilePath, _Log.ToString, False)
+        End If
+
+        '// SQL Query erstellen, falls dies zuvor ausgewählt wurde.
+        If _GenerateSQLQuery Then
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Generate SQL update querys...", _MainProcess.Guid))
+            My.Computer.FileSystem.WriteAllText(_SQLQueryPath, GenerateSQLQuery(_CheckedCharacterList), False)
+        End If
+
+        '// Abschließendes Events ausführen.
+        RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_Log, _InlineReport, _MainProcess))
+    End Sub
+
+    ''' <summary>Alle nicht gebannten Titel aus den FoundTitles zu einer Bitmask addieren. Referenz zu CurrentCharacter.</summary>
     Private Function GetGrantedBitmask(_FoundTitles As List(Of CharTitle), ByRef _CurrentCharacter As Character, _Available_TitleList As List(Of CharTitle)) As UInteger
         Dim _GrantedBitmask As UInteger = 0
 
@@ -234,111 +374,7 @@ Public Class Cls_Main
 
         Return _GrantedBitmask
     End Function
-
-    Public Sub Remove()
-        RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Process running ...", _MainProcess.Guid))
-
-        Dim _CheckedCharacterList As New List(Of Character)
-
-        Dim _PlayerInput_Splitted As New List(Of String)(Regex.Split(_MainProcess.ValidatedPlayerInput, vbCrLf))
-
-        '// 1234 Roki 0 64 0 0 0
-        For _i As Integer = 0 To _PlayerInput_Splitted.Count - 1
-            AddInlineReport("____________________________________________________________________________________" + vbCrLf + _
-                            "// CHARACTER TITLE DATA" + vbCrLf)
-
-            '// Neuen Charakter erstellen
-            Dim _CurrentCharacter As New Character With {.NothingChanged = True}
-
-            Dim _SplittedCharacterInfo() As String = Regex.Split(_PlayerInput_Splitted(_i), " ")
-            If _SplittedCharacterInfo.Length = 9 Then
-                Dim _Field_ID As Integer = 0
-
-                For Each _Value As String In _SplittedCharacterInfo
-                    Select Case _Field_ID
-                        Case 0 '// GUID
-                            _CurrentCharacter.GUID = CInt(_Value)
-                        Case 1 '// Account ID
-                            _CurrentCharacter.AccountID = CInt(_Value)
-                        Case 2 '// NAME
-                            _CurrentCharacter.Name = _Value
-                        Case 3 '// INT_0
-                            If _Value = "0" Then
-                                _CurrentCharacter.INT_0 = 0 '// Keine Titel vorhanden.
-                            Else
-                                _CurrentCharacter.INT_0 = GetGrantedBitmask(GetTitlesFromIntValue(0, _Value, _LANG_TitleList_INT_0),
-                                                                            _CurrentCharacter,
-                                                                            _LANG_TitleList_INT_0)
-                            End If
-                        Case 4 '// INT_1
-                            If _Value = "0" Then
-                                _CurrentCharacter.INT_1 = 0 '// Keine Titel vorhanden.
-                            Else
-                                _CurrentCharacter.INT_1 = GetGrantedBitmask(GetTitlesFromIntValue(1, _Value, _LANG_TitleList_INT_1),
-                                                                            _CurrentCharacter,
-                                                                            _LANG_TitleList_INT_1)
-                            End If
-                        Case 5 '// INT_2
-                            If _Value = "0" Then
-                                _CurrentCharacter.INT_2 = 0 '// Keine Titel vorhanden.
-                            Else
-                                _CurrentCharacter.INT_2 = GetGrantedBitmask(GetTitlesFromIntValue(2, _Value, _LANG_TitleList_INT_2),
-                                                                            _CurrentCharacter,
-                                                                            _LANG_TitleList_INT_2)
-                            End If
-                        Case 6 '// INT_3
-                            If _Value = "0" Then
-                                _CurrentCharacter.INT_3 = 0 '// Keine Titel vorhanden.
-                            Else
-                                _CurrentCharacter.INT_3 = GetGrantedBitmask(GetTitlesFromIntValue(3, _Value, _LANG_TitleList_INT_3),
-                                                                            _CurrentCharacter,
-                                                                            _LANG_TitleList_INT_3)
-                            End If
-                        Case 7 '// INT_4
-                            If _Value = "0" Then
-                                _CurrentCharacter.INT_4 = 0 '// Keine Titel vorhanden.
-                            Else
-                                _CurrentCharacter.INT_4 = GetGrantedBitmask(GetTitlesFromIntValue(4, _Value, _LANG_TitleList_INT_4),
-                                                                            _CurrentCharacter,
-                                                                            _LANG_TitleList_INT_4)
-                            End If
-                        Case 8 '// INT_5
-                            '// Int 5 enthält nie einen Titel.
-                            _CurrentCharacter.INT_5 = CUInt(_Value)
-                    End Select
-                    _Field_ID += 1
-                Next
-
-                '// Charakterdaten generieren und ausgeben.
-                AddInlineReport(GeneratePrintCharakter(_CurrentCharacter))
-
-                If _GenerateSQLQuery Then
-                    '// Charakter zur Liste alle abgearbeiteten Chars hinzuzählen.
-                    _CheckedCharacterList.Add(_CurrentCharacter)
-                End If
-            Else
-                '// Fehler bei der Länge des Charakter Input / dürfte normal nie vorkommen!
-                MessageBox.Show("The character input contains a line with a wrong syntax." + vbCrLf + "Line " + (_i + 1).ToString + " affected: """ + _PlayerInput_Splitted(_i) + """" + vbCrLf + vbCrLf + "Take a closer look at this character!" + vbCrLf + "The current process will be canceled now.", "Error: Wrong character syntax.", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_Log, _InlineReport, _MainProcess))
-                Return
-            End If
-        Next
-
-        '// Logfile Lokal speichern, falls dies zuvor ausgewählt wurde.
-        If _LogToHarddrive Then
-            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Save log to hard disk...", _MainProcess.Guid))
-            My.Computer.FileSystem.WriteAllText(_LogfilePath, _Log.ToString, False)
-        End If
-
-        '// SQL Query erstellen, falls dies zuvor ausgewählt wurde.
-        If _GenerateSQLQuery Then
-            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Generate SQL update querys...", _MainProcess.Guid))
-            My.Computer.FileSystem.WriteAllText(_SQLQueryPath, GenerateSQLQuery(_CheckedCharacterList), False)
-        End If
-
-        '// Abschließendes Events ausführen.
-        RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_Log, _InlineReport, _MainProcess))
-    End Sub
+#End Region
 
 #Region "Old"
     'Public Sub Remove()

@@ -48,7 +48,8 @@ Public Class Cls_Clipboard
                 Select Case My.Settings.ClipboardSyntax
                     Case 0  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
                         If _ClipboardLines(_i).Contains("INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (") Then
-                            Dim _ToCheck As String = (_ClipboardLines(_i).Substring(76, _ClipboardLines(_i).Length - 80).Replace(",", "").Replace("'", ""))
+                            Dim _Replaced As String = _ClipboardLines(_i).Replace(",", "").Replace("'", "")
+                            Dim _ToCheck As String = _Replaced.Substring(73, _Replaced.Length - (73 + ((_Replaced.Length - 1) - _Replaced.LastIndexOf("0"))))
                             If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
                                 _ValidatedClipboardContent += _ToCheck + vbCrLf
                                 If _Debug Then MessageBox.Show("Clipboard Line Added: """ + _ToCheck + """")

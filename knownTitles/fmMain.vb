@@ -16,43 +16,24 @@ Public Class fmMain
     '// Speichert die Startzeit des laufenden Threads
     Private _StartTime As Date
 
+    '// Für die Verarbeitung des DataGridView verantwortlich
+    Private _DataGridView_Handler As Cls_DataGridView
+
     '// Speichert die laufenden Threads
     Private _Hashtable As New Hashtable
-
-#Region "Location & Size Deklarationen"
-    Structure ControlData
-        Dim Control As Control
-        Dim Location As Point
-        Dim Size As Size
-    End Structure
-
-    Private _CD_gbPlayerInput As ControlData
-    Private _CD_tbPlayerInput As ControlData
-    Private _CD_gbTitlesInput As ControlData
-    Private _CD_clbTitlesInput As ControlData
-    Private _CD_gbLog As ControlData
-    Private _CD_tbLog As ControlData
-#End Region
 #End Region
 
     '// Button Pressed Handler
     Private Sub Button_ClickedHandler(sender As Object, e As EventArgs) Handles _
         btnAdd.Click,
-        btnImportFromClipboard.Click,
         btnRemove.Click,
-        btnLookup.Click,
-        btnLogfilePath.Click,
-        btnSQLQueryPath.Click
+        btnLookup.Click
 
         Select Case True
             Case sender Is btnAdd
                 '// Titel hinzufügen
                 MessageBox.Show("Not implemented yet.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-            Case sender Is btnImportFromClipboard
-                '// Von Zwischenablage importieren
-                If Clipboard.ContainsText Then
-                    Process_GetClipboardContent_Start(Clipboard.GetText)
-                End If
+                'GetSelectedTitles(DsSelectedTitles.dtShort)
             Case sender Is btnRemove
                 '// Titel entfernen
                 tbLog.Text = ""
@@ -67,18 +48,6 @@ Public Class fmMain
 
                 Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_LOOKUP,
                                                                            .PlayerInput = tbPlayerInput.Text})
-            Case sender Is btnLogfilePath
-                '// Logfile Pfad festlegen
-                Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
-                If Not _Path = "" Then
-                    tbLogfilePath.Text = _Path
-                End If
-            Case sender Is btnSQLQueryPath
-                '// SQL Query Pfad festlegen
-                Dim _Path As String = OpenSaveFileDialog(".sql files (*.sql)|*.sql|All files (*.*)|*.*", "kT_Query")
-                If Not _Path = "" Then
-                    tbSQLQueryPath.Text = _Path
-                End If
         End Select
     End Sub
 
@@ -100,7 +69,7 @@ Public Class fmMain
 
     Private Sub Process_LookupTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, tbLogfilePath.Text, _Debug, _InlineReport, _LogToHarddrive)
+        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text, _Debug, _InlineReport, _LogToHarddrive)
         AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
@@ -117,7 +86,7 @@ Public Class fmMain
 
     Private Sub Process_RemoveTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, tbLogfilePath.Text, tbSQLQueryPath.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
+        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text, miSQLQuery_Path.Text, _Debug, _InlineReport, _LogToHarddrive, _GenerateSQLQuery)
         AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
@@ -191,7 +160,7 @@ Public Class fmMain
 
         If Not e.P_InlineReport Then
             tbX_AddText(e.P_Log.ToString + vbCrLf + _
-                                        "Thread GUID: " + e.P_MainProcess.Guid.ToString + ")" + _
+                                        "Thread GUID: " + e.P_MainProcess.Guid.ToString + _
                                         " | Start: " + _StartTime.ToString + _
                                         " | Finished: " + Date.Now.ToString + _
                                         " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds), tbLog)
@@ -221,7 +190,7 @@ Public Class fmMain
                     Process_LookupTitles_Start(e.P_MainProcess)
                 Case MainProcessingID.PROCESS_REMOVE
                     Dim _MainProcess As New MainProcessing With {.ID = e.P_MainProcess.ID,
-                                                                 .SelectedTitles = GetSelectedTitles(clbTitlesInput, _Debug),
+                                                                 .SelectedTitles = GetSelectedTitles(New DataTable),
                                                                  .ValidatedPlayerInput = e.P_MainProcess.ValidatedPlayerInput}
                     Process_RemoveTitles_Start(_MainProcess)
             End Select
@@ -262,7 +231,7 @@ Public Class fmMain
     ''' <summary>Buttons auf der Form sperren oder entsperren.</summary>
     Public Sub btnX_setState(_State As Boolean)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnImportFromClipboard, btnRemove, btnLookup}
+        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnRemove, btnLookup}
         Dim _btnControl As New ControlButtonUpdater(_Buttons)
 
         '// Formelemente sperren / entsperren.
@@ -332,20 +301,36 @@ Public Class fmMain
     End Function
 #End Region
 
+#Region "Menüleistenverwaltung"
     '// Verwaltung der oberen Menüleiste
     Private Sub Menu_ClickedHandler(sender As Object, e As EventArgs) Handles _
         miExit.Click,
         miFile_SaveLogfile.Click,
         miInfo_About.Click,
-        miLanguage_Save.Click
+        miLanguage_Save.Click,
+        miSettings_DebugMode.Click,
+        miSettings_ExtendedTitles.Click,
+        miSettings_InlineReports.Click,
+        miSelectSyntax_0.Click,
+        miSelectSyntax_1.Click,
+        miLogfile_State.Click,
+        miSQLQuery_State.Click,
+        miImport_FromClipboard.Click,
+        miLogfile_NewPath.MouseDown,
+        miSQlQuery_NewPath.MouseDown
+
+        '// Prüfen ob ein Prozess läuft | Ausnahmen: About und Exit^^
+        If ThreadIsRunning(_Hashtable) AndAlso Not sender Is miInfo_About AndAlso Not sender Is miExit Then
+            MessageBox.Show("You can't change the settings, while processing..." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            Return
+        End If
 
         Select Case True
-            Case sender Is miExit
-                '// Programm beenden.
+            Case sender Is miExit '// Programm beenden.
                 CancelAllThreads()
                 Application.Exit()
-            Case sender Is miFile_SaveLogfile
-                '// Logfile Pfad festlegen und speichern.
+            Case sender Is miFile_SaveLogfile '// Logfile Pfad festlegen und speichern.
+
                 Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
                 If Not _Path = "" Then
                     Try
@@ -355,178 +340,97 @@ Public Class fmMain
                         MessageBox.Show(ex.ToString)
                     End Try
                 End If
-            Case sender Is miInfo_About
-                '// Über das Programm.
+            Case sender Is miInfo_About '// Infos über das Programm anzeigen.
                 Dim _fmAbout As New fmAbout
                 _fmAbout.StartPosition = FormStartPosition.Manual
                 _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
                 _fmAbout.Show()
-            Case sender Is miLanguage_Save
-                '// Sprache ändern.
-                If _Hashtable.Count = 0 Then
-                    Select Case miLanguage_ComboBox.SelectedIndex
-                        Case 0 '// English
-                            ChangeLanguage(0)
-                        Case 1 '// German
-                            ChangeLanguage(1)
-                    End Select
-                Else
-                    MessageBox.Show("You can't change the language, while processing..." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            Case sender Is miLanguage_Save '// Sprache ändern.
+                Select Case miLanguage_ComboBox.SelectedIndex
+                    Case 0
+                        ReloadLanguage(LANGUAGE.ENGLISH)
+                    Case 1
+                        ReloadLanguage(LANGUAGE.GERMAN)
+                End Select
+                _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
+            Case sender Is miSettings_DebugMode '// Debug Mode de-/aktivieren.
+                SetDebugMode(True)
+            Case sender Is miSettings_ExtendedTitles '// Erweiterte Titel de-/aktivieren.
+                SetExtendedTitles(True)
+                _DataGridView_Handler.Relocate_DataGridView(My.Settings.ExtendedTitles)
+            Case sender Is miSettings_InlineReports '// Inline Reports de-/aktivieren.
+                SetInlineReports(True)
+            Case sender Is miSelectSyntax_0 '// Clipboard Syntax ändern.
+                SetClipboardSyntax(CLIPBOARD_SYNTAX.INSERT_INTO)
+            Case sender Is miSelectSyntax_1
+                SetClipboardSyntax(CLIPBOARD_SYNTAX.ONLY_WITH_SPACES)
+            Case sender Is miLogfile_State '// Logfiles speichern de-/aktivieren.
+                SetLogfileToHDD(True)
+            Case sender Is miSQLQuery_State '// SQL Query speichern de-/aktivieren.
+                SetSQLQueryToHDD(True)
+            Case sender Is miImport_FromClipboard '// Importieren von Zwischenablage.
+                If Clipboard.ContainsText Then
+                    Process_GetClipboardContent_Start(Clipboard.GetText)
+                End If
+            Case sender Is miLogfile_NewPath '// Neuer Logfile Pfad festlegen.
+                Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
+                If Not _Path = "" Then
+                    miLogfile_Path.Text = _Path
+                End If
+            Case sender Is miSQlQuery_NewPath '// Neuer SQL Query Pfad festlegen.
+                Dim _Path As String = OpenSaveFileDialog(".sql files (*.sql)|*.sql|All files (*.*)|*.*", "kT_Query")
+                If Not _Path = "" Then
+                    miSQLQuery_Path.Text = _Path
                 End If
         End Select
-    End Sub
-
-    '// Form Load - Diverse Sachen laden.
-    Private Sub fmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
-        tbLogfilePath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Log.txt"
-        tbSQLQueryPath.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Query.sql"
-        miLanguage_ComboBox.SelectedIndex = My.Settings.Language
-        tsPbStatusPercent.Maximum = 100
-
-        _CD_gbPlayerInput = New ControlData With {.Control = gbPlayerInput, .Location = gbPlayerInput.Location, .Size = gbPlayerInput.Size}
-        _CD_tbPlayerInput = New ControlData With {.Control = tbPlayerInput, .Location = tbPlayerInput.Location, .Size = tbPlayerInput.Size}
-        _CD_gbTitlesInput = New ControlData With {.Control = gbTitlesInput, .Location = gbTitlesInput.Location, .Size = gbTitlesInput.Size}
-        _CD_clbTitlesInput = New ControlData With {.Control = clbTitlesInput, .Location = clbTitlesInput.Location, .Size = clbTitlesInput.Size}
-        _CD_gbLog = New ControlData With {.Control = gbLog, .Location = gbLog.Location, .Size = gbLog.Size}
-        _CD_tbLog = New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
-
-        ChangeLanguage(My.Settings.Language)
-        Refresh_VisualSelectedSyntax()
-    End Sub
-
-    Private Sub ChangeLanguage(_NewLanguageID As Integer)
-        Select Case _NewLanguageID
-            Case 0 '// English
-                _LANG_TitelList_All = _TitleList_All_ENG
-                _LANG_TitleList_INT_0 = _TitleList_INT_0_ENG
-                _LANG_TitleList_INT_1 = _TitleList_INT_1_ENG
-                _LANG_TitleList_INT_2 = _TitleList_INT_2_ENG
-                _LANG_TitleList_INT_3 = _TitleList_INT_3_ENG
-                _LANG_TitleList_INT_4 = _TitleList_INT_4_ENG
-            Case 1 '// German
-                _LANG_TitelList_All = _TitleList_All_GER
-                _LANG_TitleList_INT_0 = _TitleList_INT_0_GER
-                _LANG_TitleList_INT_1 = _TitleList_INT_1_GER
-                _LANG_TitleList_INT_2 = _TitleList_INT_2_GER
-                _LANG_TitleList_INT_3 = _TitleList_INT_3_GER
-                _LANG_TitleList_INT_4 = _TitleList_INT_4_GER
-        End Select
-        '// Reloads aufrufen um Elemente an neue Sprache anzupassen
-        Reload_TitlesInput(CBool(cbExtendedTitles.CheckState))
-
-        My.Settings.Language = _NewLanguageID
-        My.Settings.Save()
-    End Sub
-
-#Region "Checkbox Handler"
-    '// Booleanische Variablen ändern.
-    Private Sub ChekBox_Handler(sender As Object, e As EventArgs) Handles _
-        cbDebug.CheckStateChanged, _
-        cbInlineReport.CheckStateChanged, _
-        cbLogToHarddrive.CheckStateChanged, _
-        cbGenerateSQLQuery.CheckStateChanged
-
-        Select Case True
-            Case sender Is cbDebug
-                If cbDebug.CheckState = CheckState.Checked Then
-                    _Debug = True
-                Else
-                    _Debug = False
-                End If
-            Case sender Is cbInlineReport
-                If cbInlineReport.CheckState = CheckState.Checked Then
-                    _InlineReport = True
-                Else
-                    _InlineReport = False
-                End If
-            Case sender Is cbLogToHarddrive
-                If cbLogToHarddrive.CheckState = CheckState.Checked Then
-                    _LogToHarddrive = True
-                Else
-                    _LogToHarddrive = False
-                End If
-            Case sender Is cbGenerateSQLQuery
-                If cbGenerateSQLQuery.CheckState = CheckState.Checked Then
-                    _GenerateSQLQuery = True
-                Else
-                    _GenerateSQLQuery = False
-                End If
-        End Select
-    End Sub
-
-    '// Extended Titel umschalten.
-    Private Sub cbExtendedBannedTitles_CheckStateChanged(sender As Object, e As EventArgs) Handles cbExtendedTitles.CheckStateChanged
-        If cbExtendedTitles.CheckState = CheckState.Checked Then
-            '// Erweiterte Titel anzeigen
-            Reload_TitlesInput(True)
-            '// GroupBox - Größe/Position anpassen
-            gbPlayerInput.Location = New Point(gbTitlesInput.Location.X, gbTitlesInput.Location.Y)
-            gbPlayerInput.Size = New Size((_CD_gbPlayerInput.Location.X + _CD_gbPlayerInput.Size.Width) - 12, gbPlayerInput.Size.Height)
-            gbTitlesInput.Location = New Point(gbTitlesInput.Location.X, gbLog.Location.Y)
-            gbTitlesInput.Size = New Size(gbLog.Width, CInt(gbLog.Height / 2.5))
-
-            gbLog.Location = New Point(gbTitlesInput.Location.X, gbTitlesInput.Location.Y + gbTitlesInput.Height + 5)
-            gbLog.Size = New Size(gbTitlesInput.Width, (gbLog.Height - gbTitlesInput.Height) - 5)
-
-            '// TextBox/CheckList - Größe anpassen
-            tbPlayerInput.Size = New Size(gbPlayerInput.Size.Width - 12, tbPlayerInput.Size.Height)
-            clbTitlesInput.Size = New Size(tbLog.Width, gbTitlesInput.Height - 20)
-
-            tbLog.Size = New Size(clbTitlesInput.Width, gbLog.Size.Height - 25)
-        Else
-            '// Erweiterte Titel ausblenden
-            Reload_TitlesInput(False)
-            '// GroupBox - Größe/Position anpassen
-            gbPlayerInput.Location = _CD_gbPlayerInput.Location
-            gbPlayerInput.Size = _CD_gbPlayerInput.Size
-            gbTitlesInput.Location = _CD_gbTitlesInput.Location
-            gbTitlesInput.Size = _CD_gbTitlesInput.Size
-            gbLog.Location = _CD_gbLog.Location
-            gbLog.Size = _CD_gbLog.Size
-            '// TextBox/CheckList - Größe anpassen
-            tbPlayerInput.Size = _CD_tbPlayerInput.Size
-            clbTitlesInput.Size = _CD_clbTitlesInput.Size
-            tbLog.Size = _CD_tbLog.Size
-        End If
     End Sub
 #End Region
 
-#Region "Clipboard Import Handler"
-    Private Sub SelectSyntax_Handler(sender As Object, e As EventArgs) Handles _
-        miSelectSyntax_0.MouseDown,
-        miSelectSyntax_1.Click
+    '// Form Load - Diverse Sachen laden.
+    Private Sub fmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
+        miLogfile_Path.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Log.txt"
+        miSQLQuery_Path.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Query.sql"
+        tsPbStatusPercent.Maximum = 100
 
-        Dim _ClipboardSyntax As Integer
-        Select Case True
-            Case sender Is miSelectSyntax_0 '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
-                _ClipboardSyntax = 0
-            Case sender Is miSelectSyntax_1 '// "1 1 ABC 0 0 0 0 0 "
-                _ClipboardSyntax = 1
-        End Select
-        '// Speichern und erneuern der abgelegten Variable
-        My.Settings.ClipboardSyntax = _ClipboardSyntax
-        My.Settings.Save()
-        My.Settings.Reload()
-        '// Visuelle Anpassung an neues ausgewählten Element
-        Refresh_VisualSelectedSyntax()
+        '// Sprache an Einstellungen anpassen - Inizialisiert die TitleList's!
+        ReloadLanguage()
+
+        '// DataGridView mit gespeicherten Einstellungen inizialisieren.
+        Dim _gbPlayerInput As New ControlData With {.Control = gbPlayerInput, .Location = gbPlayerInput.Location, .Size = gbPlayerInput.Size}
+        Dim _tbPlayerInput As New ControlData With {.Control = tbPlayerInput, .Location = tbPlayerInput.Location, .Size = tbPlayerInput.Size}
+        Dim _gbSelectedTitles As New ControlData With {.Control = gbSelectedTitles, .Location = gbSelectedTitles.Location, .Size = gbSelectedTitles.Size}
+        Dim _dgvSelectedTitles As New ControlData With {.Control = dgvSelectedTitles, .Location = dgvSelectedTitles.Location, .Size = dgvSelectedTitles.Size}
+        Dim _gbLog As New ControlData With {.Control = gbLog, .Location = gbLog.Location, .Size = gbLog.Size}
+        Dim _tbLog As New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
+
+        _DataGridView_Handler = New Cls_DataGridView(_gbPlayerInput, _tbPlayerInput, _gbSelectedTitles, _dgvSelectedTitles, _gbLog, _tbLog)
+        '// Position & Daten.
+        _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
+        _DataGridView_Handler.Relocate_DataGridView(My.Settings.ExtendedTitles)
+
+        '// Alle ToolStripMenuItems visuell an Einstellungen anpassen.
+        SetAllMenuItems_LikeSettings()
+        miLanguage_ComboBox.SelectedIndex = My.Settings.Language
+
+        '// Verstecken des Row Headers
+        dgvSelectedTitles.RowHeadersVisible = False
     End Sub
 
-    Private Sub Refresh_VisualSelectedSyntax()
-        Select Case My.Settings.ClipboardSyntax
-            Case 0  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
-                miSelectSyntax_1.ForeColor = Color.Navy
-                miSelectSyntax_1.CheckState = CheckState.Unchecked
+#Region "Gemerkt"
+    'Dim col3 As New DataGridViewTextBoxColumn
+    'col3.Name = "MaleTitle"
+    'col3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+    'col3.ReadOnly = True
+    'col3.ValueType = GetType(String)
+    'fmMain.dgvSelectedTitles.Columns.Add(col3)
 
-                miSelectSyntax_0.ForeColor = Color.Green
-                miSelectSyntax_0.CheckState = CheckState.Checked
-            Case 1 '// "1 1 ABC 0 0 0 0 0 "
-                miSelectSyntax_0.ForeColor = Color.Navy
-                miSelectSyntax_0.CheckState = CheckState.Unchecked
 
-                miSelectSyntax_1.ForeColor = Color.Green
-                miSelectSyntax_1.CheckState = CheckState.Checked
-        End Select
-    End Sub
+    ''// Hinzufügen der Titel
+    'For Each _Title In _LANG_TitelList_All
+    '    With fmMain.dgvSelectedTitles.Rows
+    '        .Add(False, _Title.TitleID, _Title.MaleTitle)
+    '    End With
+    'Next
 #End Region
 
 End Class

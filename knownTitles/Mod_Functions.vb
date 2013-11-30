@@ -79,32 +79,6 @@ Module Mod_Functions
         Return ""
     End Function
 
-    ''' <summary>Reload der Titles Input CheckBoxList.</summary>
-    Public Sub Reload_TitlesInput(_CheckState As Boolean)
-        fmMain.clbTitlesInput.Items.Clear()
-        '// Erweiterte Ansicht
-        If _CheckState Then
-            For Each _Title In _LANG_TitelList_All
-                fmMain.clbTitlesInput.Items.Add("INT: " + _Title.IntID.ToString + " (" + _Title.IntID_Double.ToString + _
-                                                ") | BIT: " + _Title.Bit.ToString + _
-                                                " | TitleID: " + _Title.TitleID.ToString + _
-                                                " | IntBit: " + _Title.BitOfInteger.ToString + _
-                                                " | UnkRef: " + _Title.UnkRef.ToString + _
-                                                " | MaleTitle: " + _Title.MaleTitle + _
-                                                " | FemaleTitle: " + _Title.FemaleTitle + _
-                                                " | InGameOrder: " + _Title.InGameOrder.ToString)
-            Next
-        Else
-            '// Einfache Ansicht
-            For Each _Title In _LANG_TitelList_All
-                fmMain.clbTitlesInput.Items.Add("INT: " + _Title.IntID.ToString + _
-                                                " | BIT: " + _Title.Bit.ToString + _
-                                                " | TitleID: " + _Title.TitleID.ToString + _
-                                                " | Title: " + _Title.MaleTitle)
-            Next
-        End If
-    End Sub
-
     ''' <summary>Entfernt alle Leeren Zeilen in der Textbox.</summary>
     Public Sub Remove_EmptyLines(_TextBox As Windows.Forms.TextBox)
         _TextBox.Lines = (From s As String In _TextBox.Lines Where s.Length > 0 Select s).ToArray
@@ -112,25 +86,15 @@ Module Mod_Functions
     End Sub
 
     ''' <summary>Eine Liste aller aktuell ausgewählten Titels bekommen.</summary>
-    Public Function GetSelectedTitles(_CheckedListBox As System.Windows.Forms.CheckedListBox, _Debug As Boolean) As List(Of CharTitle)
+    Public Function GetSelectedTitles(_DataTable As DataTable) As List(Of CharTitle)
         Dim _SelectedTitles As New List(Of CharTitle)
-        '// Findet "D: 1234".
-        Dim _RegEx As Regex = New Regex("D: [0-9]+")
 
-        For Each _SelectedTitel In _CheckedListBox.CheckedItems
-            Dim _Match As Match = _RegEx.Match(_SelectedTitel.ToString)
-
-            If _Match.Success Then '// Obligatorisch, kann normal niemals False sein.
-                For Each _Title In _LANG_TitelList_All
-                    If _Title.TitleID = CInt(_Match.Value.Replace("D: ", "")) Then
-                        _SelectedTitles.Add(_Title)
-                    End If
-                Next
-                If _Debug Then MessageBox.Show("_Match.Success: """ + _Match.Value.Replace("D: ", "") + """ (" + _SelectedTitel.ToString + ")")
-            Else
-                MessageBox.Show("NO _Match.Success @ " + _SelectedTitel.ToString, "GetSelectedTitles Error", MessageBoxButtons.OK, MessageBoxIcon.Warning)
+        For Each _Title As dsSelectedTitles.dtShortRow In _DataTable.Rows
+            If _Title.colChoose = True Then
+                _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
             End If
         Next
+
         Return _SelectedTitles
         '// http://regexhero.net/tester/
     End Function

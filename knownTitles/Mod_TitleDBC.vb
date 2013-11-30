@@ -4,16 +4,48 @@ Option Strict On
 Module Mod_TitleDBC
 
 #Region "Language Deklarationen"
-    Public _LANG_TitelList_All As List(Of CharTitle)
-    Public _LANG_TitleList_INT_0 As List(Of CharTitle)
-    Public _LANG_TitleList_INT_1 As List(Of CharTitle)
-    Public _LANG_TitleList_INT_2 As List(Of CharTitle)
-    Public _LANG_TitleList_INT_3 As List(Of CharTitle)
-    Public _LANG_TitleList_INT_4 As List(Of CharTitle)
+    Public _TitelList_All As List(Of CharTitle)
+    Public _TitleList_INT_0 As List(Of CharTitle)
+    Public _TitleList_INT_1 As List(Of CharTitle)
+    Public _TitleList_INT_2 As List(Of CharTitle)
+    Public _TitleList_INT_3 As List(Of CharTitle)
+    Public _TitleList_INT_4 As List(Of CharTitle)
+
+    Public Enum LANGUAGE
+        ENGLISH = 0
+        GERMAN = 1
+    End Enum
 #End Region
 
-    '// Charactertitles from DBC - ENGLISCH
-#Region "CharTitles from DBC [ENG]"
+    Public Sub ReloadLanguage(Optional _SetNewLanguage As Integer = -1)
+        If Not _SetNewLanguage = -1 Then
+            '// Spracheinstellungen speichern.
+            With My.Settings
+                .Language = _SetNewLanguage
+                .Save()
+                .Reload()
+            End With
+        End If
+        Select Case My.Settings.Language
+            Case LANGUAGE.ENGLISH '// English
+                _TitelList_All = _TitleList_All_ENG
+                _TitleList_INT_0 = _TitleList_INT_0_ENG
+                _TitleList_INT_1 = _TitleList_INT_1_ENG
+                _TitleList_INT_2 = _TitleList_INT_2_ENG
+                _TitleList_INT_3 = _TitleList_INT_3_ENG
+                _TitleList_INT_4 = _TitleList_INT_4_ENG
+            Case LANGUAGE.GERMAN '// German
+                _TitelList_All = _TitleList_All_GER
+                _TitleList_INT_0 = _TitleList_INT_0_GER
+                _TitleList_INT_1 = _TitleList_INT_1_GER
+                _TitleList_INT_2 = _TitleList_INT_2_GER
+                _TitleList_INT_3 = _TitleList_INT_3_GER
+                _TitleList_INT_4 = _TitleList_INT_4_GER
+        End Select
+    End Sub
+
+    '// Nachfolgende Reihenfolge nicht ändern! Sonst werden die List of's vor den hinzuzufügenden Werten inizialisiert!
+#Region "Charactertitles from DBC - ENGLISCH"
     Private _1_ENG As New CharTitle With {.TitleID = 1, .InGameOrder = 1, .IntID = 0, .BitOfInteger = 1, .Bit = 2, .DBValue = "2 0 0 0 0 0", .IntID_Double = 0.03125, .UnkRef = 5879, .MaleTitle = "Private %s", .FemaleTitle = "Private %s"}
     Private _2_ENG As New CharTitle With {.TitleID = 2, .InGameOrder = 2, .IntID = 0, .BitOfInteger = 2, .Bit = 4, .DBValue = "4 0 0 0 0 0", .IntID_Double = 0.0625, .UnkRef = 5880, .MaleTitle = "Corporal %s", .FemaleTitle = "Corporal %s"}
     Private _3_ENG As New CharTitle With {.TitleID = 3, .InGameOrder = 3, .IntID = 0, .BitOfInteger = 3, .Bit = 8, .DBValue = "8 0 0 0 0 0", .IntID_Double = 0.09375, .UnkRef = 5881, .MaleTitle = "Sergeant %s", .FemaleTitle = "Sergeant %s"}
@@ -158,8 +190,7 @@ Module Mod_TitleDBC
     Private _177_ENG As New CharTitle With {.TitleID = 177, .InGameOrder = 142, .IntID = 4, .BitOfInteger = 14, .Bit = 16384, .DBValue = "0 0 0 0 16384 0", .IntID_Double = 4.4375, .UnkRef = 0, .MaleTitle = "Wrathful Gladiator %s", .FemaleTitle = "Wrathful Gladiator %s"}
 #End Region
 
-    '// Charactertitles from DBC - DEUTSCH
-#Region "CharTitles from DBC [GERMAN]"
+#Region "Charactertitles from DBC - DEUTSCH"
     Private _1_GER As New CharTitle With {.TitleID = 1, .InGameOrder = 1, .IntID = 0, .BitOfInteger = 1, .Bit = 2, .DBValue = "2 0 0 0 0 0", .IntID_Double = 0.03125, .UnkRef = 5879, .MaleTitle = "Gefreiter %s", .FemaleTitle = ""}
     Private _2_GER As New CharTitle With {.TitleID = 2, .InGameOrder = 2, .IntID = 0, .BitOfInteger = 2, .Bit = 4, .DBValue = "4 0 0 0 0 0", .IntID_Double = 0.0625, .UnkRef = 5880, .MaleTitle = "Fußknecht %s", .FemaleTitle = ""}
     Private _3_GER As New CharTitle With {.TitleID = 3, .InGameOrder = 3, .IntID = 0, .BitOfInteger = 3, .Bit = 8, .DBValue = "8 0 0 0 0 0", .IntID_Double = 0.09375, .UnkRef = 5881, .MaleTitle = "Landsknecht %s", .FemaleTitle = ""}
@@ -302,27 +333,25 @@ Module Mod_TitleDBC
     Private _175_GER As New CharTitle With {.TitleID = 175, .InGameOrder = 140, .IntID = 4, .BitOfInteger = 12, .Bit = 4096, .DBValue = "0 0 0 0 4096 0", .IntID_Double = 4.375, .UnkRef = 9046, .MaleTitle = "%s der Königsmörder", .FemaleTitle = ""}
     Private _176_GER As New CharTitle With {.TitleID = 176, .InGameOrder = 141, .IntID = 4, .BitOfInteger = 13, .Bit = 8192, .DBValue = "0 0 0 0 8192 0", .IntID_Double = 4.40625, .UnkRef = 9138, .MaleTitle = "%s vom Äschernen Verdikt", .FemaleTitle = ""}
     Private _177_GER As New CharTitle With {.TitleID = 177, .InGameOrder = 142, .IntID = 4, .BitOfInteger = 14, .Bit = 16384, .DBValue = "0 0 0 0 16384 0", .IntID_Double = 4.4375, .UnkRef = 0, .MaleTitle = "Zornerfüllter Gladiator %s", .FemaleTitle = ""}
-
-
 #End Region
 
     '// List of CharTitles - ENGLISCH
-    Public ReadOnly _TitleList_INT_0_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_ENG, _2_ENG, _3_ENG, _4_ENG, _5_ENG, _6_ENG, _7_ENG, _8_ENG, _9_ENG, _10_ENG, _11_ENG, _12_ENG, _13_ENG, _14_ENG, _15_ENG, _16_ENG, _17_ENG, _18_ENG, _19_ENG, _20_ENG, _21_ENG, _22_ENG, _23_ENG, _24_ENG, _25_ENG, _26_ENG, _27_ENG, _28_ENG, _42_ENG, _43_ENG, _44_ENG})
-    Public ReadOnly _TitleList_INT_1_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_45_ENG, _46_ENG, _47_ENG, _48_ENG, _53_ENG, _62_ENG, _63_ENG, _64_ENG, _71_ENG, _72_ENG, _74_ENG, _75_ENG, _76_ENG, _77_ENG, _78_ENG, _79_ENG, _80_ENG, _81_ENG, _82_ENG, _83_ENG, _84_ENG, _85_ENG, _86_ENG, _87_ENG, _89_ENG, _90_ENG, _91_ENG, _92_ENG, _93_ENG, _94_ENG, _95_ENG, _157_ENG})
-    Public ReadOnly _TitleList_INT_2_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_96_ENG, _97_ENG, _98_ENG, _99_ENG, _100_ENG, _101_ENG, _102_ENG, _103_ENG, _104_ENG, _105_ENG, _106_ENG, _107_ENG, _108_ENG, _109_ENG, _110_ENG, _111_ENG, _112_ENG, _113_ENG, _114_ENG, _115_ENG, _116_ENG, _117_ENG, _118_ENG, _119_ENG, _120_ENG, _121_ENG, _122_ENG, _123_ENG, _124_ENG, _125_ENG, _126_ENG, _127_ENG})
-    Public ReadOnly _TitleList_INT_3_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_128_ENG, _129_ENG, _130_ENG, _131_ENG, _132_ENG, _133_ENG, _134_ENG, _135_ENG, _137_ENG, _138_ENG, _139_ENG, _140_ENG, _141_ENG, _142_ENG, _143_ENG, _144_ENG, _145_ENG, _146_ENG, _147_ENG, _148_ENG, _149_ENG, _150_ENG, _151_ENG, _152_ENG, _153_ENG, _154_ENG, _155_ENG, _156_ENG, _158_ENG, _159_ENG, _160_ENG, _161_ENG})
-    Public ReadOnly _TitleList_INT_4_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_163_ENG, _164_ENG, _165_ENG, _166_ENG, _167_ENG, _168_ENG, _169_ENG, _170_ENG, _171_ENG, _172_ENG, _173_ENG, _174_ENG, _175_ENG, _176_ENG, _177_ENG})
+    Private ReadOnly _TitleList_INT_0_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_ENG, _2_ENG, _3_ENG, _4_ENG, _5_ENG, _6_ENG, _7_ENG, _8_ENG, _9_ENG, _10_ENG, _11_ENG, _12_ENG, _13_ENG, _14_ENG, _15_ENG, _16_ENG, _17_ENG, _18_ENG, _19_ENG, _20_ENG, _21_ENG, _22_ENG, _23_ENG, _24_ENG, _25_ENG, _26_ENG, _27_ENG, _28_ENG, _42_ENG, _43_ENG, _44_ENG})
+    Private ReadOnly _TitleList_INT_1_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_45_ENG, _46_ENG, _47_ENG, _48_ENG, _53_ENG, _62_ENG, _63_ENG, _64_ENG, _71_ENG, _72_ENG, _74_ENG, _75_ENG, _76_ENG, _77_ENG, _78_ENG, _79_ENG, _80_ENG, _81_ENG, _82_ENG, _83_ENG, _84_ENG, _85_ENG, _86_ENG, _87_ENG, _89_ENG, _90_ENG, _91_ENG, _92_ENG, _93_ENG, _94_ENG, _95_ENG, _157_ENG})
+    Private ReadOnly _TitleList_INT_2_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_96_ENG, _97_ENG, _98_ENG, _99_ENG, _100_ENG, _101_ENG, _102_ENG, _103_ENG, _104_ENG, _105_ENG, _106_ENG, _107_ENG, _108_ENG, _109_ENG, _110_ENG, _111_ENG, _112_ENG, _113_ENG, _114_ENG, _115_ENG, _116_ENG, _117_ENG, _118_ENG, _119_ENG, _120_ENG, _121_ENG, _122_ENG, _123_ENG, _124_ENG, _125_ENG, _126_ENG, _127_ENG})
+    Private ReadOnly _TitleList_INT_3_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_128_ENG, _129_ENG, _130_ENG, _131_ENG, _132_ENG, _133_ENG, _134_ENG, _135_ENG, _137_ENG, _138_ENG, _139_ENG, _140_ENG, _141_ENG, _142_ENG, _143_ENG, _144_ENG, _145_ENG, _146_ENG, _147_ENG, _148_ENG, _149_ENG, _150_ENG, _151_ENG, _152_ENG, _153_ENG, _154_ENG, _155_ENG, _156_ENG, _158_ENG, _159_ENG, _160_ENG, _161_ENG})
+    Private ReadOnly _TitleList_INT_4_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_163_ENG, _164_ENG, _165_ENG, _166_ENG, _167_ENG, _168_ENG, _169_ENG, _170_ENG, _171_ENG, _172_ENG, _173_ENG, _174_ENG, _175_ENG, _176_ENG, _177_ENG})
 
-    Public ReadOnly _TitleList_All_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_ENG, _2_ENG, _3_ENG, _4_ENG, _5_ENG, _6_ENG, _7_ENG, _8_ENG, _9_ENG, _10_ENG, _11_ENG, _12_ENG, _13_ENG, _14_ENG, _15_ENG, _16_ENG, _17_ENG, _18_ENG, _19_ENG, _20_ENG, _21_ENG, _22_ENG, _23_ENG, _24_ENG, _25_ENG, _26_ENG, _27_ENG, _28_ENG, _42_ENG, _43_ENG, _44_ENG, _45_ENG, _46_ENG, _47_ENG, _48_ENG, _53_ENG, _62_ENG, _63_ENG, _64_ENG, _71_ENG, _72_ENG, _74_ENG, _75_ENG, _76_ENG, _77_ENG, _78_ENG, _79_ENG, _80_ENG, _81_ENG, _82_ENG, _83_ENG, _84_ENG, _85_ENG, _86_ENG, _87_ENG, _89_ENG, _90_ENG, _91_ENG, _92_ENG, _93_ENG, _94_ENG, _95_ENG, _96_ENG, _97_ENG, _98_ENG, _99_ENG, _100_ENG, _101_ENG, _102_ENG, _103_ENG, _104_ENG, _105_ENG, _106_ENG, _107_ENG, _108_ENG, _109_ENG, _110_ENG, _111_ENG, _112_ENG, _113_ENG, _114_ENG, _115_ENG, _116_ENG, _117_ENG, _118_ENG, _119_ENG, _120_ENG, _121_ENG, _122_ENG, _123_ENG, _124_ENG, _125_ENG, _126_ENG, _127_ENG, _128_ENG, _129_ENG, _130_ENG, _131_ENG, _132_ENG, _133_ENG, _134_ENG, _135_ENG, _137_ENG, _138_ENG, _139_ENG, _140_ENG, _141_ENG, _142_ENG, _143_ENG, _144_ENG, _145_ENG, _146_ENG, _147_ENG, _148_ENG, _149_ENG, _150_ENG, _151_ENG, _152_ENG, _153_ENG, _154_ENG, _155_ENG, _156_ENG, _157_ENG, _158_ENG, _159_ENG, _160_ENG, _161_ENG, _163_ENG, _164_ENG, _165_ENG, _166_ENG, _167_ENG, _168_ENG, _169_ENG, _170_ENG, _171_ENG, _172_ENG, _173_ENG, _174_ENG, _175_ENG, _176_ENG, _177_ENG})
+    Private ReadOnly _TitleList_All_ENG As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_ENG, _2_ENG, _3_ENG, _4_ENG, _5_ENG, _6_ENG, _7_ENG, _8_ENG, _9_ENG, _10_ENG, _11_ENG, _12_ENG, _13_ENG, _14_ENG, _15_ENG, _16_ENG, _17_ENG, _18_ENG, _19_ENG, _20_ENG, _21_ENG, _22_ENG, _23_ENG, _24_ENG, _25_ENG, _26_ENG, _27_ENG, _28_ENG, _42_ENG, _43_ENG, _44_ENG, _45_ENG, _46_ENG, _47_ENG, _48_ENG, _53_ENG, _62_ENG, _63_ENG, _64_ENG, _71_ENG, _72_ENG, _74_ENG, _75_ENG, _76_ENG, _77_ENG, _78_ENG, _79_ENG, _80_ENG, _81_ENG, _82_ENG, _83_ENG, _84_ENG, _85_ENG, _86_ENG, _87_ENG, _89_ENG, _90_ENG, _91_ENG, _92_ENG, _93_ENG, _94_ENG, _95_ENG, _96_ENG, _97_ENG, _98_ENG, _99_ENG, _100_ENG, _101_ENG, _102_ENG, _103_ENG, _104_ENG, _105_ENG, _106_ENG, _107_ENG, _108_ENG, _109_ENG, _110_ENG, _111_ENG, _112_ENG, _113_ENG, _114_ENG, _115_ENG, _116_ENG, _117_ENG, _118_ENG, _119_ENG, _120_ENG, _121_ENG, _122_ENG, _123_ENG, _124_ENG, _125_ENG, _126_ENG, _127_ENG, _128_ENG, _129_ENG, _130_ENG, _131_ENG, _132_ENG, _133_ENG, _134_ENG, _135_ENG, _137_ENG, _138_ENG, _139_ENG, _140_ENG, _141_ENG, _142_ENG, _143_ENG, _144_ENG, _145_ENG, _146_ENG, _147_ENG, _148_ENG, _149_ENG, _150_ENG, _151_ENG, _152_ENG, _153_ENG, _154_ENG, _155_ENG, _156_ENG, _157_ENG, _158_ENG, _159_ENG, _160_ENG, _161_ENG, _163_ENG, _164_ENG, _165_ENG, _166_ENG, _167_ENG, _168_ENG, _169_ENG, _170_ENG, _171_ENG, _172_ENG, _173_ENG, _174_ENG, _175_ENG, _176_ENG, _177_ENG})
 
-    '// List of CharTitle  DEUTSCH
-    Public ReadOnly _TitleList_All_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_GER, _2_GER, _3_GER, _4_GER, _5_GER, _6_GER, _7_GER, _8_GER, _9_GER, _10_GER, _11_GER, _12_GER, _13_GER, _14_GER, _15_GER, _16_GER, _17_GER, _18_GER, _19_GER, _20_GER, _21_GER, _22_GER, _23_GER, _24_GER, _25_GER, _26_GER, _27_GER, _28_GER, _42_GER, _43_GER, _44_GER, _45_GER, _46_GER, _47_GER, _48_GER, _53_GER, _62_GER, _63_GER, _64_GER, _71_GER, _72_GER, _74_GER, _75_GER, _76_GER, _77_GER, _78_GER, _79_GER, _80_GER, _81_GER, _82_GER, _83_GER, _84_GER, _85_GER, _86_GER, _87_GER, _89_GER, _90_GER, _91_GER, _92_GER, _93_GER, _94_GER, _95_GER, _96_GER, _97_GER, _98_GER, _99_GER, _100_GER, _101_GER, _102_GER, _103_GER, _104_GER, _105_GER, _106_GER, _107_GER, _108_GER, _109_GER, _110_GER, _111_GER, _112_GER, _113_GER, _114_GER, _115_GER, _116_GER, _117_GER, _118_GER, _119_GER, _120_GER, _121_GER, _122_GER, _123_GER, _124_GER, _125_GER, _126_GER, _127_GER, _128_GER, _129_GER, _130_GER, _131_GER, _132_GER, _133_GER, _134_GER, _135_GER, _137_GER, _138_GER, _139_GER, _140_GER, _141_GER, _142_GER, _143_GER, _144_GER, _145_GER, _146_GER, _147_GER, _148_GER, _149_GER, _150_GER, _151_GER, _152_GER, _153_GER, _154_GER, _155_GER, _156_GER, _157_GER, _158_GER, _159_GER, _160_GER, _161_GER, _163_GER, _164_GER, _165_GER, _166_GER, _167_GER, _168_GER, _169_GER, _170_GER, _171_GER, _172_GER, _173_GER, _174_GER, _175_GER, _176_GER, _177_GER})
+    '// List of CharTitle - DEUTSCH
+    Private ReadOnly _TitleList_All_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_GER, _2_GER, _3_GER, _4_GER, _5_GER, _6_GER, _7_GER, _8_GER, _9_GER, _10_GER, _11_GER, _12_GER, _13_GER, _14_GER, _15_GER, _16_GER, _17_GER, _18_GER, _19_GER, _20_GER, _21_GER, _22_GER, _23_GER, _24_GER, _25_GER, _26_GER, _27_GER, _28_GER, _42_GER, _43_GER, _44_GER, _45_GER, _46_GER, _47_GER, _48_GER, _53_GER, _62_GER, _63_GER, _64_GER, _71_GER, _72_GER, _74_GER, _75_GER, _76_GER, _77_GER, _78_GER, _79_GER, _80_GER, _81_GER, _82_GER, _83_GER, _84_GER, _85_GER, _86_GER, _87_GER, _89_GER, _90_GER, _91_GER, _92_GER, _93_GER, _94_GER, _95_GER, _96_GER, _97_GER, _98_GER, _99_GER, _100_GER, _101_GER, _102_GER, _103_GER, _104_GER, _105_GER, _106_GER, _107_GER, _108_GER, _109_GER, _110_GER, _111_GER, _112_GER, _113_GER, _114_GER, _115_GER, _116_GER, _117_GER, _118_GER, _119_GER, _120_GER, _121_GER, _122_GER, _123_GER, _124_GER, _125_GER, _126_GER, _127_GER, _128_GER, _129_GER, _130_GER, _131_GER, _132_GER, _133_GER, _134_GER, _135_GER, _137_GER, _138_GER, _139_GER, _140_GER, _141_GER, _142_GER, _143_GER, _144_GER, _145_GER, _146_GER, _147_GER, _148_GER, _149_GER, _150_GER, _151_GER, _152_GER, _153_GER, _154_GER, _155_GER, _156_GER, _157_GER, _158_GER, _159_GER, _160_GER, _161_GER, _163_GER, _164_GER, _165_GER, _166_GER, _167_GER, _168_GER, _169_GER, _170_GER, _171_GER, _172_GER, _173_GER, _174_GER, _175_GER, _176_GER, _177_GER})
 
-    Public ReadOnly _TitleList_INT_0_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_GER, _2_GER, _3_GER, _4_GER, _5_GER, _6_GER, _7_GER, _8_GER, _9_GER, _10_GER, _11_GER, _12_GER, _13_GER, _14_GER, _15_GER, _16_GER, _17_GER, _18_GER, _19_GER, _20_GER, _21_GER, _22_GER, _23_GER, _24_GER, _25_GER, _26_GER, _27_GER, _28_GER, _42_GER, _43_GER, _44_GER})
-    Public ReadOnly _TitleList_INT_1_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_45_GER, _46_GER, _47_GER, _48_GER, _53_GER, _62_GER, _63_GER, _64_GER, _71_GER, _72_GER, _74_GER, _75_GER, _76_GER, _77_GER, _78_GER, _79_GER, _80_GER, _81_GER, _82_GER, _83_GER, _84_GER, _85_GER, _86_GER, _87_GER, _89_GER, _90_GER, _91_GER, _92_GER, _93_GER, _94_GER, _95_GER, _157_GER})
-    Public ReadOnly _TitleList_INT_2_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_96_GER, _97_GER, _98_GER, _99_GER, _100_GER, _101_GER, _102_GER, _103_GER, _104_GER, _105_GER, _106_GER, _107_GER, _108_GER, _109_GER, _110_GER, _111_GER, _112_GER, _113_GER, _114_GER, _115_GER, _116_GER, _117_GER, _118_GER, _119_GER, _120_GER, _121_GER, _122_GER, _123_GER, _124_GER, _125_GER, _126_GER, _127_GER})
-    Public ReadOnly _TitleList_INT_3_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_128_GER, _129_GER, _130_GER, _131_GER, _132_GER, _133_GER, _134_GER, _135_GER, _137_GER, _138_GER, _139_GER, _140_GER, _141_GER, _142_GER, _143_GER, _144_GER, _145_GER, _146_GER, _147_GER, _148_GER, _149_GER, _150_GER, _151_GER, _152_GER, _153_GER, _154_GER, _155_GER, _156_GER, _158_GER, _159_GER, _160_GER, _161_GER})
-    Public ReadOnly _TitleList_INT_4_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_163_GER, _164_GER, _165_GER, _166_GER, _167_GER, _168_GER, _169_GER, _170_GER, _171_GER, _172_GER, _173_GER, _174_GER, _175_GER, _176_GER, _177_GER})
+    Private ReadOnly _TitleList_INT_0_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_1_GER, _2_GER, _3_GER, _4_GER, _5_GER, _6_GER, _7_GER, _8_GER, _9_GER, _10_GER, _11_GER, _12_GER, _13_GER, _14_GER, _15_GER, _16_GER, _17_GER, _18_GER, _19_GER, _20_GER, _21_GER, _22_GER, _23_GER, _24_GER, _25_GER, _26_GER, _27_GER, _28_GER, _42_GER, _43_GER, _44_GER})
+    Private ReadOnly _TitleList_INT_1_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_45_GER, _46_GER, _47_GER, _48_GER, _53_GER, _62_GER, _63_GER, _64_GER, _71_GER, _72_GER, _74_GER, _75_GER, _76_GER, _77_GER, _78_GER, _79_GER, _80_GER, _81_GER, _82_GER, _83_GER, _84_GER, _85_GER, _86_GER, _87_GER, _89_GER, _90_GER, _91_GER, _92_GER, _93_GER, _94_GER, _95_GER, _157_GER})
+    Private ReadOnly _TitleList_INT_2_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_96_GER, _97_GER, _98_GER, _99_GER, _100_GER, _101_GER, _102_GER, _103_GER, _104_GER, _105_GER, _106_GER, _107_GER, _108_GER, _109_GER, _110_GER, _111_GER, _112_GER, _113_GER, _114_GER, _115_GER, _116_GER, _117_GER, _118_GER, _119_GER, _120_GER, _121_GER, _122_GER, _123_GER, _124_GER, _125_GER, _126_GER, _127_GER})
+    Private ReadOnly _TitleList_INT_3_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_128_GER, _129_GER, _130_GER, _131_GER, _132_GER, _133_GER, _134_GER, _135_GER, _137_GER, _138_GER, _139_GER, _140_GER, _141_GER, _142_GER, _143_GER, _144_GER, _145_GER, _146_GER, _147_GER, _148_GER, _149_GER, _150_GER, _151_GER, _152_GER, _153_GER, _154_GER, _155_GER, _156_GER, _158_GER, _159_GER, _160_GER, _161_GER})
+    Private ReadOnly _TitleList_INT_4_GER As List(Of CharTitle) = New List(Of CharTitle)(New CharTitle() {_163_GER, _164_GER, _165_GER, _166_GER, _167_GER, _168_GER, _169_GER, _170_GER, _171_GER, _172_GER, _173_GER, _174_GER, _175_GER, _176_GER, _177_GER})
 
 #Region "Backup German Title"
     'Private _1_GER As New CharTitle With {.TitleID = 1, .IntID = 0, .DBValue = "2 0 0 0 0 0", .Bit = 2, .MaleTitle = "Gefreiter %s"}

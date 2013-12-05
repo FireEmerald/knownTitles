@@ -12,13 +12,10 @@ Public Class EArgs_MainProcessCompleted
 
     '// Variablen
     Private _Log As StringBuilder
-    Private _InlineReport As Boolean
 
     '// Sub New - Was an die Form übergeben werden soll.
-    Sub New(Log As StringBuilder, InlineReport As Boolean, MainProcess As MainProcessing)
+    Sub New(Log As StringBuilder, MainProcess As MainProcessing)
         _Log = Log
-        _InlineReport = InlineReport
-
         _MainProcess = MainProcess
     End Sub
 
@@ -26,11 +23,6 @@ Public Class EArgs_MainProcessCompleted
     Public ReadOnly Property P_Log As StringBuilder
         Get
             Return _Log
-        End Get
-    End Property
-    Public ReadOnly Property P_InlineReport As Boolean
-        Get
-            Return _InlineReport
         End Get
     End Property
     Public ReadOnly Property P_MainProcess As MainProcessing

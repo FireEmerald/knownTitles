@@ -8,6 +8,7 @@ Public Enum MainProcessingID As Integer
     PROCESS_LOOKUP = 0
     PROCESS_REMOVE = 1
     PROCESS_ADD = 2
+    PROCESS_SEARCH = 3
 End Enum
 
 Public Structure MainProcessing

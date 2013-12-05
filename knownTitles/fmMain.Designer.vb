@@ -22,7 +22,6 @@ Partial Class fmMain
     'Das Bearbeiten mit dem Code-Editor ist nicht möglich.
     <System.Diagnostics.DebuggerStepThrough()> _
     Private Sub InitializeComponent()
-        Me.components = New System.ComponentModel.Container()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(fmMain))
         Me.tbPlayerInput = New System.Windows.Forms.TextBox()
         Me.btnLookup = New System.Windows.Forms.Button()
@@ -38,8 +37,8 @@ Partial Class fmMain
         Me.tsSlStatusPercent = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsSlStatusText = New System.Windows.Forms.ToolStripStatusLabel()
         Me.msMain = New System.Windows.Forms.MenuStrip()
-        Me.miFile = New System.Windows.Forms.ToolStripMenuItem()
-        Me.miFile_SaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miSave = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miSave_SaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
         Me.miImport = New System.Windows.Forms.ToolStripMenuItem()
         Me.miImport_FromClipboard = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem0 = New System.Windows.Forms.ToolStripMenuItem()
@@ -50,13 +49,13 @@ Partial Class fmMain
         Me.miSettings_InlineReports = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_DebugMode = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miLogfile_State = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLogfile_NewPath = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLogfile_Path = New System.Windows.Forms.ToolStripTextBox()
-        Me.miLogfile_State = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miSQLQuery_State = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSQlQuery_NewPath = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSQLQuery_Path = New System.Windows.Forms.ToolStripTextBox()
-        Me.miSQLQuery_State = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem3 = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripMenuItem4 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLanguage = New System.Windows.Forms.ToolStripMenuItem()
@@ -64,21 +63,17 @@ Partial Class fmMain
         Me.miLanguage_Save = New System.Windows.Forms.ToolStripMenuItem()
         Me.miExit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miInfo_TrinityCoreWiki = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_About = New System.Windows.Forms.ToolStripMenuItem()
-        Me.DtShortBindingSource = New System.Windows.Forms.BindingSource(Me.components)
         Me.DsSelectedTitles = New knownTitles.dsSelectedTitles()
-        Me.DtExtendedBindingSource = New System.Windows.Forms.BindingSource(Me.components)
-        Me.DtShortBindingSource1 = New System.Windows.Forms.BindingSource(Me.components)
+        Me.btnSearch = New System.Windows.Forms.Button()
         Me.gbSelectedTitles.SuspendLayout()
         CType(Me.dgvSelectedTitles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.gbPlayerInput.SuspendLayout()
         Me.gbLog.SuspendLayout()
         Me.tsMain.SuspendLayout()
         Me.msMain.SuspendLayout()
-        CType(Me.DtShortBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DsSelectedTitles, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.DtExtendedBindingSource, System.ComponentModel.ISupportInitialize).BeginInit()
-        CType(Me.DtShortBindingSource1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
         'tbPlayerInput
@@ -96,11 +91,11 @@ Partial Class fmMain
         '
         'btnLookup
         '
-        Me.btnLookup.Location = New System.Drawing.Point(939, 654)
+        Me.btnLookup.Location = New System.Drawing.Point(965, 654)
         Me.btnLookup.Name = "btnLookup"
-        Me.btnLookup.Size = New System.Drawing.Size(135, 23)
+        Me.btnLookup.Size = New System.Drawing.Size(112, 23)
         Me.btnLookup.TabIndex = 7
-        Me.btnLookup.Text = "Lookup Titles"
+        Me.btnLookup.Text = "Lookup"
         Me.btnLookup.UseVisualStyleBackColor = True
         '
         'tbLog
@@ -166,20 +161,20 @@ Partial Class fmMain
         '
         'btnAdd
         '
-        Me.btnAdd.Location = New System.Drawing.Point(657, 654)
+        Me.btnAdd.Location = New System.Drawing.Point(611, 654)
         Me.btnAdd.Name = "btnAdd"
-        Me.btnAdd.Size = New System.Drawing.Size(135, 23)
+        Me.btnAdd.Size = New System.Drawing.Size(112, 23)
         Me.btnAdd.TabIndex = 22
-        Me.btnAdd.Text = "Add selected Titles"
+        Me.btnAdd.Text = "Add"
         Me.btnAdd.UseVisualStyleBackColor = True
         '
         'btnRemove
         '
-        Me.btnRemove.Location = New System.Drawing.Point(798, 654)
+        Me.btnRemove.Location = New System.Drawing.Point(729, 654)
         Me.btnRemove.Name = "btnRemove"
-        Me.btnRemove.Size = New System.Drawing.Size(135, 23)
+        Me.btnRemove.Size = New System.Drawing.Size(112, 23)
         Me.btnRemove.TabIndex = 23
-        Me.btnRemove.Text = "Remove selected Titles"
+        Me.btnRemove.Text = "Remove"
         Me.btnRemove.UseVisualStyleBackColor = True
         '
         'tsMain
@@ -214,27 +209,27 @@ Partial Class fmMain
         'msMain
         '
         Me.msMain.BackColor = System.Drawing.Color.White
-        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miImport, Me.miSettings, Me.miLanguage, Me.miExit, Me.miInfo})
+        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSave, Me.miImport, Me.miSettings, Me.miLanguage, Me.miExit, Me.miInfo})
         Me.msMain.Location = New System.Drawing.Point(0, 0)
         Me.msMain.Name = "msMain"
         Me.msMain.Size = New System.Drawing.Size(1095, 24)
         Me.msMain.TabIndex = 26
         Me.msMain.Text = "MenuStrip1"
         '
-        'miFile
+        'miSave
         '
-        Me.miFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile_SaveLogfile})
-        Me.miFile.ForeColor = System.Drawing.Color.Navy
-        Me.miFile.Name = "miFile"
-        Me.miFile.Size = New System.Drawing.Size(37, 20)
-        Me.miFile.Text = "File"
+        Me.miSave.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSave_SaveLogfile})
+        Me.miSave.ForeColor = System.Drawing.Color.Navy
+        Me.miSave.Name = "miSave"
+        Me.miSave.Size = New System.Drawing.Size(43, 20)
+        Me.miSave.Text = "Save"
         '
-        'miFile_SaveLogfile
+        'miSave_SaveLogfile
         '
-        Me.miFile_SaveLogfile.ForeColor = System.Drawing.Color.Navy
-        Me.miFile_SaveLogfile.Name = "miFile_SaveLogfile"
-        Me.miFile_SaveLogfile.Size = New System.Drawing.Size(150, 22)
-        Me.miFile_SaveLogfile.Text = "Logfile save as"
+        Me.miSave_SaveLogfile.ForeColor = System.Drawing.Color.Navy
+        Me.miSave_SaveLogfile.Name = "miSave_SaveLogfile"
+        Me.miSave_SaveLogfile.Size = New System.Drawing.Size(151, 22)
+        Me.miSave_SaveLogfile.Text = "Save Logfile as"
         '
         'miImport
         '
@@ -306,11 +301,18 @@ Partial Class fmMain
         '
         'ToolStripMenuItem1
         '
-        Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miLogfile_NewPath, Me.miLogfile_Path, Me.miLogfile_State})
+        Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miLogfile_State, Me.miLogfile_NewPath, Me.miLogfile_Path})
         Me.ToolStripMenuItem1.ForeColor = System.Drawing.Color.Navy
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
         Me.ToolStripMenuItem1.Size = New System.Drawing.Size(228, 22)
         Me.ToolStripMenuItem1.Text = "Logfile"
+        '
+        'miLogfile_State
+        '
+        Me.miLogfile_State.ForeColor = System.Drawing.Color.Navy
+        Me.miLogfile_State.Name = "miLogfile_State"
+        Me.miLogfile_State.Size = New System.Drawing.Size(320, 22)
+        Me.miLogfile_State.Text = "Save Logfile"
         '
         'miLogfile_NewPath
         '
@@ -324,20 +326,20 @@ Partial Class fmMain
         Me.miLogfile_Path.Name = "miLogfile_Path"
         Me.miLogfile_Path.Size = New System.Drawing.Size(260, 23)
         '
-        'miLogfile_State
-        '
-        Me.miLogfile_State.ForeColor = System.Drawing.Color.Navy
-        Me.miLogfile_State.Name = "miLogfile_State"
-        Me.miLogfile_State.Size = New System.Drawing.Size(320, 22)
-        Me.miLogfile_State.Text = "Save Logfile"
-        '
         'ToolStripMenuItem2
         '
-        Me.ToolStripMenuItem2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSQlQuery_NewPath, Me.miSQLQuery_Path, Me.miSQLQuery_State})
+        Me.ToolStripMenuItem2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSQLQuery_State, Me.miSQlQuery_NewPath, Me.miSQLQuery_Path})
         Me.ToolStripMenuItem2.ForeColor = System.Drawing.Color.Navy
         Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
         Me.ToolStripMenuItem2.Size = New System.Drawing.Size(228, 22)
         Me.ToolStripMenuItem2.Text = "SQL Query"
+        '
+        'miSQLQuery_State
+        '
+        Me.miSQLQuery_State.ForeColor = System.Drawing.Color.Navy
+        Me.miSQLQuery_State.Name = "miSQLQuery_State"
+        Me.miSQLQuery_State.Size = New System.Drawing.Size(320, 22)
+        Me.miSQLQuery_State.Text = "Save SQL Query"
         '
         'miSQlQuery_NewPath
         '
@@ -350,13 +352,6 @@ Partial Class fmMain
         '
         Me.miSQLQuery_Path.Name = "miSQLQuery_Path"
         Me.miSQLQuery_Path.Size = New System.Drawing.Size(260, 23)
-        '
-        'miSQLQuery_State
-        '
-        Me.miSQLQuery_State.ForeColor = System.Drawing.Color.Navy
-        Me.miSQLQuery_State.Name = "miSQLQuery_State"
-        Me.miSQLQuery_State.Size = New System.Drawing.Size(320, 22)
-        Me.miSQLQuery_State.Text = "Save SQL Query"
         '
         'ToolStripMenuItem3
         '
@@ -405,38 +400,39 @@ Partial Class fmMain
         '
         'miInfo
         '
-        Me.miInfo.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miInfo_About})
+        Me.miInfo.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miInfo_TrinityCoreWiki, Me.miInfo_About})
         Me.miInfo.ForeColor = System.Drawing.Color.Navy
         Me.miInfo.Name = "miInfo"
         Me.miInfo.Size = New System.Drawing.Size(40, 20)
         Me.miInfo.Text = "Info"
         '
+        'miInfo_TrinityCoreWiki
+        '
+        Me.miInfo_TrinityCoreWiki.ForeColor = System.Drawing.Color.Navy
+        Me.miInfo_TrinityCoreWiki.Name = "miInfo_TrinityCoreWiki"
+        Me.miInfo_TrinityCoreWiki.Size = New System.Drawing.Size(235, 22)
+        Me.miInfo_TrinityCoreWiki.Text = "Trinity Core Wiki | knownTitles"
+        '
         'miInfo_About
         '
         Me.miInfo_About.ForeColor = System.Drawing.Color.Navy
         Me.miInfo_About.Name = "miInfo_About"
-        Me.miInfo_About.Size = New System.Drawing.Size(174, 22)
+        Me.miInfo_About.Size = New System.Drawing.Size(235, 22)
         Me.miInfo_About.Text = "About knownTitles"
-        '
-        'DtShortBindingSource
-        '
-        Me.DtShortBindingSource.DataMember = "dtShort"
-        Me.DtShortBindingSource.DataSource = Me.DsSelectedTitles
         '
         'DsSelectedTitles
         '
         Me.DsSelectedTitles.DataSetName = "dsSelectedTitles"
         Me.DsSelectedTitles.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
-        'DtExtendedBindingSource
+        'btnSearch
         '
-        Me.DtExtendedBindingSource.DataMember = "dtExtended"
-        Me.DtExtendedBindingSource.DataSource = Me.DsSelectedTitles
-        '
-        'DtShortBindingSource1
-        '
-        Me.DtShortBindingSource1.DataMember = "dtShort"
-        Me.DtShortBindingSource1.DataSource = Me.DsSelectedTitles
+        Me.btnSearch.Location = New System.Drawing.Point(847, 654)
+        Me.btnSearch.Name = "btnSearch"
+        Me.btnSearch.Size = New System.Drawing.Size(112, 23)
+        Me.btnSearch.TabIndex = 27
+        Me.btnSearch.Text = "Search"
+        Me.btnSearch.UseVisualStyleBackColor = True
         '
         'fmMain
         '
@@ -444,6 +440,7 @@ Partial Class fmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.ClientSize = New System.Drawing.Size(1095, 700)
+        Me.Controls.Add(Me.btnSearch)
         Me.Controls.Add(Me.tsMain)
         Me.Controls.Add(Me.msMain)
         Me.Controls.Add(Me.btnRemove)
@@ -469,10 +466,7 @@ Partial Class fmMain
         Me.tsMain.PerformLayout()
         Me.msMain.ResumeLayout(False)
         Me.msMain.PerformLayout()
-        CType(Me.DtShortBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DsSelectedTitles, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.DtExtendedBindingSource, System.ComponentModel.ISupportInitialize).EndInit()
-        CType(Me.DtShortBindingSource1, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
 
@@ -490,8 +484,8 @@ Partial Class fmMain
     Friend WithEvents tsSlStatusPercent As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tsSlStatusText As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents msMain As System.Windows.Forms.MenuStrip
-    Friend WithEvents miFile As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents miFile_SaveLogfile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miSave As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miSave_SaveLogfile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLanguage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLanguage_ComboBox As System.Windows.Forms.ToolStripComboBox
     Friend WithEvents miLanguage_Save As System.Windows.Forms.ToolStripMenuItem
@@ -503,10 +497,7 @@ Partial Class fmMain
     Friend WithEvents miSelectSyntax_0 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSelectSyntax_1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents dgvSelectedTitles As System.Windows.Forms.DataGridView
-    Friend WithEvents DtShortBindingSource As System.Windows.Forms.BindingSource
     Friend WithEvents DsSelectedTitles As knownTitles.dsSelectedTitles
-    Friend WithEvents DtExtendedBindingSource As System.Windows.Forms.BindingSource
-    Friend WithEvents DtShortBindingSource1 As System.Windows.Forms.BindingSource
     Friend WithEvents miSettings As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSettings_ExtendedTitles As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSettings_InlineReports As System.Windows.Forms.ToolStripMenuItem
@@ -522,5 +513,7 @@ Partial Class fmMain
     Friend WithEvents miImport_FromClipboard As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLogfile_NewPath As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSQlQuery_NewPath As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miInfo_TrinityCoreWiki As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents btnSearch As System.Windows.Forms.Button
 
 End Class

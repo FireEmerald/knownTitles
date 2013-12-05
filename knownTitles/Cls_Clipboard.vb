@@ -1,13 +1,13 @@
 ﻿Option Explicit On
 Option Strict On
 
+Imports System.Text
 Imports System.Text.RegularExpressions
 
 Public Class Cls_Clipboard
 
 #Region "Deklarationen"
     '// Variablen
-    Private _Debug As Boolean = False
     Private _ClipboardContent As String = ""
 
     '// Events
@@ -26,8 +26,7 @@ Public Class Cls_Clipboard
     End Property
 #End Region
 
-    Sub New(ClipboardContent As String, DebugStatus As Boolean)
-        _Debug = DebugStatus
+    Sub New(ClipboardContent As String)
         _ClipboardContent = ClipboardContent
     End Sub
 
@@ -35,7 +34,7 @@ Public Class Cls_Clipboard
     Public Sub GetDataFromClipboard()
         RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Running...", _Guid))
 
-        Dim _ValidatedClipboardContent As String = ""
+        Dim _ValidatedClipboardContent As New StringBuilder
         Dim _ErrorProcess As New ErrorProcessing With {.ID = ErrorProcessingID.CLIPBOARD_IMPORT_VALIDATION,
                                                        .WrongContent = "",
                                                        .WrongCounter = 0}
@@ -51,8 +50,8 @@ Public Class Cls_Clipboard
                             Dim _Replaced As String = _ClipboardLines(_i).Replace(",", "").Replace("'", "")
                             Dim _ToCheck As String = _Replaced.Substring(73, _Replaced.Length - (73 + ((_Replaced.Length - 1) - _Replaced.LastIndexOf("0"))))
                             If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
-                                _ValidatedClipboardContent += _ToCheck + vbCrLf
-                                If _Debug Then MessageBox.Show("Clipboard Line Added: """ + _ToCheck + """")
+                                _ValidatedClipboardContent.AppendLine(_ToCheck)
+                                DebugMessage("Clipboard Line Added: """ + _ToCheck + """")
                             Else
                                 _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
                                 _ErrorProcess.WrongCounter += 1
@@ -65,8 +64,8 @@ Public Class Cls_Clipboard
                         If Regex.IsMatch(_ClipboardLines(_i), "^[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0 $", RegexOptions.None) Then
                             Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 1)
 
-                            _ValidatedClipboardContent += _Checked + vbCrLf
-                            If _Debug Then MessageBox.Show("Clipboard Line Added: """ + _Checked + """")
+                            _ValidatedClipboardContent.AppendLine(_Checked)
+                            DebugMessage("Clipboard Line Added: """ + _Checked + """")
                         Else
                             _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
                             _ErrorProcess.WrongCounter += 1
@@ -79,6 +78,6 @@ Public Class Cls_Clipboard
         Next
         '// Das letzte vbCrLf muss nicht gelöscht werden.
 
-        RaiseEvent ClipboardImport_Completed(Me, New EArgs_ValidationProcessCompleted(_ValidatedClipboardContent, _ErrorProcess, _Guid))
+        RaiseEvent ClipboardImport_Completed(Me, New EArgs_ValidationProcessCompleted(_ValidatedClipboardContent.ToString, _ErrorProcess, _Guid))
     End Sub
 End Class

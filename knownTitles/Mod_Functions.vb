@@ -18,6 +18,13 @@ Module Mod_Functions
         Return _Bits
     End Function
 
+    ''' <summary>Zeigt eine Debugnachricht, falls Debug Mode enabled.</summary>
+    Public Sub DebugMessage(_Message As String)
+        If My.Settings.DebugMode Then
+            MessageBox.Show(_Message, "Debug message.", MessageBoxButtons.OK, MessageBoxIcon.Information)
+        End If
+    End Sub
+
     ''' <summary>Eine Character Structure in einen String umwandeln.</summary>
     Public Function GeneratePrintCharakter(_Character As Character) As String
         Dim _Output As String = vbCrLf + "Name: " + _Character.Name + _
@@ -44,12 +51,12 @@ Module Mod_Functions
                              " | Last Bitmask: """ + _Char.BitmaskBackup + """" + vbCrLf
 
                 '// Alle gebannten Titel auflisten
-                For _i As Integer = 0 To _Char.ChangedTitles.Count - 1
-                    _SQLQuery += "REMOVED | INT: " + _Char.ChangedTitles.Item(_i).IntID.ToString + _
-                                 " | BIT: " + _Char.ChangedTitles.Item(_i).Bit.ToString + _
-                                 " | TitleID: " + _Char.ChangedTitles.Item(_i).TitleID.ToString + _
-                                 " | Title: " + _Char.ChangedTitles.Item(_i).MaleTitle
-                    If _i = (_Char.ChangedTitles.Count - 1) Then _SQLQuery += " */"
+                For _i As Integer = 0 To _Char.AffectedTitles.Count - 1
+                    _SQLQuery += "REMOVED | INT: " + _Char.AffectedTitles.Item(_i).IntID.ToString + _
+                                 " | BIT: " + _Char.AffectedTitles.Item(_i).Bit.ToString + _
+                                 " | TitleID: " + _Char.AffectedTitles.Item(_i).TitleID.ToString + _
+                                 " | Title: " + _Char.AffectedTitles.Item(_i).MaleTitle
+                    If _i = (_Char.AffectedTitles.Count - 1) Then _SQLQuery += " */"
                     _SQLQuery += vbCrLf
                 Next
 
@@ -89,11 +96,20 @@ Module Mod_Functions
     Public Function GetSelectedTitles(_DataTable As DataTable) As List(Of CharTitle)
         Dim _SelectedTitles As New List(Of CharTitle)
 
-        For Each _Title As dsSelectedTitles.dtShortRow In _DataTable.Rows
-            If _Title.colChoose = True Then
-                _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
-            End If
-        Next
+        Select Case _DataTable.TableName
+            Case "dtShort"
+                For Each _Title As dsSelectedTitles.dtShortRow In _DataTable.Rows
+                    If _Title.colChoose = True Then
+                        _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
+                    End If
+                Next
+            Case "dtExtended"
+                For Each _Title As dsSelectedTitles.dtExtendedRow In _DataTable.Rows
+                    If _Title.colChoose = True Then
+                        _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
+                    End If
+                Next
+        End Select
 
         Return _SelectedTitles
         '// http://regexhero.net/tester/

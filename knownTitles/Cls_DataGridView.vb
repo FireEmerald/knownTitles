@@ -16,6 +16,9 @@ Public Class Cls_DataGridView
     Private _SavedPosition_dgvSelectedTitles As ControlData
     Private _SavedPosition_gbLog As ControlData
     Private _SavedPosition_tbLog As ControlData
+
+    '// Verändert das Verhältnis von Log zu minimized PlayerInput
+    Private _Ratio As Double = 1.4
 #End Region
 
     '// Defaultpositionen speichern
@@ -36,16 +39,14 @@ Public Class Cls_DataGridView
 
     ''' <summary>Position und Größe des DataGridView anpassen.</summary>
     Public Sub Relocate_DataGridView(_ExtendedView As Boolean)
-        Reload_DataTable(_ExtendedView)
-
         If _ExtendedView Then
             '// Erweiterte Titel anzeigen
             With fmMain
                 .gbSelectedTitles.Size = New Size(.gbLog.Width, .gbSelectedTitles.Height)
                 .dgvSelectedTitles.Size = New Size(.tbLog.Width, .dgvSelectedTitles.Height)
 
-                .gbLog.Size = New Size(CInt(.gbLog.Width / 1.3), .gbLog.Height)
-                .tbLog.Size = New Size(CInt(.tbLog.Width / 1.3) - 2, .tbLog.Height)
+                .gbLog.Size = New Size(CInt(.gbLog.Width / _Ratio), .gbLog.Height)
+                .tbLog.Size = New Size(CInt(.tbLog.Width / _Ratio) - 2, .tbLog.Height)
 
                 .gbPlayerInput.Location = New Point(.gbLog.Location.X + .gbLog.Width + 4, .gbLog.Location.Y)
                 .gbPlayerInput.Size = New Size(.gbSelectedTitles.Width - .gbLog.Width - 4, .gbLog.Height)
@@ -82,7 +83,8 @@ Public Class Cls_DataGridView
         If _ExtendedView Then
             '// Erweiterte Ansicht
             '// Hinzufügen der Titel
-            fmMain.DsSelectedTitles.dtExtended.Clear()
+            fmMain.DsSelectedTitles.dtExtended.Rows.Clear()
+
             For Each _Title In _TitelList_All
                 Dim _NewRow As dsSelectedTitles.dtExtendedRow = fmMain.DsSelectedTitles.dtExtended.NewdtExtendedRow
 
@@ -103,8 +105,10 @@ Public Class Cls_DataGridView
                 fmMain.DsSelectedTitles.dtExtended.Rows.Add(_NewRow)
             Next
 
-            '// Neue DataSource setzen.
+            '// Das DGV besitzt im Moment noch die Daten/Columns des dtShort Tables (3 Columns)!
+            '// Zuerst den dtShort Table entfernen, da sonst die Columns des dtShort mit dem dtExtended zusammengeführt werden.
             With fmMain.dgvSelectedTitles
+                .DataSource = Nothing
                 .DataSource = fmMain.DsSelectedTitles.dtExtended
             End With
 
@@ -118,14 +122,16 @@ Public Class Cls_DataGridView
             SetColumnWidthAndHeaderText("DBValue", 6)
             SetColumnWidthAndHeaderText("IntID Double", 7)
             SetColumnWidthAndHeaderText("UnkRef", 8)
-            SetColumnWidthAndHeaderText("MaleTitle", 9)
-            SetColumnWidthAndHeaderText("Female Title", 10)
 
             With fmMain.dgvSelectedTitles.Columns
                 .Item(5).AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
                 .Item(6).AutoSizeMode = DataGridViewAutoSizeColumnMode.AllCells
+
                 .Item(9).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                .Item(9).HeaderText = "MaleTitle"
+
                 .Item(10).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                .Item(10).HeaderText = "Female Title"
                 For _i As Integer = 1 To 10
                     .Item(_i).ReadOnly = True
                 Next
@@ -162,6 +168,7 @@ Public Class Cls_DataGridView
                 .Item(2).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
                 .Item(2).ReadOnly = True
             End With
+
         End If
     End Sub
 

@@ -8,14 +8,21 @@
         ONLY_WITH_SPACES = 1
     End Enum
 
-    ''' <summary>Ändert alle ToolStripMenu Items je nach Ressourcen-Einstellungen.</summary>
-    Public Sub SetAllMenuItems_LikeSettings()
+    ''' <summary>Lädt visuell alle ToolStripMenuItems neu, je nach Settings.</summary>
+    Public Sub LoadAllSettings()
+        Dim _ToLoad As New List(Of Object)
+        With fmMain
+            _ToLoad.Add(.miSettings_DebugMode)
+            _ToLoad.Add(.miSettings_ExtendedTitles)
+            _ToLoad.Add(.miSettings_InlineReports)
+            _ToLoad.Add(.miSettings_Shortcuts)
+            _ToLoad.Add(.miSaveLogfile)
+            _ToLoad.Add(.miGenerateSQLUpdateQuerys)
+        End With
+        For Each _MenuItem In _ToLoad
+            SetSettings(_MenuItem)
+        Next
         SetClipboardSyntax()
-        SetDebugMode()
-        SetExtendedTitles()
-        SetInlineReports()
-        SetLogfileToHDD()
-        SetSQLQueryToHDD()
     End Sub
 
     ''' <summary>Syntax des Clipboard Imports ändern.</summary>
@@ -30,117 +37,64 @@
         Select Case My.Settings.ClipboardSyntax
             Case CLIPBOARD_SYNTAX.INSERT_INTO  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
                 With fmMain
-                    SetForeColor_CheckState(Color.Navy, .miSelectSyntax_1)
-
-                    SetForeColor_CheckState(Color.Green, .miSelectSyntax_0)
+                    SetForeColor_CheckState(.miSelectSyntax_1, False)
+                    SetForeColor_CheckState(.miSelectSyntax_0, True)
                 End With
             Case CLIPBOARD_SYNTAX.ONLY_WITH_SPACES '// "1 1 ABC 0 0 0 0 0 "
                 With fmMain
-                    SetForeColor_CheckState(Color.Navy, .miSelectSyntax_0)
-
-                    SetForeColor_CheckState(Color.Green, .miSelectSyntax_1)
+                    SetForeColor_CheckState(.miSelectSyntax_0, False)
+                    SetForeColor_CheckState(.miSelectSyntax_1, True)
                 End With
         End Select
     End Sub
 
-    Public Sub SetDebugMode(Optional _SetNewState As Boolean = False)
-        If _SetNewState Then
-            Select Case fmMain.miSettings_DebugMode.CheckState
-                Case CheckState.Checked
-                    My.Settings.DebugMode = False
-                Case CheckState.Unchecked
-                    My.Settings.DebugMode = True
-            End Select
-            My.Settings.Save()
-            My.Settings.Reload()
-        End If
-        If My.Settings.DebugMode Then
-            SetForeColor_CheckState(Color.Green, fmMain.miSettings_DebugMode)
-        Else
-            SetForeColor_CheckState(Color.Navy, fmMain.miSettings_DebugMode)
-        End If
-    End Sub
+    ''' <summary>Einzelnes MenuItem neu festlegen bzw. laden.</summary>
+    Public Sub SetSettings(_sender As Object, Optional _SetNewState As Boolean = False)
+        Dim _MenuItem As ToolStripMenuItem = CType(_sender, ToolStripMenuItem)
 
-    Public Sub SetExtendedTitles(Optional _SetNewState As Boolean = False)
-        If _SetNewState Then
-            Select Case fmMain.miSettings_ExtendedTitles.CheckState
-                Case CheckState.Checked
-                    My.Settings.ExtendedTitles = False
-                Case CheckState.Unchecked
-                    My.Settings.ExtendedTitles = True
-            End Select
-            My.Settings.Save()
-            My.Settings.Reload()
-        End If
-        If My.Settings.ExtendedTitles Then
-            SetForeColor_CheckState(Color.Green, fmMain.miSettings_ExtendedTitles)
-        Else
-            SetForeColor_CheckState(Color.Navy, fmMain.miSettings_ExtendedTitles)
-        End If
-    End Sub
-
-    Public Sub SetInlineReports(Optional _SetNewState As Boolean = False)
-        If _SetNewState Then
-            Select Case fmMain.miSettings_InlineReports.CheckState
-                Case CheckState.Checked
-                    My.Settings.InlineReports = False
-                Case CheckState.Unchecked
-                    My.Settings.InlineReports = True
-            End Select
-            My.Settings.Save()
-            My.Settings.Reload()
-        End If
-        If My.Settings.InlineReports Then
-            SetForeColor_CheckState(Color.Green, fmMain.miSettings_InlineReports)
-        Else
-            SetForeColor_CheckState(Color.Navy, fmMain.miSettings_InlineReports)
-        End If
-    End Sub
-
-    Public Sub SetLogfileToHDD(Optional _SetNewState As Boolean = False)
-        If _SetNewState Then
-            Select Case fmMain.miLogfile_State.CheckState
-                Case CheckState.Checked
-                    My.Settings.LogfileToHDD = False
-                Case CheckState.Unchecked
-                    My.Settings.LogfileToHDD = True
-            End Select
-            My.Settings.Save()
-            My.Settings.Reload()
-        End If
-        If My.Settings.LogfileToHDD Then
-            SetForeColor_CheckState(Color.Green, fmMain.miLogfile_State)
-        Else
-            SetForeColor_CheckState(Color.Navy, fmMain.miLogfile_State)
-        End If
-    End Sub
-
-    Public Sub SetSQLQueryToHDD(Optional _SetNewState As Boolean = False)
-        If _SetNewState Then
-            Select Case fmMain.miSQLQuery_State.CheckState
-                Case CheckState.Checked
-                    My.Settings.SQLQueryToHDD = False
-                Case CheckState.Unchecked
-                    My.Settings.SQLQueryToHDD = True
-            End Select
-            My.Settings.Save()
-            My.Settings.Reload()
-        End If
-        If My.Settings.SQLQueryToHDD Then
-            SetForeColor_CheckState(Color.Green, fmMain.miSQLQuery_State)
-        Else
-            SetForeColor_CheckState(Color.Navy, fmMain.miSQLQuery_State)
-        End If
+        Select Case True
+            Case _MenuItem Is fmMain.miSettings_DebugMode
+                If _SetNewState Then
+                    My.Settings.DebugMode = Not My.Settings.DebugMode
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.DebugMode)
+            Case _MenuItem Is fmMain.miSettings_ExtendedTitles
+                If _SetNewState Then
+                    My.Settings.ExtendedTitles = Not My.Settings.ExtendedTitles
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.ExtendedTitles)
+            Case _MenuItem Is fmMain.miSettings_InlineReports
+                If _SetNewState Then
+                    My.Settings.InlineReports = Not My.Settings.InlineReports
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.InlineReports)
+            Case _MenuItem Is fmMain.miSettings_Shortcuts
+                If _SetNewState Then
+                    My.Settings.Shortcuts = Not My.Settings.Shortcuts
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.Shortcuts)
+            Case _MenuItem Is fmMain.miSaveLogfile
+                If _SetNewState Then
+                    My.Settings.LogfileToHDD = Not My.Settings.LogfileToHDD
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.LogfileToHDD)
+            Case _MenuItem Is fmMain.miGenerateSQLUpdateQuerys
+                If _SetNewState Then
+                    My.Settings.SQLQueryToHDD = Not My.Settings.SQLQueryToHDD
+                End If
+                SetForeColor_CheckState(_MenuItem, My.Settings.SQLQueryToHDD)
+        End Select
     End Sub
 
     ''' <summary>Ändert die ForeColor eines ToolStrpMenuItem sowie die CheckState.</summary>
-    Private Sub SetForeColor_CheckState(_Color As System.Drawing.Color, _MenuItem As System.Windows.Forms.ToolStripMenuItem)
-        _MenuItem.ForeColor = _Color
-        Select Case _Color
-            Case Color.Green
+    Private Sub SetForeColor_CheckState(_MenuItem As ToolStripMenuItem, _Setting As Boolean)
+        Select Case _Setting
+            Case True
                 _MenuItem.CheckState = CheckState.Checked
-            Case Color.Navy
+                _MenuItem.ForeColor = Color.Green
+            Case False
                 _MenuItem.CheckState = CheckState.Unchecked
+                _MenuItem.ForeColor = Color.Navy
         End Select
     End Sub
 

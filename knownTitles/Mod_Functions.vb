@@ -114,4 +114,15 @@ Module Mod_Functions
         Return _SelectedTitles
         '// http://regexhero.net/tester/
     End Function
+
+    ''' <summary>Alle markierten (Choosen) Zeilen grün hinterlegen.</summary>
+    Public Sub RefreshVisualRowColor()
+        For Each _Row As DataGridViewRow In fmMain.dgvSelectedTitles.Rows
+            If CType(_Row.Cells(0).Value, Boolean) = True Then
+                _Row.DefaultCellStyle.BackColor = Color.LightGreen
+            Else
+                _Row.DefaultCellStyle.BackColor = Color.White
+            End If
+        Next
+    End Sub
 End Module

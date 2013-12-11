@@ -12,6 +12,9 @@ Public Class fmMain
     Private _LogToHarddrive As Boolean = False
     Private _GenerateSQLQuery As Boolean = False
 
+    '// Forms die nicht doppelt geöffnet werden können
+    Public WithEvents _fmFind, _fmAbout As Form
+
     '// Speichert die Startzeit des laufenden Threads
     Private _StartTime As Date
 
@@ -33,7 +36,6 @@ Public Class fmMain
             Case sender Is btnAdd
                 '// Titel hinzufügen
                 MessageBox.Show("Not implemented yet.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
-                'GetSelectedTitles(DsSelectedTitles.dtShort)
             Case sender Is btnRemove
                 '// Titel entfernen
                 tbLog.Text = ""
@@ -260,7 +262,7 @@ Public Class fmMain
     ''' <summary>Buttons auf der Form sperren oder entsperren.</summary>
     Public Sub btnX_setState(_State As Boolean)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnRemove, btnLookup}
+        Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnRemove, btnLookup, btnSearch}
         Dim _btnControl As New ControlButtonUpdater(_Buttons)
 
         '// Formelemente sperren / entsperren.
@@ -341,16 +343,22 @@ Public Class fmMain
         miSettings_DebugMode.Click,
         miSettings_ExtendedTitles.Click,
         miSettings_InlineReports.Click,
+        miSettings_Shortcuts.Click,
         miSelectSyntax_0.Click,
         miSelectSyntax_1.Click,
-        miLogfile_State.Click,
-        miSQLQuery_State.Click,
+        miSaveLogfile.Click,
+        miGenerateSQLUpdateQuerys.Click,
         miImport_FromClipboard.Click,
         miLogfile_NewPath.Click,
         miSQlQuery_NewPath.Click
 
-        '// Prüfen ob ein Prozess läuft | Ausnahmen: About und Exit^^
-        If ThreadIsRunning(_Hashtable) AndAlso Not sender Is miInfo_About AndAlso Not sender Is miExit AndAlso Not sender Is miInfo_TrinityCoreWiki Then
+        '// Können währen eines Prozesses aufgerufen werden.
+        Dim _NotProcessAffectedItems As New List(Of System.Windows.Forms.ToolStripMenuItem)({miInfo_About,
+                                                                                             miInfo_TrinityCoreWiki,
+                                                                                             miExit})
+
+        '// Prüfen ob ein Prozess läuft | Ausnahmen, siehe oben.
+        If ThreadIsRunning(_Hashtable) AndAlso Not _NotProcessAffectedItems.Contains(CType(sender, System.Windows.Forms.ToolStripMenuItem)) Then
             MessageBox.Show("You can't change the settings, while processing..." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Return
         End If
@@ -371,10 +379,14 @@ Public Class fmMain
                     End Try
                 End If
             Case sender Is miInfo_About '// Infos über das Programm anzeigen.
-                Dim _fmAbout As New fmAbout
-                _fmAbout.StartPosition = FormStartPosition.Manual
-                _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
-                _fmAbout.Show()
+                If _fmAbout Is Nothing Then
+                    _fmAbout = New fmAbout
+                    _fmAbout.StartPosition = FormStartPosition.Manual
+                    _fmAbout.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmAbout.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmAbout.Size.Height / 2)))
+                    _fmAbout.Show()
+                Else
+                    _fmAbout.Focus()
+                End If
             Case sender Is miInfo_TrinityCoreWiki '// TrinityCore Wiki anzeigen.
                 Process.Start("http://collab.kpsn.org/display/tc/Characters+tc2#Characterstc2-knownTitles")
             Case sender Is miLanguage_Save '// Sprache ändern.
@@ -386,21 +398,26 @@ Public Class fmMain
                 End Select
                 _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
             Case sender Is miSettings_DebugMode '// Debug Mode de-/aktivieren.
-                SetDebugMode(True)
+                SetSettings(sender, True)
             Case sender Is miSettings_ExtendedTitles '// Erweiterte Titel de-/aktivieren.
-                SetExtendedTitles(True)
+                SetSettings(sender, True)
                 _DataGridView_Handler.Relocate_DataGridView(My.Settings.ExtendedTitles)
                 _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
+                If Not IsNothing(_fmFind) Then
+                    _fmFind.Close()
+                End If
             Case sender Is miSettings_InlineReports '// Inline Reports de-/aktivieren.
-                SetInlineReports(True)
+                SetSettings(sender, True)
+            Case sender Is miSettings_Shortcuts
+                SetSettings(sender, True)
             Case sender Is miSelectSyntax_0 '// Clipboard Syntax ändern.
                 SetClipboardSyntax(CLIPBOARD_SYNTAX.INSERT_INTO)
             Case sender Is miSelectSyntax_1
                 SetClipboardSyntax(CLIPBOARD_SYNTAX.ONLY_WITH_SPACES)
-            Case sender Is miLogfile_State '// Logfiles speichern de-/aktivieren.
-                SetLogfileToHDD(True)
-            Case sender Is miSQLQuery_State '// SQL Query speichern de-/aktivieren.
-                SetSQLQueryToHDD(True)
+            Case sender Is miSaveLogfile '// Logfiles speichern de-/aktivieren.
+                SetSettings(sender, True)
+            Case sender Is miGenerateSQLUpdateQuerys '// SQL Query speichern de-/aktivieren.
+                SetSettings(sender, True)
             Case sender Is miImport_FromClipboard '// Importieren von Zwischenablage.
                 If Clipboard.ContainsText Then
                     Process_GetClipboardContent_Start(Clipboard.GetText)
@@ -444,15 +461,71 @@ Public Class fmMain
         _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
 
         '// Alle ToolStripMenuItems visuell an Einstellungen anpassen.
-        SetAllMenuItems_LikeSettings()
+        LoadAllSettings()
         miLanguage_ComboBox.SelectedIndex = My.Settings.Language
 
         '// Verstecken des Row Headers
         dgvSelectedTitles.RowHeadersVisible = False
+
     End Sub
 
-#Region "Spezielle Funktionen [DEBUG]"
+#Region "Farben & Shortcut Handling des DGV"
+    Private Sub Cell_Click_Handler(sender As Object, e As DataGridViewCellEventArgs) Handles dgvSelectedTitles.CellClick
+        If e.ColumnIndex = 0 Then
+            Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(e.RowIndex).Cells(e.ColumnIndex), DataGridViewCheckBoxCell)
+            If CBool(_dgvCheckBoxCell.Value) = False Then
+                dgvSelectedTitles.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.LightGreen
+            Else
+                dgvSelectedTitles.Rows(e.RowIndex).DefaultCellStyle.BackColor = Color.White
+            End If
+        End If
+    End Sub
 
+    Private Sub Key_Down_ShortcutHandler(sender As Object, e As KeyEventArgs) Handles dgvSelectedTitles.KeyDown
+        If My.Settings.Shortcuts AndAlso e.Control Then
+
+            Select Case e.KeyCode
+                Case Keys.S
+                    '// Alle ausgewählten aktivieren.
+                    For Each _SelectedRow As DataGridViewRow In dgvSelectedTitles.SelectedRows
+                        DebugMessage(_SelectedRow.Cells.Item(0).ToString)
+                        Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_SelectedRow.Index).Cells(0), DataGridViewCheckBoxCell)
+                        _dgvCheckBoxCell.Value = "True"
+                    Next
+                Case Keys.R
+                    '// Alle Deaktivieren.
+                    For Each _Row As DataGridViewRow In dgvSelectedTitles.Rows
+                        DebugMessage(_Row.Cells.Item(0).ToString)
+                        Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_Row.Index).Cells(0), DataGridViewCheckBoxCell)
+                        _dgvCheckBoxCell.Value = "False"
+                    Next
+                Case Keys.U
+                    '// Alle ausgewählten Deaktivieren.
+                    For Each _Row As DataGridViewRow In dgvSelectedTitles.SelectedRows
+                        DebugMessage(_Row.Cells.Item(0).ToString)
+                        Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_Row.Index).Cells(0), DataGridViewCheckBoxCell)
+                        _dgvCheckBoxCell.Value = "False"
+                    Next
+                Case Keys.F
+                    '// Suchfenster öffnen.
+                    If _fmFind Is Nothing Then
+                        _fmFind = New fmFind
+                        _fmFind.StartPosition = FormStartPosition.Manual
+                        _fmFind.Location = New Point(CInt((Me.Location.X + (Me.Size.Width / 2)) - (_fmFind.Size.Width / 2)), CInt((Me.Location.Y + (Me.Size.Height / 2)) - (_fmFind.Size.Height / 2)))
+                        _fmFind.Show()
+                    Else
+                        _fmFind.Focus()
+                    End If
+            End Select
+
+            RefreshVisualRowColor()
+        End If
+    End Sub
+
+    
+#End Region
+
+#Region "Spezielle Funktionen [DEBUG]"
     Private Sub EnableDebug_KeyDownHandler(sender As Object, e As KeyEventArgs) Handles btnLookup.KeyDown, btnAdd.KeyDown, btnRemove.KeyDown
         Static _EnteredKey As String = ""
 
@@ -474,7 +547,7 @@ Public Class fmMain
     End Sub
 #End Region
     
-#Region "Allgemeine Infos zu DGV"
+#Region "Notizen zum DGV"
     'Dim col3 As New DataGridViewTextBoxColumn
     'col3.Name = "MaleTitle"
     'col3.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
@@ -482,6 +555,7 @@ Public Class fmMain
     'col3.ValueType = GetType(String)
     'fmMain.dgvSelectedTitles.Columns.Add(col3)
 
+    'http://www.vb-tips.com/dbpages.aspx?IA=DG2
 
     ''// Hinzufügen der Titel
     'For Each _Title In _LANG_TitelList_All
@@ -489,6 +563,7 @@ Public Class fmMain
     '        .Add(False, _Title.TitleID, _Title.MaleTitle)
     '    End With
     'Next
-#End Region
 
+    'http://social.msdn.microsoft.com/Forums/vstudio/en-US/30b9e161-f415-4887-9d5a-421061d5840b/datagridview-checkbox-column-value-problem-using-vbnet-2010
+#End Region
 End Class

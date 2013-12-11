@@ -131,7 +131,7 @@ Public Class Cls_DataGridView
                 .Item(9).HeaderText = "MaleTitle"
 
                 .Item(10).AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
-                .Item(10).HeaderText = "Female Title"
+                .Item(10).HeaderText = "FemaleTitle"
                 For _i As Integer = 1 To 10
                     .Item(_i).ReadOnly = True
                 Next

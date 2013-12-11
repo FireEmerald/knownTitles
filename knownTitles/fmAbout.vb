@@ -7,7 +7,6 @@
     Dim mouseOffset As Point
 #End Region
 
-
 #Region "Fenster Movement"
     Private Sub Me_MouseDown(ByVal sender As Object, ByVal e As MouseEventArgs) Handles PictureBox1.MouseDown
         _MouseDown = True
@@ -34,4 +33,8 @@
         End If
     End Sub
 #End Region
+
+    Private Sub fmAbout_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
+        fmMain._fmAbout = Nothing
+    End Sub
 End Class

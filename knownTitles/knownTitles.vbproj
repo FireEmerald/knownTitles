@@ -97,7 +97,14 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>dsSelectedTitles.xsd</DependentUpon>
     </Compile>
+    <Compile Include="fmFind.Designer.vb">
+      <DependentUpon>fmFind.vb</DependentUpon>
+    </Compile>
+    <Compile Include="fmFind.vb">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Mod_MenuItem.vb" />
+    <Compile Include="Settings.vb" />
     <Compile Include="Updater\ControlButtonUpdater.vb" />
     <Compile Include="Updater\ControlStatusStripUpdater.vb" />
     <Compile Include="fmAbout.Designer.vb">
@@ -144,6 +151,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="fmMain.resx">
       <DependentUpon>fmMain.vb</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="fmFind.resx">
+      <DependentUpon>fmFind.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectInfo\Resources.resx">
       <Generator>VbMyResourcesResXFileCodeGenerator</Generator>

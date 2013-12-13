@@ -39,6 +39,7 @@ Public Class Cls_Main_Validate
 #End Region
 
     Sub New(MainProcess As MainProcessing)
+        _MainProcess.ValidatedPlayerInput = MainProcess.ValidatedPlayerInput
         _MainProcess.PlayerInput = MainProcess.PlayerInput
         _MainProcess.ID = MainProcess.ID
     End Sub
@@ -51,10 +52,12 @@ Public Class Cls_Main_Validate
                                                        .WrongContent = "",
                                                        .WrongCounter = 0}
 
-        'ONLY FOR TESTING
-        '_MainProcess.ValidatedPlayerInput = _MainProcess.PlayerInput
-        'RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
-        'Return
+        '// Validation Prozess überspringen, wenn bereits validiert wurde.
+        If Not IsNothing(_MainProcess.ValidatedPlayerInput) OrElse My.Settings.DebugMode Then
+            DebugMessage("PlayerInput validation skipped. This could lead to errors while processing!", MessageBoxIcon.Warning)
+            RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
+            Return
+        End If
 
         Dim _ProgressCounter As Integer = 0
 
@@ -83,5 +86,4 @@ Public Class Cls_Main_Validate
         '// Abschließendes Event
         RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
     End Sub
-
 End Class

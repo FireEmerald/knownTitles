@@ -37,10 +37,13 @@ Partial Class fmMain
         Me.tsSlStatusPercent = New System.Windows.Forms.ToolStripStatusLabel()
         Me.tsSlStatusText = New System.Windows.Forms.ToolStripStatusLabel()
         Me.msMain = New System.Windows.Forms.MenuStrip()
-        Me.miSave = New System.Windows.Forms.ToolStripMenuItem()
-        Me.miSave_SaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miFile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miFile_SaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
+        Me.miFile_Exit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miImport = New System.Windows.Forms.ToolStripMenuItem()
         Me.miImport_FromClipboard = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator2 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStripMenuItem0 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSelectSyntax_0 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSelectSyntax_1 = New System.Windows.Forms.ToolStripMenuItem()
@@ -49,6 +52,7 @@ Partial Class fmMain
         Me.miSettings_InlineReports = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_Shortcuts = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_DebugMode = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLogfile_NewPath = New System.Windows.Forms.ToolStripMenuItem()
@@ -60,12 +64,14 @@ Partial Class fmMain
         Me.miLanguage = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLanguage_ComboBox = New System.Windows.Forms.ToolStripComboBox()
         Me.miLanguage_Save = New System.Windows.Forms.ToolStripMenuItem()
-        Me.miExit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_TrinityCoreWiki = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_About = New System.Windows.Forms.ToolStripMenuItem()
         Me.btnSearch = New System.Windows.Forms.Button()
         Me.DsSelectedTitles = New knownTitles.dsSelectedTitles()
+        Me.btnAbort = New System.Windows.Forms.Button()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.gbSelectedTitles.SuspendLayout()
         CType(Me.dgvSelectedTitles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.gbPlayerInput.SuspendLayout()
@@ -90,7 +96,7 @@ Partial Class fmMain
         '
         'btnLookup
         '
-        Me.btnLookup.Location = New System.Drawing.Point(965, 654)
+        Me.btnLookup.Location = New System.Drawing.Point(729, 654)
         Me.btnLookup.Name = "btnLookup"
         Me.btnLookup.Size = New System.Drawing.Size(112, 23)
         Me.btnLookup.TabIndex = 7
@@ -161,7 +167,7 @@ Partial Class fmMain
         '
         'btnAdd
         '
-        Me.btnAdd.Location = New System.Drawing.Point(611, 654)
+        Me.btnAdd.Location = New System.Drawing.Point(493, 654)
         Me.btnAdd.Name = "btnAdd"
         Me.btnAdd.Size = New System.Drawing.Size(112, 23)
         Me.btnAdd.TabIndex = 22
@@ -170,7 +176,7 @@ Partial Class fmMain
         '
         'btnRemove
         '
-        Me.btnRemove.Location = New System.Drawing.Point(729, 654)
+        Me.btnRemove.Location = New System.Drawing.Point(611, 654)
         Me.btnRemove.Name = "btnRemove"
         Me.btnRemove.Size = New System.Drawing.Size(112, 23)
         Me.btnRemove.TabIndex = 23
@@ -209,31 +215,43 @@ Partial Class fmMain
         'msMain
         '
         Me.msMain.BackColor = System.Drawing.Color.White
-        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSave, Me.miImport, Me.miSettings, Me.miLanguage, Me.miExit, Me.miInfo})
+        Me.msMain.Items.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile, Me.miImport, Me.miSettings, Me.miLanguage, Me.miInfo})
         Me.msMain.Location = New System.Drawing.Point(0, 0)
         Me.msMain.Name = "msMain"
         Me.msMain.Size = New System.Drawing.Size(1095, 24)
         Me.msMain.TabIndex = 26
         Me.msMain.Text = "MenuStrip1"
         '
-        'miSave
+        'miFile
         '
-        Me.miSave.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSave_SaveLogfile})
-        Me.miSave.ForeColor = System.Drawing.Color.Navy
-        Me.miSave.Name = "miSave"
-        Me.miSave.Size = New System.Drawing.Size(43, 20)
-        Me.miSave.Text = "Save"
+        Me.miFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile_SaveLogfile, Me.ToolStripSeparator1, Me.miFile_Exit})
+        Me.miFile.ForeColor = System.Drawing.Color.Navy
+        Me.miFile.Name = "miFile"
+        Me.miFile.Size = New System.Drawing.Size(37, 20)
+        Me.miFile.Text = "File"
         '
-        'miSave_SaveLogfile
+        'miFile_SaveLogfile
         '
-        Me.miSave_SaveLogfile.ForeColor = System.Drawing.Color.Navy
-        Me.miSave_SaveLogfile.Name = "miSave_SaveLogfile"
-        Me.miSave_SaveLogfile.Size = New System.Drawing.Size(151, 22)
-        Me.miSave_SaveLogfile.Text = "Save Logfile as"
+        Me.miFile_SaveLogfile.ForeColor = System.Drawing.Color.Navy
+        Me.miFile_SaveLogfile.Name = "miFile_SaveLogfile"
+        Me.miFile_SaveLogfile.Size = New System.Drawing.Size(151, 22)
+        Me.miFile_SaveLogfile.Text = "Save Logfile as"
+        '
+        'ToolStripSeparator1
+        '
+        Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(148, 6)
+        '
+        'miFile_Exit
+        '
+        Me.miFile_Exit.ForeColor = System.Drawing.Color.Navy
+        Me.miFile_Exit.Name = "miFile_Exit"
+        Me.miFile_Exit.Size = New System.Drawing.Size(151, 22)
+        Me.miFile_Exit.Text = "Exit"
         '
         'miImport
         '
-        Me.miImport.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miImport_FromClipboard, Me.ToolStripMenuItem0})
+        Me.miImport.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miImport_FromClipboard, Me.ToolStripSeparator2, Me.ToolStripMenuItem0})
         Me.miImport.ForeColor = System.Drawing.Color.Navy
         Me.miImport.Name = "miImport"
         Me.miImport.Size = New System.Drawing.Size(55, 20)
@@ -245,6 +263,11 @@ Partial Class fmMain
         Me.miImport_FromClipboard.Name = "miImport_FromClipboard"
         Me.miImport_FromClipboard.Size = New System.Drawing.Size(194, 22)
         Me.miImport_FromClipboard.Text = "Import from Clipboard"
+        '
+        'ToolStripSeparator2
+        '
+        Me.ToolStripSeparator2.Name = "ToolStripSeparator2"
+        Me.ToolStripSeparator2.Size = New System.Drawing.Size(191, 6)
         '
         'ToolStripMenuItem0
         '
@@ -271,7 +294,7 @@ Partial Class fmMain
         '
         'miSettings
         '
-        Me.miSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSettings_ExtendedTitles, Me.miSettings_InlineReports, Me.miSettings_Shortcuts, Me.miSettings_DebugMode, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2})
+        Me.miSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSettings_ExtendedTitles, Me.miSettings_InlineReports, Me.miSettings_Shortcuts, Me.miSettings_DebugMode, Me.ToolStripSeparator3, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2})
         Me.miSettings.ForeColor = System.Drawing.Color.Navy
         Me.miSettings.Name = "miSettings"
         Me.miSettings.Size = New System.Drawing.Size(61, 20)
@@ -306,9 +329,14 @@ Partial Class fmMain
         Me.miSettings_DebugMode.Text = "Debug mode"
         Me.miSettings_DebugMode.Visible = False
         '
+        'ToolStripSeparator3
+        '
+        Me.ToolStripSeparator3.Name = "ToolStripSeparator3"
+        Me.ToolStripSeparator3.Size = New System.Drawing.Size(173, 6)
+        '
         'ToolStripMenuItem1
         '
-        Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSaveLogfile, Me.miLogfile_NewPath, Me.miLogfile_Path})
+        Me.ToolStripMenuItem1.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSaveLogfile, Me.ToolStripSeparator4, Me.miLogfile_NewPath, Me.miLogfile_Path})
         Me.ToolStripMenuItem1.ForeColor = System.Drawing.Color.Navy
         Me.ToolStripMenuItem1.Name = "ToolStripMenuItem1"
         Me.ToolStripMenuItem1.Size = New System.Drawing.Size(176, 22)
@@ -335,7 +363,7 @@ Partial Class fmMain
         '
         'ToolStripMenuItem2
         '
-        Me.ToolStripMenuItem2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miGenerateSQLUpdateQuerys, Me.miSQlQuery_NewPath, Me.miSQLQuery_Path})
+        Me.ToolStripMenuItem2.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miGenerateSQLUpdateQuerys, Me.ToolStripSeparator5, Me.miSQlQuery_NewPath, Me.miSQLQuery_Path})
         Me.ToolStripMenuItem2.ForeColor = System.Drawing.Color.Navy
         Me.ToolStripMenuItem2.Name = "ToolStripMenuItem2"
         Me.ToolStripMenuItem2.Size = New System.Drawing.Size(176, 22)
@@ -384,13 +412,6 @@ Partial Class fmMain
         Me.miLanguage_Save.Size = New System.Drawing.Size(181, 22)
         Me.miLanguage_Save.Text = "Save"
         '
-        'miExit
-        '
-        Me.miExit.ForeColor = System.Drawing.Color.Navy
-        Me.miExit.Name = "miExit"
-        Me.miExit.Size = New System.Drawing.Size(37, 20)
-        Me.miExit.Text = "Exit"
-        '
         'miInfo
         '
         Me.miInfo.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miInfo_TrinityCoreWiki, Me.miInfo_About})
@@ -427,12 +448,32 @@ Partial Class fmMain
         Me.DsSelectedTitles.DataSetName = "dsSelectedTitles"
         Me.DsSelectedTitles.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
         '
+        'btnAbort
+        '
+        Me.btnAbort.Location = New System.Drawing.Point(965, 654)
+        Me.btnAbort.Name = "btnAbort"
+        Me.btnAbort.Size = New System.Drawing.Size(112, 23)
+        Me.btnAbort.TabIndex = 28
+        Me.btnAbort.Text = "Abort"
+        Me.btnAbort.UseVisualStyleBackColor = True
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(317, 6)
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(317, 6)
+        '
         'fmMain
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.ClientSize = New System.Drawing.Size(1095, 700)
+        Me.Controls.Add(Me.btnAbort)
         Me.Controls.Add(Me.btnSearch)
         Me.Controls.Add(Me.ssMain)
         Me.Controls.Add(Me.msMain)
@@ -477,12 +518,11 @@ Partial Class fmMain
     Friend WithEvents tsSlStatusPercent As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents tsSlStatusText As System.Windows.Forms.ToolStripStatusLabel
     Friend WithEvents msMain As System.Windows.Forms.MenuStrip
-    Friend WithEvents miSave As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents miSave_SaveLogfile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miFile As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents miFile_SaveLogfile As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLanguage As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLanguage_ComboBox As System.Windows.Forms.ToolStripComboBox
     Friend WithEvents miLanguage_Save As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents miExit As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miInfo As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miInfo_About As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miImport As System.Windows.Forms.ToolStripMenuItem
@@ -507,5 +547,12 @@ Partial Class fmMain
     Friend WithEvents miInfo_TrinityCoreWiki As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents btnSearch As System.Windows.Forms.Button
     Friend WithEvents miSettings_Shortcuts As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents btnAbort As System.Windows.Forms.Button
+    Friend WithEvents miFile_Exit As System.Windows.Forms.ToolStripMenuItem
+    Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
 
 End Class

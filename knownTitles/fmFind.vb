@@ -43,7 +43,7 @@ Public Class fmFind
             Case sender Is btnClose
                 Me.Close()
             Case sender Is tsHelpLink
-                ShowMySQLSyntaxHelp()
+                ShowMySQLSyntaxHelp(True)
             Case sender Is cbTransparency
                 My.Settings.Transparency = Not cbTransparency.Checked
             Case sender Is cbWildcraft
@@ -211,22 +211,21 @@ Public Class fmFind
     End Sub
 
     ''' <summary>MessageBox mit Hilfe zur SQL Syntax anzeigen.</summary>
-    Private Sub ShowMySQLSyntaxHelp()
-        Static _Show As Boolean = True
-
-        If _Show Then
+    Private Sub ShowMySQLSyntaxHelp(Optional _OverrideShow As Boolean = False)
+        If fmMain._fmFind_ShowSyntaxHelp OrElse _OverrideShow Then
             Select Case MessageBox.Show("It's highly recommended, that you take a look at how the syntax should look like, would you like?" + vbCrLf + vbCrLf + _
-                                    "You have to use this column names instead of the visibles:" + vbCrLf + _
-                                    """X"" ⇒ ""colChoose""" + vbCrLf + _
-                                    """ID/TitleID"" ⇒ ""colTitleID""" + vbCrLf + _
-                                    """IntID Double"" ⇒ ""colIntID_Double""" + vbCrLf + vbCrLf + _
-                                    "Don't forget to add a ""col"" for each column name, like shown!", _
-                                    "Important informations!", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                                "You have to use this column names instead of the visibles:" + vbCrLf + _
+                                """X"" ⇒ ""colChoose""" + vbCrLf + _
+                                """ID/TitleID"" ⇒ ""colTitleID""" + vbCrLf + _
+                                """IntID Double"" ⇒ ""colIntID_Double""" + vbCrLf + vbCrLf + _
+                                "Don't forget to add a ""col"" for each column name, like shown!", _
+                                "Important informations!", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
 
                 Case Windows.Forms.DialogResult.Yes
                     Process.Start("http://www.csharp-examples.net/dataview-rowfilter/")
+                Case Windows.Forms.DialogResult.No
+                    fmMain._fmFind_ShowSyntaxHelp = False
             End Select
-            _Show = False
         End If
     End Sub
 

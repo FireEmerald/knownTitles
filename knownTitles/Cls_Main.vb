@@ -45,7 +45,7 @@ Public Class Cls_Main
     Public Event StatusReport(sender As Object, e As EArgs_StatusReport)
     Public Event MainProcess_Completed(sender As Object, e As EArgs_MainProcessCompleted)
 
-#Region "Enums FieldID"
+#Region "Enum - FieldID"
     Private Enum FieldID
         GUID = 0
         AccountID = 1

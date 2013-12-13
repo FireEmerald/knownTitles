@@ -12,6 +12,12 @@ Public Class fmMain
     Private _LogToHarddrive As Boolean = False
     Private _GenerateSQLQuery As Boolean = False
 
+    '// Zuletzt validierter PlayerInput
+    Public _LastApprovedPlayerInput As String = ""
+
+    '// Ob ein "Hilfe Fenster" zur Syntax anzeigt wird
+    Public _fmFind_ShowSyntaxHelp As Boolean = True
+
     '// Forms die nicht doppelt geöffnet werden können
     Public WithEvents _fmFind, _fmAbout As Form
 
@@ -30,7 +36,8 @@ Public Class fmMain
         btnAdd.Click,
         btnRemove.Click,
         btnLookup.Click,
-        btnSearch.Click
+        btnSearch.Click,
+        btnAbort.Click
 
         Select Case True
             Case sender Is btnAdd
@@ -38,27 +45,52 @@ Public Class fmMain
                 MessageBox.Show("Not implemented yet.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Case sender Is btnRemove
                 '// Titel entfernen
-                tbLog.Text = ""
-                Remove_EmptyLines(tbPlayerInput)
-
-                Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_REMOVE,
-                                                                           .PlayerInput = tbPlayerInput.Text})
+                Prepare_ValidationProcess(MainProcessingID.PROCESS_REMOVE)
             Case sender Is btnLookup
                 '// Titel auslesen
-                tbLog.Text = ""
-                Remove_EmptyLines(tbPlayerInput)
-
-                Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_LOOKUP,
-                                                                           .PlayerInput = tbPlayerInput.Text})
+                Prepare_ValidationProcess(MainProcessingID.PROCESS_LOOKUP)
             Case sender Is btnSearch
                 '// Titel suchen
-                tbLog.Text = ""
-                Remove_EmptyLines(tbPlayerInput)
-
-                Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = MainProcessingID.PROCESS_SEARCH,
-                                                                           .PlayerInput = tbPlayerInput.Text})
+                Prepare_ValidationProcess(MainProcessingID.PROCESS_SEARCH)
+            Case sender Is btnAbort
+                '// Abbrechen
+                CancelAllThreads()
+                tsMain_setAll(0, "Status: Aborted.")
+                btnX_setState(True)
         End Select
     End Sub
+
+#Region "Validierung"
+    Private Sub Prepare_ValidationProcess(_MainProcessingID As MainProcessingID)
+        '// TextBoxen aufräumen
+        tbLog.Text = ""
+        Remove_EmptyLines(tbPlayerInput)
+
+        '// Prüfen ob der Input bereits validiert wurde.
+        If tbPlayerInput.Text = _LastApprovedPlayerInput Then
+            Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = _MainProcessingID,
+                                                                       .ValidatedPlayerInput = tbPlayerInput.Text})
+        Else
+            Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = _MainProcessingID,
+                                                                       .PlayerInput = tbPlayerInput.Text})
+        End If
+    End Sub
+
+    Private Sub Process_ValidatePlayerInput_Start(_MainProcess As MainProcessing)
+        '// Das Task-Objekt erstellen.
+        Dim _ValidateProcess As New Cls_Main_Validate(_MainProcess)
+        AddHandler _ValidateProcess.StatusReport, AddressOf StatusReport_Handler
+        AddHandler _ValidateProcess.MainProcess_ValidationCompleted, AddressOf MainProcess_ValidationCompleted_Handler
+
+        '// Buttons auf der Form sperren
+        btnX_setState(False)
+
+        '// Den Thread erstellen.
+        Dim _ValidateProcess_Thread As New Thread(AddressOf _ValidateProcess.Validate_PlayerInput)
+        _ValidateProcess_Thread.Start()
+        _Hashtable.Add(_ValidateProcess.P_MainProcess_Guid.ToString, _ValidateProcess_Thread)
+    End Sub
+#End Region
 
 #Region "Prozesse starten"
     Private Sub Process_GetClipboardContent_Start(ClipboardContent As String)
@@ -83,9 +115,8 @@ Public Class fmMain
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
-        '// Startzeit festhalten & Buttons auf Form sperren
+        '// Startzeit festhalten
         _StartTime = Date.Now
-        btnX_setState(False)
 
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Lookup)
@@ -100,9 +131,8 @@ Public Class fmMain
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
-        '// Startzeit festhalten & Buttons auf der Form sperren
+        '// Startzeit festhalten
         _StartTime = Date.Now
-        btnX_setState(False)
 
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Remove)
@@ -117,26 +147,13 @@ Public Class fmMain
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
-        '// Startzeit festhalten & Buttons auf der Form sperren
+        '// Startzeit festhalten
         _StartTime = Date.Now
-        btnX_setState(False)
 
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Search)
         _Process_Thread.Start()
         _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
-    End Sub
-
-    Private Sub Process_ValidatePlayerInput_Start(_MainProcess As MainProcessing)
-        '// Das Task-Objekt erstellen.
-        Dim _ValidateProcess As New Cls_Main_Validate(_MainProcess)
-        AddHandler _ValidateProcess.StatusReport, AddressOf StatusReport_Handler
-        AddHandler _ValidateProcess.MainProcess_ValidationCompleted, AddressOf MainProcess_ValidationCompleted_Handler
-
-        '// Den Thread erstellen.
-        Dim _ValidateProcess_Thread As New Thread(AddressOf _ValidateProcess.Validate_PlayerInput)
-        _ValidateProcess_Thread.Start()
-        _Hashtable.Add(_ValidateProcess.P_MainProcess_Guid.ToString, _ValidateProcess_Thread)
     End Sub
 #End Region
 
@@ -153,7 +170,7 @@ Public Class fmMain
         tbX_AddText(e.P_ValidatedClipboardContent, tbPlayerInput)
 
         '// Anzeigen ob falsche Einträge gefunden wurden.
-        DoErrorProcessing(e)
+        NoErrorWhileValidation(e)
 
         '// Buttons auf der Form entsperren
         btnX_setState(True)
@@ -207,8 +224,10 @@ Public Class fmMain
 #Region "MainProcess Validate Event Handler"
     Private Sub MainProcess_ValidationCompleted_Handler(sender As Object, e As EArgs_ValidationProcessCompleted)
         '// Anzeigen ob falsche Einträge gefunden wurden.
-        If DoErrorProcessing(e) Then
-            '// Falls ja, wird kein Prozess gestartet!
+        If NoErrorWhileValidation(e) Then
+            '// Aktueller PlayerInput wurde validiert
+            _LastApprovedPlayerInput = tbPlayerInput.Text
+            '// Hauptprozess starten
             Select Case e.P_MainProcess.ID
                 Case MainProcessingID.PROCESS_ADD
 
@@ -225,6 +244,9 @@ Public Class fmMain
                                                                  .ValidatedPlayerInput = e.P_MainProcess.ValidatedPlayerInput}
                     Process_SearchTitles_Start(_MainProcess)
             End Select
+        Else
+            '// Validation war nicht erfolgreich -> kein MainProcess, also Buttons entsperren.
+            btnX_setState(True)
         End If
 
         '// Das Task-Objekt löschen.
@@ -297,7 +319,7 @@ Public Class fmMain
 #End Region
 
 #Region "ErrorProcessing"
-    Private Function DoErrorProcessing(e As EArgs_ValidationProcessCompleted) As Boolean
+    Private Function NoErrorWhileValidation(e As EArgs_ValidationProcessCompleted) As Boolean
         Dim _ErrorProcessMsg As String = ""
 
         Select Case e.P_ErrorProcess.ID
@@ -335,8 +357,8 @@ Public Class fmMain
 #Region "Menüleistenverwaltung"
     '// Verwaltung der oberen Menüleiste
     Private Sub Menu_ClickedHandler(sender As Object, e As EventArgs) Handles _
-        miExit.Click,
-        miSave_SaveLogfile.Click,
+        miFile_Exit.Click,
+        miFile_SaveLogfile.Click,
         miInfo_About.Click,
         miInfo_TrinityCoreWiki.Click,
         miLanguage_Save.Click,
@@ -355,7 +377,7 @@ Public Class fmMain
         '// Können währen eines Prozesses aufgerufen werden.
         Dim _NotProcessAffectedItems As New List(Of System.Windows.Forms.ToolStripMenuItem)({miInfo_About,
                                                                                              miInfo_TrinityCoreWiki,
-                                                                                             miExit})
+                                                                                             miFile_Exit})
 
         '// Prüfen ob ein Prozess läuft | Ausnahmen, siehe oben.
         If ThreadIsRunning(_Hashtable) AndAlso Not _NotProcessAffectedItems.Contains(CType(sender, System.Windows.Forms.ToolStripMenuItem)) Then
@@ -364,10 +386,10 @@ Public Class fmMain
         End If
 
         Select Case True
-            Case sender Is miExit '// Programm beenden.
+            Case sender Is miFile_Exit '// Programm beenden.
                 CancelAllThreads()
                 Application.Exit()
-            Case sender Is miSave_SaveLogfile '// Logfile Pfad festlegen und speichern.
+            Case sender Is miFile_SaveLogfile '// Logfile Pfad festlegen und speichern.
 
                 Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
                 If Not _Path = "" Then
@@ -522,7 +544,7 @@ Public Class fmMain
         End If
     End Sub
 
-    
+
 #End Region
 
 #Region "Spezielle Funktionen [DEBUG]"
@@ -546,7 +568,7 @@ Public Class fmMain
         End If
     End Sub
 #End Region
-    
+
 #Region "Notizen zum DGV"
     'Dim col3 As New DataGridViewTextBoxColumn
     'col3.Name = "MaleTitle"

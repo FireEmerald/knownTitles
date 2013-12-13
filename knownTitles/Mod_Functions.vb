@@ -19,9 +19,9 @@ Module Mod_Functions
     End Function
 
     ''' <summary>Zeigt eine Debugnachricht, falls Debug Mode enabled.</summary>
-    Public Sub DebugMessage(_Message As String)
+    Public Sub DebugMessage(_Message As String, Optional _Icon As MessageBoxIcon = MessageBoxIcon.Information)
         If My.Settings.DebugMode Then
-            MessageBox.Show(_Message, "Debug message.", MessageBoxButtons.OK, MessageBoxIcon.Information)
+            MessageBox.Show(_Message, "Debug message.", MessageBoxButtons.OK, _Icon)
         End If
     End Sub
 

@@ -90,45 +90,52 @@
     <Import Include="System.Threading.Tasks" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cls_Clipboard.vb" />
-    <Compile Include="Cls_DataGridView.vb" />
-    <Compile Include="Cls_Log.vb" />
-    <Compile Include="dsSelectedTitles.Designer.vb">
+    <Compile Include="Klassen\Cls_Clipboard.vb" />
+    <Compile Include="Klassen\Cls_ExtendedView.vb" />
+    <Compile Include="Klassen\Cls_Log.vb" />
+    <Compile Include="DataSets\dsResults.Designer.vb">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>dsResults.xsd</DependentUpon>
+    </Compile>
+    <Compile Include="DataSets\dsSelectedTitles.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>dsSelectedTitles.xsd</DependentUpon>
     </Compile>
-    <Compile Include="fmFind.Designer.vb">
+    <Compile Include="Module\Mod_Log.vb" />
+    <Compile Include="WindowsForms\fmFind.Designer.vb">
       <DependentUpon>fmFind.vb</DependentUpon>
     </Compile>
-    <Compile Include="fmFind.vb">
+    <Compile Include="WindowsForms\fmFind.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Mod_MenuItem.vb" />
+    <Compile Include="Module\Mod_MenuItem.vb" />
     <Compile Include="Settings.vb" />
-    <Compile Include="Updater\ControlButtonUpdater.vb" />
-    <Compile Include="Updater\ControlStatusStripUpdater.vb" />
-    <Compile Include="fmAbout.Designer.vb">
+    <Compile Include="ControlInvoker\ButtonInvoker.vb" />
+    <Compile Include="ControlInvoker\DataGridViewInvoker.vb" />
+    <Compile Include="ControlInvoker\StatusStripInvoker.vb" />
+    <Compile Include="WindowsForms\fmAbout.Designer.vb">
       <DependentUpon>fmAbout.vb</DependentUpon>
     </Compile>
-    <Compile Include="fmAbout.vb">
+    <Compile Include="WindowsForms\fmAbout.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Mod_Functions.vb" />
+    <Compile Include="Module\Mod_Functions.vb" />
     <Compile Include="EArgs\EArgs_ValidationProcessCompleted.vb" />
     <Compile Include="EArgs\EArgs_MainProcessCompleted.vb" />
-    <Compile Include="Updater\ControlTextUpdater.vb" />
-    <Compile Include="fmMain.vb">
+    <Compile Include="ControlInvoker\TextInvoker.vb" />
+    <Compile Include="WindowsForms\fmMain.vb">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="fmMain.Designer.vb">
+    <Compile Include="WindowsForms\fmMain.Designer.vb">
       <DependentUpon>fmMain.vb</DependentUpon>
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="EArgs\EArgs_InlineReport.vb" />
     <Compile Include="EArgs\EArgs_StatusReport.vb" />
-    <Compile Include="Cls_Main.vb" />
-    <Compile Include="Mod_TitleDBC.vb" />
+    <Compile Include="Klassen\Cls_Main.vb" />
+    <Compile Include="Module\Mod_TitleDBC.vb" />
     <Compile Include="ProjectInfo\AssemblyInfo.vb" />
     <Compile Include="ProjectInfo\Application.Designer.vb">
       <AutoGen>True</AutoGen>
@@ -144,16 +151,16 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="Cls_Main_Validate.vb" />
+    <Compile Include="Klassen\Cls_Main_Validate.vb" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="fmAbout.resx">
+    <EmbeddedResource Include="WindowsForms\fmAbout.resx">
       <DependentUpon>fmAbout.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="fmMain.resx">
+    <EmbeddedResource Include="WindowsForms\fmMain.resx">
       <DependentUpon>fmMain.vb</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="fmFind.resx">
+    <EmbeddedResource Include="WindowsForms\fmFind.resx">
       <DependentUpon>fmFind.vb</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectInfo\Resources.resx">
@@ -164,15 +171,26 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <None Include="dsSelectedTitles.xsc">
+    <None Include="DataSets\dsResults.xsc">
+      <DependentUpon>dsResults.xsd</DependentUpon>
+    </None>
+    <None Include="DataSets\dsResults.xsd">
+      <SubType>Designer</SubType>
+      <Generator>MSDataSetGenerator</Generator>
+      <LastGenOutput>dsResults.Designer.vb</LastGenOutput>
+    </None>
+    <None Include="DataSets\dsResults.xss">
+      <DependentUpon>dsResults.xsd</DependentUpon>
+    </None>
+    <None Include="DataSets\dsSelectedTitles.xsc">
       <DependentUpon>dsSelectedTitles.xsd</DependentUpon>
     </None>
-    <None Include="dsSelectedTitles.xsd">
+    <None Include="DataSets\dsSelectedTitles.xsd">
       <SubType>Designer</SubType>
       <Generator>MSDataSetGenerator</Generator>
       <LastGenOutput>dsSelectedTitles.Designer.vb</LastGenOutput>
     </None>
-    <None Include="dsSelectedTitles.xss">
+    <None Include="DataSets\dsSelectedTitles.xss">
       <DependentUpon>dsSelectedTitles.xsd</DependentUpon>
     </None>
     <None Include="ProjectInfo\app.manifest" />
@@ -205,13 +223,13 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\about_image.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="ProjectInfo\Application.myapp">
       <Generator>MyApplicationCodeGenerator</Generator>
       <LastGenOutput>Application.Designer.vb</LastGenOutput>
     </None>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\about_image.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.VisualBasic.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

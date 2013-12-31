@@ -12,16 +12,7 @@
   <xs:element name="dsSelectedTitles" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="dsSelectedTitles" msprop:Generator_UserDSName="dsSelectedTitles">
     <xs:complexType>
       <xs:choice minOccurs="0" maxOccurs="unbounded">
-        <xs:element name="dtShort" msprop:Generator_TableClassName="dtShortDataTable" msprop:Generator_TableVarName="tabledtShort" msprop:Generator_TablePropName="dtShort" msprop:Generator_RowDeletingName="dtShortRowDeleting" msprop:Generator_RowChangingName="dtShortRowChanging" msprop:Generator_RowEvHandlerName="dtShortRowChangeEventHandler" msprop:Generator_RowDeletedName="dtShortRowDeleted" msprop:Generator_UserTableName="dtShort" msprop:Generator_RowChangedName="dtShortRowChanged" msprop:Generator_RowEvArgName="dtShortRowChangeEvent" msprop:Generator_RowClassName="dtShortRow">
-          <xs:complexType>
-            <xs:sequence>
-              <xs:element name="colChoose" msprop:Generator_ColumnVarNameInTable="columncolChoose" msprop:Generator_ColumnPropNameInRow="colChoose" msprop:Generator_ColumnPropNameInTable="colChooseColumn" msprop:Generator_UserColumnName="colChoose" type="xs:boolean" default="false" minOccurs="0" />
-              <xs:element name="colTitleID" msprop:Generator_ColumnVarNameInTable="columncolTitleID" msprop:Generator_ColumnPropNameInRow="colTitleID" msprop:Generator_ColumnPropNameInTable="colTitleIDColumn" msprop:Generator_UserColumnName="colTitleID" type="xs:int" minOccurs="0" />
-              <xs:element name="colMaleTitle" msprop:Generator_ColumnVarNameInTable="columncolMaleTitle" msprop:Generator_ColumnPropNameInRow="colMaleTitle" msprop:Generator_ColumnPropNameInTable="colMaleTitleColumn" msprop:Generator_UserColumnName="colMaleTitle" type="xs:string" minOccurs="0" />
-            </xs:sequence>
-          </xs:complexType>
-        </xs:element>
-        <xs:element name="dtExtended" msprop:Generator_TableClassName="dtExtendedDataTable" msprop:Generator_TableVarName="tabledtExtended" msprop:Generator_RowChangedName="dtExtendedRowChanged" msprop:Generator_TablePropName="dtExtended" msprop:Generator_RowDeletingName="dtExtendedRowDeleting" msprop:Generator_RowChangingName="dtExtendedRowChanging" msprop:Generator_RowEvHandlerName="dtExtendedRowChangeEventHandler" msprop:Generator_RowDeletedName="dtExtendedRowDeleted" msprop:Generator_RowClassName="dtExtendedRow" msprop:Generator_UserTableName="dtExtended" msprop:Generator_RowEvArgName="dtExtendedRowChangeEvent">
+        <xs:element name="dtExtended" msprop:Generator_TableClassName="dtExtendedDataTable" msprop:Generator_TableVarName="tabledtExtended" msprop:Generator_TablePropName="dtExtended" msprop:Generator_RowDeletingName="dtExtendedRowDeleting" msprop:Generator_RowChangingName="dtExtendedRowChanging" msprop:Generator_RowEvHandlerName="dtExtendedRowChangeEventHandler" msprop:Generator_RowDeletedName="dtExtendedRowDeleted" msprop:Generator_UserTableName="dtExtended" msprop:Generator_RowChangedName="dtExtendedRowChanged" msprop:Generator_RowEvArgName="dtExtendedRowChangeEvent" msprop:Generator_RowClassName="dtExtendedRow">
           <xs:complexType>
             <xs:sequence>
               <xs:element name="colChoose" msdata:Caption="Choose" msprop:Generator_ColumnVarNameInTable="columncolChoose" msprop:Generator_ColumnPropNameInRow="colChoose" msprop:Generator_ColumnPropNameInTable="colChooseColumn" msprop:Generator_UserColumnName="colChoose" type="xs:boolean" default="false" minOccurs="0" />

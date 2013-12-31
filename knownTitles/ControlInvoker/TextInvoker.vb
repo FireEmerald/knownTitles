@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-Public Class ControlTextUpdater
+Public Class TextInvoker
     '// Der Verweis wird als generisches Steuerelement gespeichert, so dass
     '// diese Hilfsklasse in anderen Szenarien wiederverwendet werden kann.
     Private _ControlToUpdate As Control

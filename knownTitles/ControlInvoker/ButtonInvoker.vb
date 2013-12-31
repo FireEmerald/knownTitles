@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-Public Class ControlButtonUpdater
+Public Class ButtonInvoker
     '// Der Verweis wird als generisches Steuerelement gespeichert, so dass
     '// diese Hilfsklasse in anderen Szenarien wiederverwendet werden kann.
     Private _ControlsToUpdate() As Windows.Forms.Button
@@ -31,6 +31,7 @@ Public Class ControlButtonUpdater
             End SyncLock
         Next
     End Sub
+
     Private Sub ThreadSafeChangeState()
         Me.P_ControlToUpdate.Enabled = _NewState
     End Sub

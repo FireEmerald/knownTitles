@@ -7,10 +7,12 @@ Imports System.Text.RegularExpressions
 Public Class fmMain
 
 #Region "Deklarationen"
-    '// Booleanische Variablen
-    Private _InlineReport As Boolean = False
-    Private _LogToHarddrive As Boolean = False
-    Private _GenerateSQLQuery As Boolean = False
+    '// Wird von anderen Forms verwendet um auf diese eine Referenz zu haben.
+    Public ReadOnly _Me As fmMain = Me
+
+    '// Letztes Logfile / SQL Update Query
+    Private _LastLog As String = ""
+    Private _LastSQLUpdateQuery As String = ""
 
     '// Zuletzt validierter PlayerInput
     Public _LastApprovedPlayerInput As String = ""
@@ -25,7 +27,7 @@ Public Class fmMain
     Private _StartTime As Date
 
     '// Für die Verarbeitung des DataGridView verantwortlich
-    Private _DataGridView_Handler As Cls_DataGridView
+    Private _ExtendedView_Handler As Cls_ExtendedView
 
     '// Speichert die laufenden Threads
     Private _Hashtable As New Hashtable
@@ -37,12 +39,12 @@ Public Class fmMain
         btnRemove.Click,
         btnLookup.Click,
         btnSearch.Click,
-        btnAbort.Click
+        btnCancel.Click
 
         Select Case True
             Case sender Is btnAdd
                 '// Titel hinzufügen
-                MessageBox.Show("Not implemented yet.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
+                MessageBox.Show("Not implemented yet." + vbCrLf + "Add them Ingame!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information)
             Case sender Is btnRemove
                 '// Titel entfernen
                 Prepare_ValidationProcess(MainProcessingID.PROCESS_REMOVE)
@@ -52,7 +54,7 @@ Public Class fmMain
             Case sender Is btnSearch
                 '// Titel suchen
                 Prepare_ValidationProcess(MainProcessingID.PROCESS_SEARCH)
-            Case sender Is btnAbort
+            Case sender Is btnCancel
                 '// Abbrechen
                 CancelAllThreads()
                 tsMain_setAll(0, "Status: Aborted.")
@@ -63,7 +65,7 @@ Public Class fmMain
 #Region "Validierung"
     Private Sub Prepare_ValidationProcess(_MainProcessingID As MainProcessingID)
         '// TextBoxen aufräumen
-        tbLog.Text = ""
+        Log_Clear()
         Remove_EmptyLines(tbPlayerInput)
 
         '// Prüfen ob der Input bereits validiert wurde.
@@ -111,7 +113,6 @@ Public Class fmMain
     Private Sub Process_LookupTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
         Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text)
-        AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
@@ -121,13 +122,12 @@ Public Class fmMain
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Lookup)
         _Process_Thread.Start()
-        _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
+        _Hashtable.Add(_Process.GetMainProcess_Guid.ToString, _Process_Thread)
     End Sub
 
     Private Sub Process_RemoveTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text, miSQLQuery_Path.Text)
-        AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
+        Dim _Process As New Cls_Main(_MainProcess, miSQLQuery_Path.Text)
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
@@ -137,13 +137,12 @@ Public Class fmMain
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Remove)
         _Process_Thread.Start()
-        _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
+        _Hashtable.Add(_Process.GetMainProcess_Guid.ToString, _Process_Thread)
     End Sub
 
     Private Sub Process_SearchTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Object erstellen.
         Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text)
-        AddHandler _Process.InlineReport, AddressOf InlineReport_Handler
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
@@ -153,7 +152,7 @@ Public Class fmMain
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Search)
         _Process_Thread.Start()
-        _Hashtable.Add(_Process.P_MainProcess_Guid.ToString, _Process_Thread)
+        _Hashtable.Add(_Process.GetMainProcess_Guid.ToString, _Process_Thread)
     End Sub
 #End Region
 
@@ -183,11 +182,6 @@ Public Class fmMain
 #End Region
 
 #Region "MainProcess Event Handler"
-    Private Sub InlineReport_Handler(sender As Object, e As EArgs_InlineReport)
-        '// Eine thread-sichere Aktualisierung durchführen.
-        tbX_AddText(e.P_LogMessage + vbCrLf, tbLog)
-    End Sub
-
     Private Sub StatusReport_Handler(sender As Object, e As EArgs_StatusReport)
         '// Eine thread-sichere Aktualisierung durchführen.
         If e.P_StatusMessage = "" Then
@@ -198,16 +192,30 @@ Public Class fmMain
     End Sub
 
     Private Sub MainProcess_Completed_Handler(sender As Object, e As EArgs_MainProcessCompleted)
+        '// Daten aus dem MainProcess an die beiden DataGridViews weiterreichen.
+        Dim _dgvInvoker As New DataGridViewInvoker(Me)
+        '// Bevor den DataTablen neue Daten zugewiesen werden können, müssen die Bindings aufgehoben werden.
+        _dgvInvoker.NewSourceAndMember(dgvCharacters, Nothing, Nothing)
+        _dgvInvoker.NewSourceAndMember(dgvCharacterTitles, Nothing, Nothing)
+
+        '// Hinzufügen.
+        _dgvInvoker.AddCharacterData(e.GetCheckedCharacterDataList)
+        _dgvInvoker.NewSourceAndMember(dgvCharacters, DsResults, "dtCharacters")
+        _dgvInvoker.NewSourceAndMember(dgvCharacterTitles, DsResults, "dtCharacters.CharactersToTitlesRelation")
+        _dgvInvoker.SetColumnNamesAndWidth()
+        _dgvInvoker.ReloadVisibleDataGridViewValues(My.Settings.ExtendedView)
+
+        '// Logfile speichern und SQL Update Query.
+        _LastLog = GetLog
+        _LastSQLUpdateQuery = e.GetSQLUpdateQuery
+
         '// Abschließende Informationen anzeigen.
         Dim _ProgressTime As TimeSpan = (Date.Now - _StartTime)
 
-        If Not My.Settings.InlineReports Then
-            tbX_AddText(e.P_Log.ToString + vbCrLf + _
-                                        "Thread GUID: " + e.P_MainProcess.Guid.ToString + _
-                                        " | Start: " + _StartTime.ToString + _
-                                        " | Finished: " + Date.Now.ToString + _
-                                        " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds), tbLog)
-        End If
+        Log_Msg(PRÄFIX.INFO, "Thread GUID: " + e.GetMainProcess.Guid.ToString + _
+                             " | Start: " + _StartTime.ToString + _
+                             " | Finished: " + Date.Now.ToString + _
+                             " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds))
 
         '// ToolStrip aktualisieren.
         tsMain_setAll(100, "Done!" + String.Format("  | Elapsed: {0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds))
@@ -216,7 +224,7 @@ Public Class fmMain
 
         '// Das Task-Objekt löschen.
         SyncLock _Hashtable
-            _Hashtable.Remove(e.P_MainProcess.Guid.ToString)
+            _Hashtable.Remove(e.GetMainProcess.Guid.ToString)
         End SyncLock
     End Sub
 #End Region
@@ -285,7 +293,7 @@ Public Class fmMain
     Public Sub btnX_setState(_State As Boolean)
         '// Das Aktualisierungsobjekt erstellen.
         Dim _Buttons() As Windows.Forms.Button = {btnAdd, btnRemove, btnLookup, btnSearch}
-        Dim _btnControl As New ControlButtonUpdater(_Buttons)
+        Dim _btnControl As New ButtonInvoker(_Buttons)
 
         '// Formelemente sperren / entsperren.
         _btnControl.setState(_State)
@@ -293,26 +301,26 @@ Public Class fmMain
 
     Private Sub tbX_AddText(_Text As String, _TextBox As System.Windows.Forms.TextBox)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _tbPlayerOutput As New ControlTextUpdater(_TextBox)
+        Dim _tbPlayerOutput As New TextInvoker(_TextBox)
 
         _tbPlayerOutput.AddText(_Text)
     End Sub
 
     Private Sub tsMain_setAll(_Percent As Integer, _Text As String)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _tsMain As New ControlStatusStripUpdater(tsPbStatusPercent, tsSlStatusPercent, tsSlStatusText)
+        Dim _tsMain As New StatusStripInvoker(tsPbStatusPercent, tsSlStatusPercent, tsSlStatusText)
 
         _tsMain.setAll(_Percent, _Text)
     End Sub
     Private Sub tsMain_setPercent(_Percent As Integer)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _tsMain As New ControlStatusStripUpdater(tsPbStatusPercent, tsSlStatusPercent)
+        Dim _tsMain As New StatusStripInvoker(tsPbStatusPercent, tsSlStatusPercent)
 
         _tsMain.setPercent(_Percent)
     End Sub
     Private Sub tsMain_setText(_Text As String)
         '// Das Aktualisierungsobjekt erstellen.
-        Dim _tsMain As New ControlStatusStripUpdater(tsSlStatusText)
+        Dim _tsMain As New StatusStripInvoker(tsSlStatusText)
 
         _tsMain.setText(_Text)
     End Sub
@@ -359,12 +367,12 @@ Public Class fmMain
     Private Sub Menu_ClickedHandler(sender As Object, e As EventArgs) Handles _
         miFile_Exit.Click,
         miFile_SaveLogfile.Click,
+        miFile_SaveSQLUpdateQuery.Click,
         miInfo_About.Click,
         miInfo_TrinityCoreWiki.Click,
         miLanguage_Save.Click,
         miSettings_DebugMode.Click,
         miSettings_ExtendedTitles.Click,
-        miSettings_InlineReports.Click,
         miSettings_Shortcuts.Click,
         miSelectSyntax_0.Click,
         miSelectSyntax_1.Click,
@@ -386,21 +394,18 @@ Public Class fmMain
         End If
 
         Select Case True
-            Case sender Is miFile_Exit '// Programm beenden.
+            Case sender Is miFile_Exit
+                '// Programm beenden.
                 CancelAllThreads()
                 Application.Exit()
-            Case sender Is miFile_SaveLogfile '// Logfile Pfad festlegen und speichern.
-
-                Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
-                If Not _Path = "" Then
-                    Try
-                        My.Computer.FileSystem.WriteAllText(_Path, tbLog.Text, False)
-                        Process.Start(_Path)
-                    Catch ex As Exception
-                        MessageBox.Show(ex.ToString)
-                    End Try
-                End If
-            Case sender Is miInfo_About '// Infos über das Programm anzeigen.
+            Case sender Is miFile_SaveLogfile
+                '// Logfile speichern.
+                SaveFileWithOpenFileDialog(_LastLog, ".log files (*.log)|*.log|All files (*.*)|*.*", "knownTitles")
+            Case sender Is miFile_SaveSQLUpdateQuery
+                '// SQL Update Query speichern.
+                SaveFileWithOpenFileDialog(_LastSQLUpdateQuery, ".sql files (*.sql)|*.sql|All files (*.*)|*.*", "knownTitles_UpdateQuerys")
+            Case sender Is miInfo_About
+                '// Infos über das Programm anzeigen.
                 If _fmAbout Is Nothing Then
                     _fmAbout = New fmAbout
                     _fmAbout.StartPosition = FormStartPosition.Manual
@@ -409,7 +414,8 @@ Public Class fmMain
                 Else
                     _fmAbout.Focus()
                 End If
-            Case sender Is miInfo_TrinityCoreWiki '// TrinityCore Wiki anzeigen.
+            Case sender Is miInfo_TrinityCoreWiki
+                '// TrinityCore Wiki anzeigen.
                 Process.Start("http://collab.kpsn.org/display/tc/Characters+tc2#Characterstc2-knownTitles")
             Case sender Is miLanguage_Save '// Sprache ändern.
                 Select Case miLanguage_ComboBox.SelectedIndex
@@ -418,39 +424,45 @@ Public Class fmMain
                     Case 1
                         ReloadLanguage(LANGUAGE.GERMAN)
                 End Select
-                _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
-            Case sender Is miSettings_DebugMode '// Debug Mode de-/aktivieren.
+                _ExtendedView_Handler.SwitchExtendedTitlesLanguage(My.Settings.ExtendedView)
+            Case sender Is miSettings_DebugMode
+                '// Debug Mode de-/aktivieren.
                 SetSettings(sender, True)
-            Case sender Is miSettings_ExtendedTitles '// Erweiterte Titel de-/aktivieren.
+            Case sender Is miSettings_ExtendedTitles
+                '// Erweiterte Titel de-/aktivieren.
                 SetSettings(sender, True)
-                _DataGridView_Handler.Relocate_DataGridView(My.Settings.ExtendedTitles)
-                _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
+                _ExtendedView_Handler.SwitchExtendedTitles(My.Settings.ExtendedView)
                 If Not IsNothing(_fmFind) Then
                     _fmFind.Close()
                 End If
-            Case sender Is miSettings_InlineReports '// Inline Reports de-/aktivieren.
-                SetSettings(sender, True)
             Case sender Is miSettings_Shortcuts
                 SetSettings(sender, True)
-            Case sender Is miSelectSyntax_0 '// Clipboard Syntax ändern.
+            Case sender Is miSelectSyntax_0
+                '// Clipboard Syntax ändern.
                 SetClipboardSyntax(CLIPBOARD_SYNTAX.INSERT_INTO)
             Case sender Is miSelectSyntax_1
                 SetClipboardSyntax(CLIPBOARD_SYNTAX.ONLY_WITH_SPACES)
-            Case sender Is miSaveLogfile '// Logfiles speichern de-/aktivieren.
+            Case sender Is miSaveLogfile
+                '// Logfiles speichern de-/aktivieren.
                 SetSettings(sender, True)
-            Case sender Is miGenerateSQLUpdateQuerys '// SQL Query speichern de-/aktivieren.
+            Case sender Is miGenerateSQLUpdateQuerys
+                '// SQL Query speichern de-/aktivieren.
                 SetSettings(sender, True)
-            Case sender Is miImport_FromClipboard '// Importieren von Zwischenablage.
+            Case sender Is miImport_FromClipboard
+                '// Importieren von Zwischenablage.
                 If Clipboard.ContainsText Then
                     Process_GetClipboardContent_Start(Clipboard.GetText)
                 End If
-            Case sender Is miLogfile_NewPath '// Neuer Logfile Pfad festlegen.
-                Dim _Path As String = OpenSaveFileDialog(".txt files (*.txt)|*.txt|All files (*.*)|*.*", "kT_Log")
+            Case sender Is miLogfile_NewPath
+                '// Neuer Logfile Pfad festlegen.
+                Dim _Path As String = OpenSaveFileDialog(".log files (*.log)|*.log|All files (*.*)|*.*", "knownTitles")
                 If Not _Path = "" Then
+                    Log_LogfilePath = _Path
                     miLogfile_Path.Text = _Path
                 End If
-            Case sender Is miSQlQuery_NewPath '// Neuer SQL Query Pfad festlegen.
-                Dim _Path As String = OpenSaveFileDialog(".sql files (*.sql)|*.sql|All files (*.*)|*.*", "kT_Query")
+            Case sender Is miSQlQuery_NewPath
+                '// Neuer SQL Query Pfad festlegen.
+                Dim _Path As String = OpenSaveFileDialog(".sql files (*.sql)|*.sql|All files (*.*)|*.*", "knownTitles_UpdateQuerys")
                 If Not _Path = "" Then
                     miSQLQuery_Path.Text = _Path
                 End If
@@ -460,35 +472,39 @@ Public Class fmMain
 
     '// Form Load - Diverse Sachen laden.
     Private Sub fmMain_Load(sender As Object, e As EventArgs) Handles Me.Load
-        miLogfile_Path.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Log.txt"
-        miSQLQuery_Path.Text = My.Computer.FileSystem.SpecialDirectories.Desktop + "\kT_Query.sql"
-        tsPbStatusPercent.Maximum = 100
+        '// Pfade für Dateispeicherorte laden.
+        If My.Settings.LogfilePath = "" Then My.Settings.LogfilePath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\knownTitles.log"
+        Log_LogfilePath = My.Settings.LogfilePath
+        miLogfile_Path.Text = My.Settings.LogfilePath
+        If My.Settings.SQLUpdateQueryPath = "" Then My.Settings.SQLUpdateQueryPath = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory) + "\knownTitles_UpdateQuerys.sql"
+        miSQLQuery_Path.Text = My.Settings.SQLUpdateQueryPath
 
+        '// Falls DebugMode aktiv war, ToolStripMenuItem anzeigen.
         If My.Settings.DebugMode Then miSettings_DebugMode.Visible = True
 
         '// Sprache an Einstellungen anpassen - Inizialisiert die TitleList's!
         ReloadLanguage()
 
-        '// DataGridView mit gespeicherten Einstellungen inizialisieren.
+        '// Default Position & Größe der WinForms speichern.
         Dim _gbPlayerInput As New ControlData With {.Control = gbPlayerInput, .Location = gbPlayerInput.Location, .Size = gbPlayerInput.Size}
         Dim _tbPlayerInput As New ControlData With {.Control = tbPlayerInput, .Location = tbPlayerInput.Location, .Size = tbPlayerInput.Size}
         Dim _gbSelectedTitles As New ControlData With {.Control = gbSelectedTitles, .Location = gbSelectedTitles.Location, .Size = gbSelectedTitles.Size}
         Dim _dgvSelectedTitles As New ControlData With {.Control = dgvSelectedTitles, .Location = dgvSelectedTitles.Location, .Size = dgvSelectedTitles.Size}
-        Dim _gbLog As New ControlData With {.Control = gbLog, .Location = gbLog.Location, .Size = gbLog.Size}
-        Dim _tbLog As New ControlData With {.Control = tbLog, .Location = tbLog.Location, .Size = tbLog.Size}
+        Dim _gbResults As New ControlData With {.Control = gbResults, .Location = gbResults.Location, .Size = gbResults.Size}
+        Dim _dgvCharacters As New ControlData With {.Control = dgvCharacters, .Location = dgvCharacters.Location, .Size = dgvCharacters.Size}
 
-        _DataGridView_Handler = New Cls_DataGridView(_gbPlayerInput, _tbPlayerInput, _gbSelectedTitles, _dgvSelectedTitles, _gbLog, _tbLog)
-        '// Position & Daten.
-        _DataGridView_Handler.Relocate_DataGridView(My.Settings.ExtendedTitles)
-        _DataGridView_Handler.Reload_DataTable(My.Settings.ExtendedTitles)
+        '// ExtendedView Handler inizialisieren & DGV's nach Einstellungen anpassen.
+        _ExtendedView_Handler = New Cls_ExtendedView(Me, _gbPlayerInput, _tbPlayerInput, _gbSelectedTitles, _dgvSelectedTitles, _gbResults, _dgvCharacters)
+        _ExtendedView_Handler.Initialize(My.Settings.ExtendedView)
 
         '// Alle ToolStripMenuItems visuell an Einstellungen anpassen.
-        LoadAllSettings()
+        Initialize_LoadAllSettings(Me)
         miLanguage_ComboBox.SelectedIndex = My.Settings.Language
 
-        '// Verstecken des Row Headers
+        '// Verstecken der RowHeader.
         dgvSelectedTitles.RowHeadersVisible = False
-
+        dgvCharacters.RowHeadersVisible = False
+        dgvCharacterTitles.RowHeadersVisible = False
     End Sub
 
 #Region "Farben & Shortcut Handling des DGV"
@@ -540,10 +556,9 @@ Public Class fmMain
                     End If
             End Select
 
-            RefreshVisualRowColor()
+            RefreshVisualRowColor(dgvSelectedTitles)
         End If
     End Sub
-
 
 #End Region
 

@@ -3,18 +3,23 @@
     ''' Dieses Modul behandelt ausschließlich jene ToolStripMenuItems, welche eine CheckState besitzen!
     ''' </summary>
 
+#Region "Deklarationen"
     Public Enum CLIPBOARD_SYNTAX
         INSERT_INTO = 0
         ONLY_WITH_SPACES = 1
     End Enum
 
+    Private _fmMain As fmMain
+#End Region
+
     ''' <summary>Lädt visuell alle ToolStripMenuItems neu, je nach Settings.</summary>
-    Public Sub LoadAllSettings()
+    Public Sub Initialize_LoadAllSettings(winForm As fmMain)
+        _fmMain = winForm
+
         Dim _ToLoad As New List(Of Object)
-        With fmMain
+        With _fmMain
             _ToLoad.Add(.miSettings_DebugMode)
             _ToLoad.Add(.miSettings_ExtendedTitles)
-            _ToLoad.Add(.miSettings_InlineReports)
             _ToLoad.Add(.miSettings_Shortcuts)
             _ToLoad.Add(.miSaveLogfile)
             _ToLoad.Add(.miGenerateSQLUpdateQuerys)
@@ -36,12 +41,12 @@
         End If
         Select Case My.Settings.ClipboardSyntax
             Case CLIPBOARD_SYNTAX.INSERT_INTO  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
-                With fmMain
+                With _fmMain
                     SetForeColor_CheckState(.miSelectSyntax_1, False)
                     SetForeColor_CheckState(.miSelectSyntax_0, True)
                 End With
             Case CLIPBOARD_SYNTAX.ONLY_WITH_SPACES '// "1 1 ABC 0 0 0 0 0 "
-                With fmMain
+                With _fmMain
                     SetForeColor_CheckState(.miSelectSyntax_0, False)
                     SetForeColor_CheckState(.miSelectSyntax_1, True)
                 End With
@@ -53,36 +58,31 @@
         Dim _MenuItem As ToolStripMenuItem = CType(_sender, ToolStripMenuItem)
 
         Select Case True
-            Case _MenuItem Is fmMain.miSettings_DebugMode
+            Case _MenuItem Is _fmMain.miSettings_DebugMode
                 If _SetNewState Then
                     My.Settings.DebugMode = Not My.Settings.DebugMode
                 End If
                 SetForeColor_CheckState(_MenuItem, My.Settings.DebugMode)
-            Case _MenuItem Is fmMain.miSettings_ExtendedTitles
+            Case _MenuItem Is _fmMain.miSettings_ExtendedTitles
                 If _SetNewState Then
-                    My.Settings.ExtendedTitles = Not My.Settings.ExtendedTitles
+                    My.Settings.ExtendedView = Not My.Settings.ExtendedView
                 End If
-                SetForeColor_CheckState(_MenuItem, My.Settings.ExtendedTitles)
-            Case _MenuItem Is fmMain.miSettings_InlineReports
-                If _SetNewState Then
-                    My.Settings.InlineReports = Not My.Settings.InlineReports
-                End If
-                SetForeColor_CheckState(_MenuItem, My.Settings.InlineReports)
-            Case _MenuItem Is fmMain.miSettings_Shortcuts
+                SetForeColor_CheckState(_MenuItem, My.Settings.ExtendedView)
+            Case _MenuItem Is _fmMain.miSettings_Shortcuts
                 If _SetNewState Then
                     My.Settings.Shortcuts = Not My.Settings.Shortcuts
                 End If
                 SetForeColor_CheckState(_MenuItem, My.Settings.Shortcuts)
-            Case _MenuItem Is fmMain.miSaveLogfile
+            Case _MenuItem Is _fmMain.miSaveLogfile
                 If _SetNewState Then
-                    My.Settings.LogfileToHDD = Not My.Settings.LogfileToHDD
+                    My.Settings.SaveLogfile = Not My.Settings.SaveLogfile
                 End If
-                SetForeColor_CheckState(_MenuItem, My.Settings.LogfileToHDD)
-            Case _MenuItem Is fmMain.miGenerateSQLUpdateQuerys
+                SetForeColor_CheckState(_MenuItem, My.Settings.SaveLogfile)
+            Case _MenuItem Is _fmMain.miGenerateSQLUpdateQuerys
                 If _SetNewState Then
-                    My.Settings.SQLQueryToHDD = Not My.Settings.SQLQueryToHDD
+                    My.Settings.SaveSQLQuery = Not My.Settings.SaveSQLQuery
                 End If
-                SetForeColor_CheckState(_MenuItem, My.Settings.SQLQueryToHDD)
+                SetForeColor_CheckState(_MenuItem, My.Settings.SaveSQLQuery)
         End Select
     End Sub
 

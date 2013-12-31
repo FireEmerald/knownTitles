@@ -35,7 +35,7 @@ Module Mod_Functions
                                          " | INT_2: " + _Character.INT_2.ToString + _
                                          " | INT_3: " + _Character.INT_3.ToString + _
                                          " | INT_4: " + _Character.INT_4.ToString
-        If Not _Character.NothingChanged Then _Output += " | Last knownTitles: """ + _Character.BitmaskBackup + """"
+        If Not _Character.NothingChanged Then _Output += " | Last knownTitles: """ + _Character.KnownTitlesBackup + """"
         Return _Output
     End Function
 
@@ -48,7 +48,7 @@ Module Mod_Functions
                 _SQLQuery += "/* Character: " + _Char.Name +
                              " | GUID: " + _Char.GUID.ToString +
                              " | Account ID: " + _Char.AccountID.ToString +
-                             " | Last Bitmask: """ + _Char.BitmaskBackup + """" + vbCrLf
+                             " | Last Bitmask: """ + _Char.KnownTitlesBackup + """" + vbCrLf
 
                 '// Alle gebannten Titel auflisten
                 For _i As Integer = 0 To _Char.AffectedTitles.Count - 1
@@ -73,6 +73,24 @@ Module Mod_Functions
         Return _SQLQuery
     End Function
 
+    ''' <summary>Speichert eine Datei mit einem OpenFileDialog. Falls ein Fehler auftritt, wird dieser angezeigt.</summary>
+    Public Function SaveFileWithOpenFileDialog(_TextToSave As String, _Filter As String, _FileName As String, Optional _FilterIndex As Integer = 1) As Boolean
+        Dim _Path As String = OpenSaveFileDialog(_Filter, _FileName, _FilterIndex)
+        If Not _Path = "" Then
+            Try
+                My.Computer.FileSystem.WriteAllText(_Path, _TextToSave, False)
+                Select Case MessageBox.Show("Would you like to open the file?", "File saved!", MessageBoxButtons.YesNo, MessageBoxIcon.Information)
+                    Case DialogResult.Yes
+                        Process.Start(_Path)
+                End Select
+            Catch ex As Exception
+                MessageBox.Show(ex.ToString, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return False
+            End Try
+        End If
+        Return True
+    End Function
+
     ''' <summary>Öffnet einen SaveFileDialog und gibt den Pfad + Dateiname + Endung zurück, falls korrekt.</summary>
     Public Function OpenSaveFileDialog(_Filter As String, _FileName As String, Optional _FilterIndex As Integer = 1) As String
         Dim _SetPathDialog As New SaveFileDialog
@@ -92,37 +110,47 @@ Module Mod_Functions
         ReDim Preserve _TextBox.Lines(_TextBox.Lines.Count - 1)
     End Sub
 
-    ''' <summary>Eine Liste aller aktuell ausgewählten Titels bekommen.</summary>
+    ''' <summary>Eine Liste aller aktuell ausgewählten Titel bekommen.</summary>
     Public Function GetSelectedTitles(_DataTable As DataTable) As List(Of CharTitle)
         Dim _SelectedTitles As New List(Of CharTitle)
 
-        Select Case _DataTable.TableName
-            Case "dtShort"
-                For Each _Title As dsSelectedTitles.dtShortRow In _DataTable.Rows
-                    If _Title.colChoose = True Then
-                        _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
-                    End If
-                Next
-            Case "dtExtended"
-                For Each _Title As dsSelectedTitles.dtExtendedRow In _DataTable.Rows
-                    If _Title.colChoose = True Then
-                        _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
-                    End If
-                Next
-        End Select
+        For Each _Title As dsSelectedTitles.dtExtendedRow In _DataTable.Rows
+            If _Title.colChoose = True Then
+                _SelectedTitles.Add(_TitelList_All.Find(Function(c) c.TitleID = _Title.colTitleID))
+            End If
+        Next
 
         Return _SelectedTitles
         '// http://regexhero.net/tester/
     End Function
 
     ''' <summary>Alle markierten (Choosen) Zeilen grün hinterlegen.</summary>
-    Public Sub RefreshVisualRowColor()
-        For Each _Row As DataGridViewRow In fmMain.dgvSelectedTitles.Rows
+    Public Sub RefreshVisualRowColor(_dgv As DataGridView)
+        For Each _Row As DataGridViewRow In _dgv.Rows
             If CType(_Row.Cells(0).Value, Boolean) = True Then
                 _Row.DefaultCellStyle.BackColor = Color.LightGreen
             Else
                 _Row.DefaultCellStyle.BackColor = Color.White
             End If
         Next
+    End Sub
+
+    ''' <summary>Ändert den Text und die Breite einer Spalte in einem DataGridView.</summary>
+    ''' <param name="_dgv">Das DataGridView, welches angepasst werden soll.</param>
+    ''' <param name="_colID">Die ColumnID, beginnend von links mit 0.</param>
+    ''' <param name="_colHeaderText">Der neue Name der Spalte.</param>
+    ''' <param name="_Offset">Wenn angegeben, wird die AutoSizeMode überschrieben.</param>
+    Public Sub SetColumnHeaderTextAndWidth(_dgv As DataGridView, _colID As Integer, _colHeaderText As String, _colAutoSizeMode As DataGridViewAutoSizeColumnMode, Optional _Offset As Integer = 25)
+        With _dgv.Columns
+            .Item(_colID).HeaderText = _colHeaderText
+
+            If _Offset = 25 Then
+                .Item(_colID).AutoSizeMode = _colAutoSizeMode
+                Return
+            End If
+
+            .Item(_colID).Width = TextRenderer.MeasureText(_colHeaderText, _dgv.Font).Width + _Offset
+            .Item(_colID).MinimumWidth = TextRenderer.MeasureText(_colHeaderText, _dgv.Font).Width + _Offset
+        End With
     End Sub
 End Module

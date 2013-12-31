@@ -231,9 +231,9 @@ Partial Class fmFind
         Me.cbWildcraft.ForeColor = System.Drawing.Color.Navy
         Me.cbWildcraft.Location = New System.Drawing.Point(18, 80)
         Me.cbWildcraft.Name = "cbWildcraft"
-        Me.cbWildcraft.Size = New System.Drawing.Size(195, 17)
+        Me.cbWildcraft.Size = New System.Drawing.Size(191, 17)
         Me.cbWildcraft.TabIndex = 11
-        Me.cbWildcraft.Text = "Wildcraft (only @Columns > Normal)"
+        Me.cbWildcraft.Text = "Wildcraft (only @Columns | Normal)"
         Me.cbWildcraft.UseVisualStyleBackColor = True
         '
         'fmFind

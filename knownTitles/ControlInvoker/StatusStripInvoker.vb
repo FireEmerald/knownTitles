@@ -1,7 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
-Public Class ControlStatusStripUpdater
+Public Class StatusStripInvoker
     '// Der Verweis wird als generisches Steuerelement gespeichert, so dass
     '// diese Hilfsklasse in anderen Szenarien wiederverwendet werden kann.
     Private _tsProgressBar As Windows.Forms.ToolStripProgressBar

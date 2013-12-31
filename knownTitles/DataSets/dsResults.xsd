@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="dsResults" targetNamespace="http://tempuri.org/dsResults.xsd" xmlns:mstns="http://tempuri.org/dsResults.xsd" xmlns="http://tempuri.org/dsResults.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections />
+        <Tables />
+        <Sources />
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="dsResults" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:EnableTableAdapterManager="true" msprop:Generator_DataSetName="dsResults" msprop:Generator_UserDSName="dsResults">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="dtCharacters" msprop:Generator_TableClassName="dtCharactersDataTable" msprop:Generator_TableVarName="tabledtCharacters" msprop:Generator_RowChangedName="dtCharactersRowChanged" msprop:Generator_TablePropName="dtCharacters" msprop:Generator_RowDeletingName="dtCharactersRowDeleting" msprop:Generator_RowChangingName="dtCharactersRowChanging" msprop:Generator_RowEvHandlerName="dtCharactersRowChangeEventHandler" msprop:Generator_RowDeletedName="dtCharactersRowDeleted" msprop:Generator_RowClassName="dtCharactersRow" msprop:Generator_UserTableName="dtCharacters" msprop:Generator_RowEvArgName="dtCharactersRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="colName" msprop:Generator_ColumnVarNameInTable="columncolName" msprop:Generator_ColumnPropNameInRow="colName" msprop:Generator_ColumnPropNameInTable="colNameColumn" msprop:Generator_UserColumnName="colName" type="xs:string" minOccurs="0" />
+              <xs:element name="colGUID" msprop:Generator_ColumnVarNameInTable="columncolGUID" msprop:Generator_ColumnPropNameInRow="colGUID" msprop:Generator_ColumnPropNameInTable="colGUIDColumn" msprop:Generator_UserColumnName="colGUID" type="xs:int" minOccurs="0" />
+              <xs:element name="colAccountID" msprop:Generator_ColumnVarNameInTable="columncolAccountID" msprop:Generator_ColumnPropNameInRow="colAccountID" msprop:Generator_ColumnPropNameInTable="colAccountIDColumn" msprop:Generator_UserColumnName="colAccountID" type="xs:int" minOccurs="0" />
+              <xs:element name="colKnownTitlesBackup" msprop:Generator_ColumnVarNameInTable="columncolKnownTitlesBackup" msprop:Generator_ColumnPropNameInRow="colKnownTitlesBackup" msprop:Generator_ColumnPropNameInTable="colKnownTitlesBackupColumn" msprop:Generator_UserColumnName="colKnownTitlesBackup" type="xs:string" minOccurs="0" />
+              <xs:element name="colAffected" msprop:Generator_ColumnVarNameInTable="columncolAffected" msprop:Generator_ColumnPropNameInRow="colAffected" msprop:Generator_ColumnPropNameInTable="colAffectedColumn" msprop:Generator_UserColumnName="colAffected" type="xs:int" minOccurs="0" />
+              <xs:element name="colRemoved" msprop:Generator_ColumnVarNameInTable="columncolRemoved" msprop:Generator_ColumnPropNameInRow="colRemoved" msprop:Generator_ColumnPropNameInTable="colRemovedColumn" msprop:Generator_UserColumnName="colRemoved" type="xs:int" minOccurs="0" />
+              <xs:element name="colLeft" msprop:Generator_ColumnVarNameInTable="columncolLeft" msprop:Generator_ColumnPropNameInRow="colLeft" msprop:Generator_ColumnPropNameInTable="colLeftColumn" msprop:Generator_UserColumnName="colLeft" type="xs:int" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="dtCharacterTitles" msprop:Generator_TableClassName="dtCharacterTitlesDataTable" msprop:Generator_TableVarName="tabledtCharacterTitles" msprop:Generator_RowChangedName="dtCharacterTitlesRowChanged" msprop:Generator_TablePropName="dtCharacterTitles" msprop:Generator_RowDeletingName="dtCharacterTitlesRowDeleting" msprop:Generator_RowChangingName="dtCharacterTitlesRowChanging" msprop:Generator_RowEvHandlerName="dtCharacterTitlesRowChangeEventHandler" msprop:Generator_RowDeletedName="dtCharacterTitlesRowDeleted" msprop:Generator_RowClassName="dtCharacterTitlesRow" msprop:Generator_UserTableName="dtCharacterTitles" msprop:Generator_RowEvArgName="dtCharacterTitlesRowChangeEvent">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="colGUID" msprop:Generator_ColumnVarNameInTable="columncolGUID" msprop:Generator_ColumnPropNameInRow="colGUID" msprop:Generator_ColumnPropNameInTable="colGUIDColumn" msprop:Generator_UserColumnName="colGUID" type="xs:int" minOccurs="0" />
+              <xs:element name="colState" msprop:Generator_ColumnVarNameInTable="columncolState" msprop:Generator_ColumnPropNameInRow="colState" msprop:Generator_ColumnPropNameInTable="colStateColumn" msprop:Generator_UserColumnName="colState" type="xs:string" minOccurs="0" />
+              <xs:element name="colTitleID" msprop:Generator_ColumnVarNameInTable="columncolTitleID" msprop:Generator_ColumnPropNameInRow="colTitleID" msprop:Generator_ColumnPropNameInTable="colTitleIDColumn" msprop:Generator_UserColumnName="colTitleID" type="xs:int" minOccurs="0" />
+              <xs:element name="colInGameOrder" msprop:Generator_ColumnVarNameInTable="columncolInGameOrder" msprop:Generator_ColumnPropNameInRow="colInGameOrder" msprop:Generator_ColumnPropNameInTable="colInGameOrderColumn" msprop:Generator_UserColumnName="colInGameOrder" type="xs:int" minOccurs="0" />
+              <xs:element name="colIntID" msprop:Generator_ColumnVarNameInTable="columncolIntID" msprop:Generator_ColumnPropNameInRow="colIntID" msprop:Generator_ColumnPropNameInTable="colIntIDColumn" msprop:Generator_UserColumnName="colIntID" type="xs:int" minOccurs="0" />
+              <xs:element name="colBitOfInteger" msprop:Generator_ColumnVarNameInTable="columncolBitOfInteger" msprop:Generator_ColumnPropNameInRow="colBitOfInteger" msprop:Generator_ColumnPropNameInTable="colBitOfIntegerColumn" msprop:Generator_UserColumnName="colBitOfInteger" type="xs:int" minOccurs="0" />
+              <xs:element name="colBit" msprop:Generator_ColumnVarNameInTable="columncolBit" msprop:Generator_ColumnPropNameInRow="colBit" msprop:Generator_ColumnPropNameInTable="colBitColumn" msprop:Generator_UserColumnName="colBit" type="xs:unsignedInt" minOccurs="0" />
+              <xs:element name="colDBValue" msprop:Generator_ColumnVarNameInTable="columncolDBValue" msprop:Generator_ColumnPropNameInRow="colDBValue" msprop:Generator_ColumnPropNameInTable="colDBValueColumn" msprop:Generator_UserColumnName="colDBValue" type="xs:string" minOccurs="0" />
+              <xs:element name="colIntID_Double" msprop:Generator_ColumnVarNameInTable="columncolIntID_Double" msprop:Generator_ColumnPropNameInRow="colIntID_Double" msprop:Generator_ColumnPropNameInTable="colIntID_DoubleColumn" msprop:Generator_UserColumnName="colIntID_Double" type="xs:double" minOccurs="0" />
+              <xs:element name="colUnkRef" msprop:Generator_ColumnVarNameInTable="columncolUnkRef" msprop:Generator_ColumnPropNameInRow="colUnkRef" msprop:Generator_ColumnPropNameInTable="colUnkRefColumn" msprop:Generator_UserColumnName="colUnkRef" type="xs:int" minOccurs="0" />
+              <xs:element name="colMaleTitle" msprop:Generator_ColumnVarNameInTable="columncolMaleTitle" msprop:Generator_ColumnPropNameInRow="colMaleTitle" msprop:Generator_ColumnPropNameInTable="colMaleTitleColumn" msprop:Generator_UserColumnName="colMaleTitle" type="xs:string" minOccurs="0" />
+              <xs:element name="colFemaleTitle" msprop:Generator_ColumnVarNameInTable="columncolFemaleTitle" msprop:Generator_ColumnPropNameInRow="colFemaleTitle" msprop:Generator_ColumnPropNameInTable="colFemaleTitleColumn" msprop:Generator_UserColumnName="colFemaleTitle" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+  </xs:element>
+  <xs:annotation>
+    <xs:appinfo>
+      <msdata:Relationship name="CharactersToTitlesRelation" msdata:parent="dtCharacters" msdata:child="dtCharacterTitles" msdata:parentkey="colGUID" msdata:childkey="colGUID" msprop:Generator_UserChildTable="dtCharacterTitles" msprop:Generator_ChildPropName="GetdtCharacterTitlesRows" msprop:Generator_UserRelationName="CharactersToTitlesRelation" msprop:Generator_ParentPropName="dtCharactersRow" msprop:Generator_RelationVarName="relationCharactersToTitlesRelation" msprop:Generator_UserParentTable="dtCharacters" />
+    </xs:appinfo>
+  </xs:annotation>
+</xs:schema>

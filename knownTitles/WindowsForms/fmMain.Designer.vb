@@ -25,11 +25,9 @@ Partial Class fmMain
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(fmMain))
         Me.tbPlayerInput = New System.Windows.Forms.TextBox()
         Me.btnLookup = New System.Windows.Forms.Button()
-        Me.tbLog = New System.Windows.Forms.TextBox()
         Me.gbSelectedTitles = New System.Windows.Forms.GroupBox()
         Me.dgvSelectedTitles = New System.Windows.Forms.DataGridView()
         Me.gbPlayerInput = New System.Windows.Forms.GroupBox()
-        Me.gbLog = New System.Windows.Forms.GroupBox()
         Me.btnAdd = New System.Windows.Forms.Button()
         Me.btnRemove = New System.Windows.Forms.Button()
         Me.ssMain = New System.Windows.Forms.StatusStrip()
@@ -39,6 +37,7 @@ Partial Class fmMain
         Me.msMain = New System.Windows.Forms.MenuStrip()
         Me.miFile = New System.Windows.Forms.ToolStripMenuItem()
         Me.miFile_SaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.miFile_SaveSQLUpdateQuery = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator1 = New System.Windows.Forms.ToolStripSeparator()
         Me.miFile_Exit = New System.Windows.Forms.ToolStripMenuItem()
         Me.miImport = New System.Windows.Forms.ToolStripMenuItem()
@@ -49,16 +48,17 @@ Partial Class fmMain
         Me.miSelectSyntax_1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_ExtendedTitles = New System.Windows.Forms.ToolStripMenuItem()
-        Me.miSettings_InlineReports = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_Shortcuts = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSettings_DebugMode = New System.Windows.Forms.ToolStripMenuItem()
         Me.ToolStripSeparator3 = New System.Windows.Forms.ToolStripSeparator()
         Me.ToolStripMenuItem1 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSaveLogfile = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
         Me.miLogfile_NewPath = New System.Windows.Forms.ToolStripMenuItem()
         Me.miLogfile_Path = New System.Windows.Forms.ToolStripTextBox()
         Me.ToolStripMenuItem2 = New System.Windows.Forms.ToolStripMenuItem()
         Me.miGenerateSQLUpdateQuerys = New System.Windows.Forms.ToolStripMenuItem()
+        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.miSQlQuery_NewPath = New System.Windows.Forms.ToolStripMenuItem()
         Me.miSQLQuery_Path = New System.Windows.Forms.ToolStripTextBox()
         Me.miLanguage = New System.Windows.Forms.ToolStripMenuItem()
@@ -68,16 +68,21 @@ Partial Class fmMain
         Me.miInfo_TrinityCoreWiki = New System.Windows.Forms.ToolStripMenuItem()
         Me.miInfo_About = New System.Windows.Forms.ToolStripMenuItem()
         Me.btnSearch = New System.Windows.Forms.Button()
+        Me.btnCancel = New System.Windows.Forms.Button()
+        Me.dgvCharacters = New System.Windows.Forms.DataGridView()
+        Me.gbResults = New System.Windows.Forms.GroupBox()
+        Me.dgvCharacterTitles = New System.Windows.Forms.DataGridView()
+        Me.DsResults = New knownTitles.dsResults()
         Me.DsSelectedTitles = New knownTitles.dsSelectedTitles()
-        Me.btnAbort = New System.Windows.Forms.Button()
-        Me.ToolStripSeparator4 = New System.Windows.Forms.ToolStripSeparator()
-        Me.ToolStripSeparator5 = New System.Windows.Forms.ToolStripSeparator()
         Me.gbSelectedTitles.SuspendLayout()
         CType(Me.dgvSelectedTitles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.gbPlayerInput.SuspendLayout()
-        Me.gbLog.SuspendLayout()
         Me.ssMain.SuspendLayout()
         Me.msMain.SuspendLayout()
+        CType(Me.dgvCharacters, System.ComponentModel.ISupportInitialize).BeginInit()
+        Me.gbResults.SuspendLayout()
+        CType(Me.dgvCharacterTitles, System.ComponentModel.ISupportInitialize).BeginInit()
+        CType(Me.DsResults, System.ComponentModel.ISupportInitialize).BeginInit()
         CType(Me.DsSelectedTitles, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -96,24 +101,12 @@ Partial Class fmMain
         '
         'btnLookup
         '
-        Me.btnLookup.Location = New System.Drawing.Point(729, 654)
+        Me.btnLookup.Location = New System.Drawing.Point(444, 654)
         Me.btnLookup.Name = "btnLookup"
         Me.btnLookup.Size = New System.Drawing.Size(112, 23)
         Me.btnLookup.TabIndex = 7
         Me.btnLookup.Text = "Lookup"
         Me.btnLookup.UseVisualStyleBackColor = True
-        '
-        'tbLog
-        '
-        Me.tbLog.BorderStyle = System.Windows.Forms.BorderStyle.None
-        Me.tbLog.Location = New System.Drawing.Point(6, 19)
-        Me.tbLog.MaxLength = 999999999
-        Me.tbLog.Multiline = True
-        Me.tbLog.Name = "tbLog"
-        Me.tbLog.ScrollBars = System.Windows.Forms.ScrollBars.Both
-        Me.tbLog.Size = New System.Drawing.Size(1059, 328)
-        Me.tbLog.TabIndex = 9
-        Me.tbLog.WordWrap = False
         '
         'gbSelectedTitles
         '
@@ -154,20 +147,9 @@ Partial Class fmMain
         Me.gbPlayerInput.TabStop = False
         Me.gbPlayerInput.Text = "GUID, AccountID, Name and knownTitles | One Character each Line."
         '
-        'gbLog
-        '
-        Me.gbLog.Controls.Add(Me.tbLog)
-        Me.gbLog.ForeColor = System.Drawing.Color.Navy
-        Me.gbLog.Location = New System.Drawing.Point(12, 295)
-        Me.gbLog.Name = "gbLog"
-        Me.gbLog.Size = New System.Drawing.Size(1071, 353)
-        Me.gbLog.TabIndex = 21
-        Me.gbLog.TabStop = False
-        Me.gbLog.Text = "Output | Log"
-        '
         'btnAdd
         '
-        Me.btnAdd.Location = New System.Drawing.Point(493, 654)
+        Me.btnAdd.Location = New System.Drawing.Point(706, 654)
         Me.btnAdd.Name = "btnAdd"
         Me.btnAdd.Size = New System.Drawing.Size(112, 23)
         Me.btnAdd.TabIndex = 22
@@ -176,7 +158,7 @@ Partial Class fmMain
         '
         'btnRemove
         '
-        Me.btnRemove.Location = New System.Drawing.Point(611, 654)
+        Me.btnRemove.Location = New System.Drawing.Point(824, 654)
         Me.btnRemove.Name = "btnRemove"
         Me.btnRemove.Size = New System.Drawing.Size(112, 23)
         Me.btnRemove.TabIndex = 23
@@ -198,7 +180,7 @@ Partial Class fmMain
         '
         Me.tsPbStatusPercent.Margin = New System.Windows.Forms.Padding(12, 3, 3, 3)
         Me.tsPbStatusPercent.Name = "tsPbStatusPercent"
-        Me.tsPbStatusPercent.Size = New System.Drawing.Size(400, 16)
+        Me.tsPbStatusPercent.Size = New System.Drawing.Size(300, 16)
         '
         'tsSlStatusPercent
         '
@@ -224,7 +206,7 @@ Partial Class fmMain
         '
         'miFile
         '
-        Me.miFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile_SaveLogfile, Me.ToolStripSeparator1, Me.miFile_Exit})
+        Me.miFile.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miFile_SaveLogfile, Me.miFile_SaveSQLUpdateQuery, Me.ToolStripSeparator1, Me.miFile_Exit})
         Me.miFile.ForeColor = System.Drawing.Color.Navy
         Me.miFile.Name = "miFile"
         Me.miFile.Size = New System.Drawing.Size(37, 20)
@@ -234,19 +216,26 @@ Partial Class fmMain
         '
         Me.miFile_SaveLogfile.ForeColor = System.Drawing.Color.Navy
         Me.miFile_SaveLogfile.Name = "miFile_SaveLogfile"
-        Me.miFile_SaveLogfile.Size = New System.Drawing.Size(151, 22)
-        Me.miFile_SaveLogfile.Text = "Save Logfile as"
+        Me.miFile_SaveLogfile.Size = New System.Drawing.Size(233, 22)
+        Me.miFile_SaveLogfile.Text = "Save last Logfile as"
+        '
+        'miFile_SaveSQLUpdateQuery
+        '
+        Me.miFile_SaveSQLUpdateQuery.ForeColor = System.Drawing.Color.Navy
+        Me.miFile_SaveSQLUpdateQuery.Name = "miFile_SaveSQLUpdateQuery"
+        Me.miFile_SaveSQLUpdateQuery.Size = New System.Drawing.Size(233, 22)
+        Me.miFile_SaveSQLUpdateQuery.Text = "Save last SQL Update Query as"
         '
         'ToolStripSeparator1
         '
         Me.ToolStripSeparator1.Name = "ToolStripSeparator1"
-        Me.ToolStripSeparator1.Size = New System.Drawing.Size(148, 6)
+        Me.ToolStripSeparator1.Size = New System.Drawing.Size(230, 6)
         '
         'miFile_Exit
         '
         Me.miFile_Exit.ForeColor = System.Drawing.Color.Navy
         Me.miFile_Exit.Name = "miFile_Exit"
-        Me.miFile_Exit.Size = New System.Drawing.Size(151, 22)
+        Me.miFile_Exit.Size = New System.Drawing.Size(233, 22)
         Me.miFile_Exit.Text = "Exit"
         '
         'miImport
@@ -294,7 +283,7 @@ Partial Class fmMain
         '
         'miSettings
         '
-        Me.miSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSettings_ExtendedTitles, Me.miSettings_InlineReports, Me.miSettings_Shortcuts, Me.miSettings_DebugMode, Me.ToolStripSeparator3, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2})
+        Me.miSettings.DropDownItems.AddRange(New System.Windows.Forms.ToolStripItem() {Me.miSettings_ExtendedTitles, Me.miSettings_Shortcuts, Me.miSettings_DebugMode, Me.ToolStripSeparator3, Me.ToolStripMenuItem1, Me.ToolStripMenuItem2})
         Me.miSettings.ForeColor = System.Drawing.Color.Navy
         Me.miSettings.Name = "miSettings"
         Me.miSettings.Size = New System.Drawing.Size(61, 20)
@@ -306,13 +295,6 @@ Partial Class fmMain
         Me.miSettings_ExtendedTitles.Name = "miSettings_ExtendedTitles"
         Me.miSettings_ExtendedTitles.Size = New System.Drawing.Size(176, 22)
         Me.miSettings_ExtendedTitles.Text = "Extended titles"
-        '
-        'miSettings_InlineReports
-        '
-        Me.miSettings_InlineReports.ForeColor = System.Drawing.Color.Navy
-        Me.miSettings_InlineReports.Name = "miSettings_InlineReports"
-        Me.miSettings_InlineReports.Size = New System.Drawing.Size(176, 22)
-        Me.miSettings_InlineReports.Text = "Inline reports"
         '
         'miSettings_Shortcuts
         '
@@ -347,7 +329,12 @@ Partial Class fmMain
         Me.miSaveLogfile.ForeColor = System.Drawing.Color.Navy
         Me.miSaveLogfile.Name = "miSaveLogfile"
         Me.miSaveLogfile.Size = New System.Drawing.Size(320, 22)
-        Me.miSaveLogfile.Text = "Save Logfile to harddrive"
+        Me.miSaveLogfile.Text = "Generate and save a Logfile"
+        '
+        'ToolStripSeparator4
+        '
+        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
+        Me.ToolStripSeparator4.Size = New System.Drawing.Size(317, 6)
         '
         'miLogfile_NewPath
         '
@@ -374,7 +361,12 @@ Partial Class fmMain
         Me.miGenerateSQLUpdateQuerys.ForeColor = System.Drawing.Color.Navy
         Me.miGenerateSQLUpdateQuerys.Name = "miGenerateSQLUpdateQuerys"
         Me.miGenerateSQLUpdateQuerys.Size = New System.Drawing.Size(320, 22)
-        Me.miGenerateSQLUpdateQuerys.Text = "Create SQL Update Query"
+        Me.miGenerateSQLUpdateQuerys.Text = "Generate and save a SQL Update Query"
+        '
+        'ToolStripSeparator5
+        '
+        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
+        Me.ToolStripSeparator5.Size = New System.Drawing.Size(317, 6)
         '
         'miSQlQuery_NewPath
         '
@@ -436,36 +428,75 @@ Partial Class fmMain
         '
         'btnSearch
         '
-        Me.btnSearch.Location = New System.Drawing.Point(847, 654)
+        Me.btnSearch.Location = New System.Drawing.Point(562, 654)
         Me.btnSearch.Name = "btnSearch"
         Me.btnSearch.Size = New System.Drawing.Size(112, 23)
         Me.btnSearch.TabIndex = 27
         Me.btnSearch.Text = "Search"
         Me.btnSearch.UseVisualStyleBackColor = True
         '
+        'btnCancel
+        '
+        Me.btnCancel.Location = New System.Drawing.Point(965, 654)
+        Me.btnCancel.Name = "btnCancel"
+        Me.btnCancel.Size = New System.Drawing.Size(112, 23)
+        Me.btnCancel.TabIndex = 28
+        Me.btnCancel.Text = "Cancel"
+        Me.btnCancel.UseVisualStyleBackColor = True
+        '
+        'dgvCharacters
+        '
+        Me.dgvCharacters.AllowUserToAddRows = False
+        Me.dgvCharacters.AllowUserToDeleteRows = False
+        Me.dgvCharacters.AllowUserToResizeColumns = False
+        Me.dgvCharacters.AllowUserToResizeRows = False
+        Me.dgvCharacters.BackgroundColor = System.Drawing.Color.White
+        Me.dgvCharacters.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvCharacters.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvCharacters.GridColor = System.Drawing.Color.Gainsboro
+        Me.dgvCharacters.Location = New System.Drawing.Point(6, 19)
+        Me.dgvCharacters.Name = "dgvCharacters"
+        Me.dgvCharacters.ReadOnly = True
+        Me.dgvCharacters.Size = New System.Drawing.Size(1059, 161)
+        Me.dgvCharacters.TabIndex = 29
+        '
+        'gbResults
+        '
+        Me.gbResults.Controls.Add(Me.dgvCharacterTitles)
+        Me.gbResults.Controls.Add(Me.dgvCharacters)
+        Me.gbResults.ForeColor = System.Drawing.Color.Navy
+        Me.gbResults.Location = New System.Drawing.Point(12, 295)
+        Me.gbResults.Name = "gbResults"
+        Me.gbResults.Size = New System.Drawing.Size(1071, 353)
+        Me.gbResults.TabIndex = 30
+        Me.gbResults.TabStop = False
+        Me.gbResults.Text = "Results"
+        '
+        'dgvCharacterTitles
+        '
+        Me.dgvCharacterTitles.AllowUserToAddRows = False
+        Me.dgvCharacterTitles.AllowUserToDeleteRows = False
+        Me.dgvCharacterTitles.AllowUserToResizeColumns = False
+        Me.dgvCharacterTitles.AllowUserToResizeRows = False
+        Me.dgvCharacterTitles.BackgroundColor = System.Drawing.Color.White
+        Me.dgvCharacterTitles.BorderStyle = System.Windows.Forms.BorderStyle.None
+        Me.dgvCharacterTitles.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize
+        Me.dgvCharacterTitles.GridColor = System.Drawing.Color.Gainsboro
+        Me.dgvCharacterTitles.Location = New System.Drawing.Point(6, 186)
+        Me.dgvCharacterTitles.Name = "dgvCharacterTitles"
+        Me.dgvCharacterTitles.ReadOnly = True
+        Me.dgvCharacterTitles.Size = New System.Drawing.Size(1059, 161)
+        Me.dgvCharacterTitles.TabIndex = 31
+        '
+        'DsResults
+        '
+        Me.DsResults.DataSetName = "dsResults"
+        Me.DsResults.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
+        '
         'DsSelectedTitles
         '
         Me.DsSelectedTitles.DataSetName = "dsSelectedTitles"
         Me.DsSelectedTitles.SchemaSerializationMode = System.Data.SchemaSerializationMode.IncludeSchema
-        '
-        'btnAbort
-        '
-        Me.btnAbort.Location = New System.Drawing.Point(965, 654)
-        Me.btnAbort.Name = "btnAbort"
-        Me.btnAbort.Size = New System.Drawing.Size(112, 23)
-        Me.btnAbort.TabIndex = 28
-        Me.btnAbort.Text = "Abort"
-        Me.btnAbort.UseVisualStyleBackColor = True
-        '
-        'ToolStripSeparator4
-        '
-        Me.ToolStripSeparator4.Name = "ToolStripSeparator4"
-        Me.ToolStripSeparator4.Size = New System.Drawing.Size(317, 6)
-        '
-        'ToolStripSeparator5
-        '
-        Me.ToolStripSeparator5.Name = "ToolStripSeparator5"
-        Me.ToolStripSeparator5.Size = New System.Drawing.Size(317, 6)
         '
         'fmMain
         '
@@ -473,13 +504,13 @@ Partial Class fmMain
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.White
         Me.ClientSize = New System.Drawing.Size(1095, 700)
-        Me.Controls.Add(Me.btnAbort)
+        Me.Controls.Add(Me.gbResults)
+        Me.Controls.Add(Me.btnCancel)
         Me.Controls.Add(Me.btnSearch)
         Me.Controls.Add(Me.ssMain)
         Me.Controls.Add(Me.msMain)
         Me.Controls.Add(Me.btnRemove)
         Me.Controls.Add(Me.btnAdd)
-        Me.Controls.Add(Me.gbLog)
         Me.Controls.Add(Me.gbPlayerInput)
         Me.Controls.Add(Me.gbSelectedTitles)
         Me.Controls.Add(Me.btnLookup)
@@ -489,17 +520,19 @@ Partial Class fmMain
         Me.MainMenuStrip = Me.msMain
         Me.MaximizeBox = False
         Me.Name = "fmMain"
-        Me.Text = "kownTitles"
+        Me.Text = "kownTitles | A Tool for the TrinityCore Title System"
         Me.gbSelectedTitles.ResumeLayout(False)
         CType(Me.dgvSelectedTitles, System.ComponentModel.ISupportInitialize).EndInit()
         Me.gbPlayerInput.ResumeLayout(False)
         Me.gbPlayerInput.PerformLayout()
-        Me.gbLog.ResumeLayout(False)
-        Me.gbLog.PerformLayout()
         Me.ssMain.ResumeLayout(False)
         Me.ssMain.PerformLayout()
         Me.msMain.ResumeLayout(False)
         Me.msMain.PerformLayout()
+        CType(Me.dgvCharacters, System.ComponentModel.ISupportInitialize).EndInit()
+        Me.gbResults.ResumeLayout(False)
+        CType(Me.dgvCharacterTitles, System.ComponentModel.ISupportInitialize).EndInit()
+        CType(Me.DsResults, System.ComponentModel.ISupportInitialize).EndInit()
         CType(Me.DsSelectedTitles, System.ComponentModel.ISupportInitialize).EndInit()
         Me.ResumeLayout(False)
         Me.PerformLayout()
@@ -507,10 +540,8 @@ Partial Class fmMain
     End Sub
     Friend WithEvents tbPlayerInput As System.Windows.Forms.TextBox
     Friend WithEvents btnLookup As System.Windows.Forms.Button
-    Friend WithEvents tbLog As System.Windows.Forms.TextBox
     Friend WithEvents gbSelectedTitles As System.Windows.Forms.GroupBox
     Friend WithEvents gbPlayerInput As System.Windows.Forms.GroupBox
-    Friend WithEvents gbLog As System.Windows.Forms.GroupBox
     Friend WithEvents btnAdd As System.Windows.Forms.Button
     Friend WithEvents btnRemove As System.Windows.Forms.Button
     Friend WithEvents ssMain As System.Windows.Forms.StatusStrip
@@ -533,7 +564,6 @@ Partial Class fmMain
     Friend WithEvents DsSelectedTitles As knownTitles.dsSelectedTitles
     Friend WithEvents miSettings As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSettings_ExtendedTitles As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents miSettings_InlineReports As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miSettings_DebugMode As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripMenuItem1 As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents miLogfile_Path As System.Windows.Forms.ToolStripTextBox
@@ -547,12 +577,17 @@ Partial Class fmMain
     Friend WithEvents miInfo_TrinityCoreWiki As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents btnSearch As System.Windows.Forms.Button
     Friend WithEvents miSettings_Shortcuts As System.Windows.Forms.ToolStripMenuItem
-    Friend WithEvents btnAbort As System.Windows.Forms.Button
+    Friend WithEvents btnCancel As System.Windows.Forms.Button
     Friend WithEvents miFile_Exit As System.Windows.Forms.ToolStripMenuItem
     Friend WithEvents ToolStripSeparator1 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator2 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator3 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator4 As System.Windows.Forms.ToolStripSeparator
     Friend WithEvents ToolStripSeparator5 As System.Windows.Forms.ToolStripSeparator
+    Friend WithEvents dgvCharacters As System.Windows.Forms.DataGridView
+    Friend WithEvents gbResults As System.Windows.Forms.GroupBox
+    Friend WithEvents dgvCharacterTitles As System.Windows.Forms.DataGridView
+    Friend WithEvents DsResults As knownTitles.dsResults
+    Friend WithEvents miFile_SaveSQLUpdateQuery As System.Windows.Forms.ToolStripMenuItem
 
 End Class

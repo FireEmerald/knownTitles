@@ -44,20 +44,20 @@ Public Class Cls_Log
     Public Sub New()
     End Sub
 
-    Public Function Strg_HEADER() As String
+    'Public Function Strg_HEADER() As String
 
-    End Function
+    'End Function
 
-    Public Function Strg_FOUND(_CharTitle As CharTitle) As String
+    'Public Function Strg_FOUND(_CharTitle As CharTitle) As String
 
-    End Function
+    'End Function
 
-    Public Function Strg_MATCHES(_CharTitle As CharTitle) As String
+    'Public Function Strg_MATCHES(_CharTitle As CharTitle) As String
 
-    End Function
+    'End Function
 
-    Public Function Strg_REMOVED(_CharTitle As CharTitle) As String
+    'Public Function Strg_REMOVED(_CharTitle As CharTitle) As String
 
-    End Function
+    'End Function
 
 End Class

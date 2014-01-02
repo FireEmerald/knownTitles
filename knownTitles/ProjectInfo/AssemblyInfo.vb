@@ -14,7 +14,7 @@ Imports System.Runtime.InteropServices
 <Assembly: AssemblyDescription("knownTitles for TrinityCore")> 
 <Assembly: AssemblyCompany("")> 
 <Assembly: AssemblyProduct("")> 
-<Assembly: AssemblyCopyright("Copyright © FireEmerald 2013")> 
+<Assembly: AssemblyCopyright("Copyright © 2014 FireEmerald")> 
 <Assembly: AssemblyTrademark("")> 
 
 <Assembly: ComVisible(False)> 
@@ -33,7 +33,7 @@ Imports System.Runtime.InteropServices
 ' übernehmen, indem Sie "*" eingeben:
 ' <Assembly: AssemblyVersion("1.0.*")> 
 
-<Assembly: AssemblyVersion("0.2.0.0")> 
-<Assembly: AssemblyFileVersion("0.2.0.0")> 
+<Assembly: AssemblyVersion("0.2.1.0")> 
+<Assembly: AssemblyFileVersion("0.2.1.0")> 
 
 <Assembly: NeutralResourcesLanguageAttribute("en")> 

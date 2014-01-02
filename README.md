@@ -30,4 +30,4 @@ Fixes are submitted as pull request via Bitbucket.
 
 ## Copyright
 
-All Rights Reserved by (C) 2013 [FireEmerald](https://github.com/FireEmerald)
+All Rights Reserved by (C) 2014 [FireEmerald](https://github.com/FireEmerald)

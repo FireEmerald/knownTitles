@@ -24,6 +24,7 @@ Partial Class fmAbout
     Private Sub InitializeComponent()
         Dim resources As System.ComponentModel.ComponentResourceManager = New System.ComponentModel.ComponentResourceManager(GetType(fmAbout))
         Me.PictureBox1 = New System.Windows.Forms.PictureBox()
+        Me.lblVersion = New System.Windows.Forms.Label()
         CType(Me.PictureBox1, System.ComponentModel.ISupportInitialize).BeginInit()
         Me.SuspendLayout()
         '
@@ -38,12 +39,26 @@ Partial Class fmAbout
         Me.PictureBox1.TabIndex = 0
         Me.PictureBox1.TabStop = False
         '
+        'lblVersion
+        '
+        Me.lblVersion.AutoSize = True
+        Me.lblVersion.BackColor = System.Drawing.Color.CornflowerBlue
+        Me.lblVersion.ForeColor = System.Drawing.Color.White
+        Me.lblVersion.Location = New System.Drawing.Point(9, 118)
+        Me.lblVersion.Name = "lblVersion"
+        Me.lblVersion.RightToLeft = System.Windows.Forms.RightToLeft.No
+        Me.lblVersion.Size = New System.Drawing.Size(25, 13)
+        Me.lblVersion.TabIndex = 1
+        Me.lblVersion.Text = "123"
+        Me.lblVersion.TextAlign = System.Drawing.ContentAlignment.MiddleRight
+        '
         'fmAbout
         '
         Me.AutoScaleDimensions = New System.Drawing.SizeF(6.0!, 13.0!)
         Me.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font
         Me.BackColor = System.Drawing.Color.Red
         Me.ClientSize = New System.Drawing.Size(400, 186)
+        Me.Controls.Add(Me.lblVersion)
         Me.Controls.Add(Me.PictureBox1)
         Me.ForeColor = System.Drawing.Color.Navy
         Me.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None
@@ -60,4 +75,5 @@ Partial Class fmAbout
 
     End Sub
     Friend WithEvents PictureBox1 As System.Windows.Forms.PictureBox
+    Friend WithEvents lblVersion As System.Windows.Forms.Label
 End Class

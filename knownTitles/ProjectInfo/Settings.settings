@@ -20,7 +20,7 @@
     <Setting Name="SaveLogfile" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
-    <Setting Name="SaveSQLQuery" Type="System.Boolean" Scope="User">
+    <Setting Name="SaveSQLUpdateQuery" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
     <Setting Name="SearchMode_Normal" Type="System.Boolean" Scope="User">

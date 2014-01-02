@@ -14,28 +14,16 @@ Public Class DataGridViewInvoker
     End Sub
 
     '// Alle Charakterdaten den DataTablen hinzufügen.
-    Public Sub AddCharacterData(_CheckedCharacterDataList As List(Of Character))
+    Public Sub AddCharacterData(_FullCharacterList As List(Of Character))
         '// Alte Zeilen löschen.
         With _fmMain.DsResults
             .dtCharacters.Rows.Clear()
             .dtCharacterTitles.Rows.Clear()
         End With
 
-        For Each _Character As Character In _CheckedCharacterDataList
-            Dim _NewCharacterRow As dsResults.dtCharactersRow = _fmMain.DsResults.dtCharacters.NewdtCharactersRow
-
-            With _NewCharacterRow
-                .colName = _Character.Name
-                .colGUID = _Character.GUID
-                .colAccountID = _Character.AccountID
-                .colKnownTitlesBackup = _Character.KnownTitlesBackup
-                .colAffected = _Character.AffectedTitles.Count
-                '.colRemoved = ???
-                '.colLeft = ???
-            End With
-
-            '// Den Charakter zum DataTable hinzufügen.
-            _fmMain.DsResults.dtCharacters.Rows.Add(_NewCharacterRow)
+        For Each _Character As Character In _FullCharacterList
+            Dim _RemovedCnt As Integer = 0
+            Dim _LeftCnt As Integer = 0
 
             '// Alle Titel des Charakters zum DataTable hinzufügen.
             For Each _Title As CharTitle In _Character.AffectedTitles
@@ -43,7 +31,7 @@ Public Class DataGridViewInvoker
 
                 With _NewTitleRow
                     .colGUID = _Character.GUID
-                    '.colState = ???
+                    .colState = [Enum].GetName(GetType(State), _Title.State)
                     .colTitleID = _Title.TitleID
                     .colInGameOrder = _Title.InGameOrder
                     .colIntID = _Title.IntID
@@ -56,9 +44,31 @@ Public Class DataGridViewInvoker
                     .colFemaleTitle = _Title.FemaleTitle
                 End With
 
+                If _Title.State = State.REMOVED Then
+                    _RemovedCnt += 1
+                Else
+                    _LeftCnt += 1
+                End If
+
                 '// Den Titel zum DataTable hinzufügen.
                 _fmMain.DsResults.dtCharacterTitles.Rows.Add(_NewTitleRow)
             Next
+
+            '// Den Charakter zum DataTable hinzufügen.
+            Dim _NewCharacterRow As dsResults.dtCharactersRow = _fmMain.DsResults.dtCharacters.NewdtCharactersRow
+
+            With _NewCharacterRow
+                .colName = _Character.Name
+                .colGUID = _Character.GUID
+                .colAccountID = _Character.AccountID
+                .colKnownTitlesBackup = _Character.KnownTitlesBackup
+                .colAffected = _Character.AffectedTitles.Count
+                .colRemoved = _RemovedCnt
+                .colLeft = _LeftCnt
+            End With
+
+            '// Den Charakter zum DataTable hinzufügen.
+            _fmMain.DsResults.dtCharacters.Rows.Add(_NewCharacterRow)
         Next
     End Sub
 

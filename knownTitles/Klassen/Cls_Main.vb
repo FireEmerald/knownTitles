@@ -5,6 +5,14 @@ Imports System.Text
 Imports System.Threading
 Imports System.Text.RegularExpressions
 
+'// State jedes Titels nach der Verarbeitung
+Public Enum State As Integer
+    FOUND = 0
+    MATCHES = 1
+    GRANTED = 2
+    REMOVED = 3
+End Enum
+
 '// Struktur für einen Charakter
 Public Structure Character
     Dim GUID, AccountID As Integer
@@ -26,6 +34,7 @@ Public Structure CharTitle
     Dim BitOfInteger As Integer
     Dim Bit As UInt32
     Dim DBValue As String
+    Dim State As State
 End Structure
 
 Public Class Cls_Main
@@ -169,10 +178,10 @@ Public Class Cls_Main
     End Sub
 
     Private Sub GenerateLogFromFoundTitles(_FoundTitles As List(Of CharTitle))
-        '// Für jeden gefundenen Titel einen Inline Report ausgeben.
-        For Each _FoundTitle In _FoundTitles
-            LogMsg_Add("FOUND | BIT: " + _FoundTitle.Bit.ToString + " | INT: " + _FoundTitle.IntID.ToString + " | IntBit: " + _FoundTitle.BitOfInteger.ToString + " | TitleID: " + _FoundTitle.TitleID.ToString + " | UnkRef: " + _FoundTitle.UnkRef.ToString + " | MaleTitle: " + _FoundTitle.MaleTitle + " | FemaleTitle: " + _FoundTitle.FemaleTitle + " | InGameOrder: " + _FoundTitle.InGameOrder.ToString)
-        Next
+        '    '// Für jeden gefundenen Titel einen Inline Report ausgeben.
+        '    For Each _FoundTitle In _FoundTitles
+        '        LogMsg_Add("FOUND | BIT: " + _FoundTitle.Bit.ToString + " | INT: " + _FoundTitle.IntID.ToString + " | IntBit: " + _FoundTitle.BitOfInteger.ToString + " | TitleID: " + _FoundTitle.TitleID.ToString + " | UnkRef: " + _FoundTitle.UnkRef.ToString + " | MaleTitle: " + _FoundTitle.MaleTitle + " | FemaleTitle: " + _FoundTitle.FemaleTitle + " | InGameOrder: " + _FoundTitle.InGameOrder.ToString)
+        '    Next
     End Sub
 #End Region
 
@@ -279,55 +288,32 @@ Public Class Cls_Main
     End Sub
 
     Private Sub PrintFoundTitles(_AffectedTitles As List(Of CharTitle), _TitlesToFind As List(Of CharTitle))
-        '// Headerzeile.
-        LogMsg_Add("____________________________________________________________________________________" + vbCrLf + _
-                            "// CHARACTER TITLE DATA" + vbCrLf)
+        ''// Headerzeile.
+        'LogMsg_Add("____________________________________________________________________________________" + vbCrLf + _
+        '                    "// CHARACTER TITLE DATA" + vbCrLf)
 
-        '// Prüfen ob einer der Titel des Charakters zu suchen war.
-        For Each _AffectedTitle In _AffectedTitles
-            If _TitlesToFind.Contains(_AffectedTitle) Then
-                LogMsg_Add("MATCHES | BIT: " + _AffectedTitle.Bit.ToString + " | INT: " + _AffectedTitle.IntID.ToString + " | IntBit: " + _AffectedTitle.BitOfInteger.ToString + " | TitleID: " + _AffectedTitle.TitleID.ToString + " | UnkRef: " + _AffectedTitle.UnkRef.ToString + " | MaleTitle: " + _AffectedTitle.MaleTitle + " | FemaleTitle: " + _AffectedTitle.FemaleTitle + " | InGameOrder: " + _AffectedTitle.InGameOrder.ToString)
-            Else
-                LogMsg_Add("FOUND | BIT: " + _AffectedTitle.Bit.ToString + " | INT: " + _AffectedTitle.IntID.ToString + " | IntBit: " + _AffectedTitle.BitOfInteger.ToString + " | TitleID: " + _AffectedTitle.TitleID.ToString + " | UnkRef: " + _AffectedTitle.UnkRef.ToString + " | MaleTitle: " + _AffectedTitle.MaleTitle + " | FemaleTitle: " + _AffectedTitle.FemaleTitle + " | InGameOrder: " + _AffectedTitle.InGameOrder.ToString)
-            End If
-        Next
+        ''// Prüfen ob einer der Titel des Charakters zu suchen war.
+        'For Each _AffectedTitle In _AffectedTitles
+        '    If _TitlesToFind.Contains(_AffectedTitle) Then
+        '        LogMsg_Add("MATCHES | BIT: " + _AffectedTitle.Bit.ToString + " | INT: " + _AffectedTitle.IntID.ToString + " | IntBit: " + _AffectedTitle.BitOfInteger.ToString + " | TitleID: " + _AffectedTitle.TitleID.ToString + " | UnkRef: " + _AffectedTitle.UnkRef.ToString + " | MaleTitle: " + _AffectedTitle.MaleTitle + " | FemaleTitle: " + _AffectedTitle.FemaleTitle + " | InGameOrder: " + _AffectedTitle.InGameOrder.ToString)
+        '    Else
+        '        LogMsg_Add("FOUND | BIT: " + _AffectedTitle.Bit.ToString + " | INT: " + _AffectedTitle.IntID.ToString + " | IntBit: " + _AffectedTitle.BitOfInteger.ToString + " | TitleID: " + _AffectedTitle.TitleID.ToString + " | UnkRef: " + _AffectedTitle.UnkRef.ToString + " | MaleTitle: " + _AffectedTitle.MaleTitle + " | FemaleTitle: " + _AffectedTitle.FemaleTitle + " | InGameOrder: " + _AffectedTitle.InGameOrder.ToString)
+        '    End If
+        'Next
     End Sub
 #End Region
-
-    ''' <summary>Aus einer Bitmask, alle Titel, als Liste ausgeben lassen.</summary>
-    Private Function GetTitlesFromIntValue(_IntID As Integer, _IntValue As String, _Available_TitleList As List(Of CharTitle)) As List(Of CharTitle)
-        '// Titel Bits der Bitmask auslesen.
-        Dim _CharacterTitleBits As List(Of UInteger) = GetBitsFromBitMask(CUInt(_IntValue))
-        '// Speichern der Titel für den Spieler.
-        Dim _FoundTitles As New List(Of CharTitle)
-
-        If _CharacterTitleBits.Count = 0 Then '// Keine Bits gefunden.
-            Return _FoundTitles
-        End If
-
-        For Each _TitleBit In _CharacterTitleBits
-            '// c.Bit = _TitleBit müsste normal nicht überprüft werden.
-            Dim _FoundTitle As CharTitle = _Available_TitleList.Find(Function(c) c.IntID = _IntID AndAlso c.Bit = _TitleBit)
-
-            _FoundTitles.Add(_FoundTitle)
-        Next
-        Return _FoundTitles
-    End Function
 
 #Region "Titel entfernen"
     Public Sub Remove()
         RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Process running ...", _MainProcess.Guid))
 
-        Dim _CheckedCharacterDataList As New List(Of Character)
-
+        Dim _FullCharacterList As New List(Of Character)
         Dim _PlayerInfo_Splitted As New List(Of String)(Regex.Split(_MainProcess.ValidatedPlayerInput, vbCrLf))
 
         '// 1234 Roki 0 64 0 0 0
         For _i As Integer = 0 To _PlayerInfo_Splitted.Count - 1
-            LogMsg_Add("____________________________________________________________________________________" + vbCrLf + _
-                            "// CHARACTER TITLE DATA" + vbCrLf)
 
-            '// Neuen Charakter erstellen
+            '// Neuen Charakter erstellen.
             Dim _CurrentCharacter As New Character With {.NothingChanged = True,
                                                          .AffectedTitles = New List(Of CharTitle)}
 
@@ -350,9 +336,8 @@ Public Class Cls_Main
                             If _SinglePlayerInfo(_FieldID) = "0" Then
                                 _CurrentCharacter.INT_0 = 0
                             Else
-                                _CurrentCharacter.INT_0 = GetGrantedBitmask(GetTitlesFromIntValue(0, _SinglePlayerInfo(_FieldID), _TitleList_INT_0), _
-                                                                            _CurrentCharacter, _
-                                                                            _TitleList_INT_0)
+                                _CurrentCharacter.INT_0 = GetGrantedBitmask(_CurrentCharacter, _
+                                                                            GetTitleList(_TitleList_INT_0, _SinglePlayerInfo(_FieldID)))
                             End If
                         Case FieldID.Int_1
                             _CurrentCharacter.KnownTitlesBackup += _SinglePlayerInfo(_FieldID) + " "
@@ -361,11 +346,9 @@ Public Class Cls_Main
                             If _SinglePlayerInfo(_FieldID) = "0" Then
                                 _CurrentCharacter.INT_1 = 0
                             Else
-                                _CurrentCharacter.INT_1 = GetGrantedBitmask(GetTitlesFromIntValue(1, _SinglePlayerInfo(_FieldID), _TitleList_INT_1), _
-                                                                            _CurrentCharacter, _
-                                                                            _TitleList_INT_1)
+                                _CurrentCharacter.INT_1 = GetGrantedBitmask(_CurrentCharacter, _
+                                                                            GetTitleList(_TitleList_INT_1, _SinglePlayerInfo(_FieldID)))
                             End If
-
                         Case FieldID.Int_2
                             _CurrentCharacter.KnownTitlesBackup += _SinglePlayerInfo(_FieldID) + " "
 
@@ -373,11 +356,9 @@ Public Class Cls_Main
                             If _SinglePlayerInfo(_FieldID) = "0" Then
                                 _CurrentCharacter.INT_2 = 0
                             Else
-                                _CurrentCharacter.INT_2 = GetGrantedBitmask(GetTitlesFromIntValue(2, _SinglePlayerInfo(_FieldID), _TitleList_INT_2), _
-                                                                            _CurrentCharacter, _
-                                                                            _TitleList_INT_2)
+                                _CurrentCharacter.INT_2 = GetGrantedBitmask(_CurrentCharacter, _
+                                                                            GetTitleList(_TitleList_INT_2, _SinglePlayerInfo(_FieldID)))
                             End If
-
                         Case FieldID.Int_3
                             _CurrentCharacter.KnownTitlesBackup += _SinglePlayerInfo(_FieldID) + " "
 
@@ -385,11 +366,10 @@ Public Class Cls_Main
                             If _SinglePlayerInfo(_FieldID) = "0" Then
                                 _CurrentCharacter.INT_3 = 0
                             Else
-                                _CurrentCharacter.INT_3 = GetGrantedBitmask(GetTitlesFromIntValue(3, _SinglePlayerInfo(_FieldID), _TitleList_INT_3), _
-                                                                            _CurrentCharacter, _
-                                                                            _TitleList_INT_3)
-                            End If
+                                _CurrentCharacter.INT_3 = GetGrantedBitmask(_CurrentCharacter, _
+                                                                            GetTitleList(_TitleList_INT_3, _SinglePlayerInfo(_FieldID)))
 
+                            End If
                         Case FieldID.Int_4
                             _CurrentCharacter.KnownTitlesBackup += _SinglePlayerInfo(_FieldID) + " "
 
@@ -397,29 +377,23 @@ Public Class Cls_Main
                             If _SinglePlayerInfo(_FieldID) = "0" Then
                                 _CurrentCharacter.INT_4 = 0
                             Else
-                                _CurrentCharacter.INT_4 = GetGrantedBitmask(GetTitlesFromIntValue(4, _SinglePlayerInfo(_FieldID), _TitleList_INT_4), _
-                                                                            _CurrentCharacter, _
-                                                                            _TitleList_INT_4)
+                                _CurrentCharacter.INT_4 = GetGrantedBitmask(_CurrentCharacter, _
+                                                                            GetTitleList(_TitleList_INT_4, _SinglePlayerInfo(_FieldID)))
                             End If
-
                         Case FieldID.Int_5
                             _CurrentCharacter.KnownTitlesBackup += _SinglePlayerInfo(_FieldID) + " "
 
                             '// Int 5 enthält nie einen Titel.
                             _CurrentCharacter.INT_5 = CUInt(_SinglePlayerInfo(_FieldID))
-
                     End Select
                 Next
 
-                '// Charakterdaten generieren und ausgeben.
-                LogMsg_Add(GeneratePrintCharakter(_CurrentCharacter))
-
-                '// Charakter zur Liste alle abgearbeiteten Chars hinzuzählen.
-                _CheckedCharacterDataList.Add(_CurrentCharacter)
+                '// Charakter zur Liste aller abgearbeiteten Chars hinzufügen.
+                _FullCharacterList.Add(_CurrentCharacter)
             Else
-                '// Fehler bei der Länge des Charakter Input / dürfte normal nie vorkommen!
+                '// Fehler bei der Länge des Charakter Input / dürfte normal nie vorkommen.
                 MessageBox.Show("The character input contains a line with a wrong syntax." + vbCrLf + "Line " + (_i + 1).ToString + " affected: """ + _PlayerInfo_Splitted(_i) + """" + vbCrLf + vbCrLf + "Take a closer look at this character!" + vbCrLf + "The current process will be canceled now.", "Error: Wrong character syntax.", MessageBoxButtons.OK, MessageBoxIcon.Error)
-                RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted("", _CheckedCharacterDataList, _MainProcess))
+                RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted("", _FullCharacterList, _MainProcess))
                 Return
             End If
 
@@ -428,19 +402,50 @@ Public Class Cls_Main
         Next
 
         Dim _SQLUpdateQuery As String = ""
-        '// SQL Query erstellen, falls dies zuvor ausgewählt wurde.
-        If My.Settings.SaveSQLQuery Then
+        '// SQL Query erstellen.
+        If My.Settings.SaveSQLUpdateQuery Then
             RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Generate SQL update querys...", _MainProcess.Guid))
-            _SQLUpdateQuery = GenerateSQLQuery(_CheckedCharacterDataList)
+            _SQLUpdateQuery = GenerateSQLUpdateQuery(_FullCharacterList)
             My.Computer.FileSystem.WriteAllText(_SQLQueryPath, _SQLUpdateQuery.ToString, False)
         End If
 
+        '// Logfile erstellen.
+        If My.Settings.SaveLogfile Then
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Running... Generate Logfile...", _MainProcess.Guid))
+            GenLogfileBody(_FullCharacterList, _MainProcess)
+        End If
+
         '// Abschließendes Events ausführen.
-        RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_SQLUpdateQuery, _CheckedCharacterDataList, _MainProcess))
+        RaiseEvent MainProcess_Completed(Me, New EArgs_MainProcessCompleted(_SQLUpdateQuery, _FullCharacterList, _MainProcess))
     End Sub
 
+    ''' <summary>Gibt eine Liste mit vorhandenen Titeln des gegebenen Integers zurück.</summary>
+    ''' <param name="_IntTitleList">Eine Liste mit möglichen Titeln zu dem Integer.</param>
+    ''' <param name="_IntValue">Der Integer des Charakters.</param>
+    Private Function GetTitleList(_IntTitleList As List(Of CharTitle), _IntValue As String) As List(Of CharTitle)
+        '// Alle vorhandenen Titel als Bits des aktuellen Integers.
+        Dim _IntTitleBits As List(Of UInteger) = GetBitsFromBitMask(CUInt(_IntValue))
+        '// Alle vorhandenen Titel aus dem aktuellen Integer.
+        Dim _FoundTitles As New List(Of CharTitle)
+
+        '// Die Bitmask enthielt keine Bits - sollte normal nie vorkommen.
+        If _IntTitleBits.Count = 0 Then Return _FoundTitles
+
+        For Each _TitleBit In _IntTitleBits
+            Dim _FoundTitle As CharTitle = _IntTitleList.Find(Function(c) c.Bit = _TitleBit)
+
+            '// Falls die Funktion keinen Titel findet. Kann passieren, wenn an den knownTitles gepfuscht wurde. (Custom Titel. Beispiel: "1 1 User 32769 0 0 0 0 0")
+            If _FoundTitle.DBValue = Nothing Then
+                Log_Msg(PRÄFIX.WARNING, "The title bit " + _TitleBit.ToString + " of the int value " + _IntValue + " couldn't be found in the DBC Values!")
+            End If
+
+            _FoundTitles.Add(_FoundTitle)
+        Next
+        Return _FoundTitles
+    End Function
+
     ''' <summary>Alle nicht gebannten Titel aus den FoundTitles zu einer Bitmask addieren. Referenz zu CurrentCharacter.</summary>
-    Private Function GetGrantedBitmask(_FoundTitles As List(Of CharTitle), ByRef _CurrentCharacter As Character, _Available_TitleList As List(Of CharTitle)) As UInteger
+    Private Function GetGrantedBitmask(ByRef _CurrentCharacter As Character, _FoundTitles As List(Of CharTitle)) As UInteger
         Dim _GrantedBitmask As UInteger = 0
 
         '// Alle gefundenen Titel
@@ -461,15 +466,17 @@ Public Class Cls_Main
 
             '// Ist der Titel gebannt Ja/Nein?
             If _FoundTitleIsBanned Then
-                '// Die Daten zu dem gebannten Titel dem Charakter hinzufügen.
-                _CurrentCharacter.AffectedTitles.Add(_FoundTitle)
+                _FoundTitle.State = State.REMOVED
+
                 '// Vermerken, dass der Charakter gebannte Titel enthält.
                 _CurrentCharacter.NothingChanged = False
-                LogMsg_Add("REMOVED | BIT: " + _FoundTitle.Bit.ToString + " | INT: " + _FoundTitle.IntID.ToString + " | IntBit: " + _FoundTitle.BitOfInteger.ToString + " | TitleID: " + _FoundTitle.TitleID.ToString + " | UnkRef: " + _FoundTitle.UnkRef.ToString + " | MaleTitle: " + _FoundTitle.MaleTitle + " | FemaleTitle: " + _FoundTitle.FemaleTitle + " | InGameOrder: " + _FoundTitle.InGameOrder.ToString)
+                _CurrentCharacter.AffectedTitles.Add(_FoundTitle)
             Else
+                _FoundTitle.State = State.GRANTED
+
                 '// Das nicht gebannte Bit wieder zu der Bitmask addieren.
                 _GrantedBitmask += _FoundTitle.Bit
-                LogMsg_Add("GRANTED | BIT: " + _FoundTitle.Bit.ToString + " | INT: " + _FoundTitle.IntID.ToString + " | IntBit: " + _FoundTitle.BitOfInteger.ToString + " | TitleID: " + _FoundTitle.TitleID.ToString + " | UnkRef: " + _FoundTitle.UnkRef.ToString + " | MaleTitle: " + _FoundTitle.MaleTitle + " | FemaleTitle: " + _FoundTitle.FemaleTitle + " | InGameOrder: " + _FoundTitle.InGameOrder.ToString)
+                _CurrentCharacter.AffectedTitles.Add(_FoundTitle)
             End If
         Next
 
@@ -483,9 +490,7 @@ Public Class Cls_Main
     End Sub
 #End Region
 
-    Public Sub LogMsg_Add(_Message As String)
-        Log_Msg(PRÄFIX.INFO, _Message)
-    End Sub
+
 
 
 #Region "Delay Sub Backup"

@@ -13,13 +13,13 @@ Public Class EArgs_MainProcessCompleted
 
     '// Variablen
     Private _SQLUpdateQuery As String
-    Private _CheckedCharacterDataList As List(Of Character)
+    Private _FullCharacterList As List(Of Character)
 #End Region
 
     '// Sub New - Was an die Form übergeben werden soll.
-    Sub New(SQLUpdateQuery As String, CheckedCharacterDataList As List(Of Character), MainProcess As MainProcessing)
+    Sub New(SQLUpdateQuery As String, FullCharacterList As List(Of Character), MainProcess As MainProcessing)
         _SQLUpdateQuery = SQLUpdateQuery
-        _CheckedCharacterDataList = CheckedCharacterDataList
+        _FullCharacterList = FullCharacterList
         _MainProcess = MainProcess
     End Sub
 
@@ -29,9 +29,9 @@ Public Class EArgs_MainProcessCompleted
             Return _SQLUpdateQuery
         End Get
     End Property
-    Public ReadOnly Property GetCheckedCharacterDataList As List(Of Character)
+    Public ReadOnly Property GetFullCharacterList As List(Of Character)
         Get
-            Return _CheckedCharacterDataList
+            Return _FullCharacterList
         End Get
     End Property
     Public ReadOnly Property GetMainProcess As MainProcessing

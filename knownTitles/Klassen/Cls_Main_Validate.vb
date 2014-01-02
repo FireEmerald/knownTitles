@@ -15,6 +15,7 @@ Public Structure MainProcessing
     Dim PlayerInput,
         ValidatedPlayerInput As String
     Dim SelectedTitles As List(Of CharTitle)
+    Dim TotalAffected, TotalRemoved, TotalLeft As Integer
     Dim ID As MainProcessingID
     Dim Guid As Guid
 End Structure

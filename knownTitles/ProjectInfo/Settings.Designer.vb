@@ -129,12 +129,12 @@ Namespace My
         <Global.System.Configuration.UserScopedSettingAttribute(), _
          Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
          Global.System.Configuration.DefaultSettingValueAttribute("False")> _
-        Public Property SaveSQLQuery() As Boolean
+        Public Property SaveSQLUpdateQuery() As Boolean
             Get
-                Return CType(Me("SaveSQLQuery"), Boolean)
+                Return CType(Me("SaveSQLUpdateQuery"), Boolean)
             End Get
             Set(value As Boolean)
-                Me("SaveSQLQuery") = value
+                Me("SaveSQLUpdateQuery") = value
             End Set
         End Property
 

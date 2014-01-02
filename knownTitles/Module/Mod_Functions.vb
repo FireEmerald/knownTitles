@@ -25,49 +25,35 @@ Module Mod_Functions
         End If
     End Sub
 
-    ''' <summary>Eine Character Structure in einen String umwandeln.</summary>
-    Public Function GeneratePrintCharakter(_Character As Character) As String
-        Dim _Output As String = vbCrLf + "Name: " + _Character.Name + _
-                                         " | Account ID: " + _Character.AccountID.ToString + _
-                                         " | GUID: " + _Character.GUID.ToString + _
-                                         " | INT_0: " + _Character.INT_0.ToString + _
-                                         " | INT_1: " + _Character.INT_1.ToString + _
-                                         " | INT_2: " + _Character.INT_2.ToString + _
-                                         " | INT_3: " + _Character.INT_3.ToString + _
-                                         " | INT_4: " + _Character.INT_4.ToString
-        If Not _Character.NothingChanged Then _Output += " | Last knownTitles: """ + _Character.KnownTitlesBackup + """"
-        Return _Output
-    End Function
-
     ''' <summary>Generiert SQL Update Querys, anhand einer Character Full List und der Variable NothingChanged bei jedem Character.</summary>
-    Public Function GenerateSQLQuery(_CharacterFullList As List(Of Character)) As String
+    Public Function GenerateSQLUpdateQuery(_CharacterFullList As List(Of Character)) As String
         Dim _SQLQuery As String = ""
-        For Each _Char In _CharacterFullList
-            If Not _Char.NothingChanged Then
+        For Each _Character In _CharacterFullList
+            If Not _Character.NothingChanged Then
                 '// Allgemeine Informationen zu dem Charakter auflisten
-                _SQLQuery += "/* Character: " + _Char.Name +
-                             " | GUID: " + _Char.GUID.ToString +
-                             " | Account ID: " + _Char.AccountID.ToString +
-                             " | Last Bitmask: """ + _Char.KnownTitlesBackup + """" + vbCrLf
+                _SQLQuery += "/* Character: " + _Character.Name +
+                             " | GUID: " + _Character.GUID.ToString +
+                             " | Account ID: " + _Character.AccountID.ToString +
+                             " | Last Bitmask: """ + _Character.KnownTitlesBackup + """" + vbCrLf
 
                 '// Alle gebannten Titel auflisten
-                For _i As Integer = 0 To _Char.AffectedTitles.Count - 1
-                    _SQLQuery += "REMOVED | INT: " + _Char.AffectedTitles.Item(_i).IntID.ToString + _
-                                 " | BIT: " + _Char.AffectedTitles.Item(_i).Bit.ToString + _
-                                 " | TitleID: " + _Char.AffectedTitles.Item(_i).TitleID.ToString + _
-                                 " | Title: " + _Char.AffectedTitles.Item(_i).MaleTitle
-                    If _i = (_Char.AffectedTitles.Count - 1) Then _SQLQuery += " */"
+                For _i As Integer = 0 To _Character.AffectedTitles.Count - 1
+                    _SQLQuery += "REMOVED | INT: " + _Character.AffectedTitles.Item(_i).IntID.ToString + _
+                                 " | BIT: " + _Character.AffectedTitles.Item(_i).Bit.ToString + _
+                                 " | TitleID: " + _Character.AffectedTitles.Item(_i).TitleID.ToString + _
+                                 " | Title: " + _Character.AffectedTitles.Item(_i).MaleTitle
+                    If _i = (_Character.AffectedTitles.Count - 1) Then _SQLQuery += " */"
                     _SQLQuery += vbCrLf
                 Next
 
                 '// Den Update Query für den Charakter erstellen
-                _SQLQuery += "UPDATE `characters` SET `knownTitles`=""" + _Char.INT_0.ToString + " " + _
-                                                                          _Char.INT_1.ToString + " " + _
-                                                                          _Char.INT_2.ToString + " " + _
-                                                                          _Char.INT_3.ToString + " " + _
-                                                                          _Char.INT_4.ToString + " " + _
-                                                                          _Char.INT_5.ToString + """ WHERE `guid`=" + _
-                                                                          _Char.GUID.ToString + ";" + vbCrLf
+                _SQLQuery += "UPDATE `characters` SET `knownTitles`=""" + _Character.INT_0.ToString + " " + _
+                                                                          _Character.INT_1.ToString + " " + _
+                                                                          _Character.INT_2.ToString + " " + _
+                                                                          _Character.INT_3.ToString + " " + _
+                                                                          _Character.INT_4.ToString + " " + _
+                                                                          _Character.INT_5.ToString + """ WHERE `guid`=" + _
+                                                                          _Character.GUID.ToString + ";" + vbCrLf
             End If
         Next
         Return _SQLQuery

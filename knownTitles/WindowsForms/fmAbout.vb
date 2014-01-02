@@ -37,4 +37,9 @@
     Private Sub fmAbout_FormClosing(sender As Object, e As FormClosingEventArgs) Handles Me.FormClosing
         fmMain._fmAbout = Nothing
     End Sub
+
+    Private Sub fmAbout_Load(sender As Object, e As EventArgs) Handles Me.Load
+        '// Don't want to update the picture whole time. Later this will be removed^^
+        lblVersion.Text = "Version: " + Application.ProductVersion.Substring(0, 5) + " 64x"
+    End Sub
 End Class

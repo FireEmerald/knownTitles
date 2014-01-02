@@ -80,9 +80,9 @@
                 SetForeColor_CheckState(_MenuItem, My.Settings.SaveLogfile)
             Case _MenuItem Is _fmMain.miGenerateSQLUpdateQuerys
                 If _SetNewState Then
-                    My.Settings.SaveSQLQuery = Not My.Settings.SaveSQLQuery
+                    My.Settings.SaveSQLUpdateQuery = Not My.Settings.SaveSQLUpdateQuery
                 End If
-                SetForeColor_CheckState(_MenuItem, My.Settings.SaveSQLQuery)
+                SetForeColor_CheckState(_MenuItem, My.Settings.SaveSQLUpdateQuery)
         End Select
     End Sub
 

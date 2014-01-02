@@ -112,12 +112,9 @@ Public Class fmMain
 
     Private Sub Process_LookupTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text)
+        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text) '// LOGFILE oder SQL Update Query????
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
-
-        '// Startzeit festhalten
-        _StartTime = Date.Now
 
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Lookup)
@@ -131,9 +128,6 @@ Public Class fmMain
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
-        '// Startzeit festhalten
-        _StartTime = Date.Now
-
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Remove)
         _Process_Thread.Start()
@@ -142,12 +136,9 @@ Public Class fmMain
 
     Private Sub Process_SearchTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Object erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text)
+        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text) '// LOGFILE oder SQL Update Query????
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
-
-        '// Startzeit festhalten
-        _StartTime = Date.Now
 
         '// Den Thread erstellen.
         Dim _Process_Thread As New Thread(AddressOf _Process.Search)
@@ -192,6 +183,14 @@ Public Class fmMain
     End Sub
 
     Private Sub MainProcess_Completed_Handler(sender As Object, e As EArgs_MainProcessCompleted)
+        '// Komplette Durchlaufzeit.
+        Dim _ProgressTime As TimeSpan = Date.Now - _StartTime
+
+        '// Abschließend den Footer für das Logfile erstellen.
+        If My.Settings.SaveLogfile Then
+            GenLogfileFooter(Date.Now, _ProgressTime, e.GetMainProcess)
+        End If
+
         '// Daten aus dem MainProcess an die beiden DataGridViews weiterreichen.
         Dim _dgvInvoker As New DataGridViewInvoker(Me)
         '// Bevor den DataTablen neue Daten zugewiesen werden können, müssen die Bindings aufgehoben werden.
@@ -199,23 +198,15 @@ Public Class fmMain
         _dgvInvoker.NewSourceAndMember(dgvCharacterTitles, Nothing, Nothing)
 
         '// Hinzufügen.
-        _dgvInvoker.AddCharacterData(e.GetCheckedCharacterDataList)
+        _dgvInvoker.AddCharacterData(e.GetFullCharacterList)
         _dgvInvoker.NewSourceAndMember(dgvCharacters, DsResults, "dtCharacters")
         _dgvInvoker.NewSourceAndMember(dgvCharacterTitles, DsResults, "dtCharacters.CharactersToTitlesRelation")
         _dgvInvoker.SetColumnNamesAndWidth()
         _dgvInvoker.ReloadVisibleDataGridViewValues(My.Settings.ExtendedView)
 
-        '// Logfile speichern und SQL Update Query.
+        '// Logfile und SQL Update Query speichern.
         _LastLog = GetLog
         _LastSQLUpdateQuery = e.GetSQLUpdateQuery
-
-        '// Abschließende Informationen anzeigen.
-        Dim _ProgressTime As TimeSpan = (Date.Now - _StartTime)
-
-        Log_Msg(PRÄFIX.INFO, "Thread GUID: " + e.GetMainProcess.Guid.ToString + _
-                             " | Start: " + _StartTime.ToString + _
-                             " | Finished: " + Date.Now.ToString + _
-                             " | Elapsed: " + String.Format("{0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds))
 
         '// ToolStrip aktualisieren.
         tsMain_setAll(100, "Done!" + String.Format("  | Elapsed: {0:0.##} minute(s), {1:0},{2:0} second(s)", _ProgressTime.Minutes, _ProgressTime.Seconds, _ProgressTime.Milliseconds))
@@ -235,6 +226,13 @@ Public Class fmMain
         If NoErrorWhileValidation(e) Then
             '// Aktueller PlayerInput wurde validiert
             _LastApprovedPlayerInput = tbPlayerInput.Text
+
+            '// Startzeit festhalten & Logfileheader erstellen.
+            _StartTime = Date.Now
+            If My.Settings.SaveLogfile Then
+                GenLogfileHeader(_StartTime)
+            End If
+
             '// Hauptprozess starten
             Select Case e.P_MainProcess.ID
                 Case MainProcessingID.PROCESS_ADD

@@ -58,12 +58,16 @@ Module Mod_Log
 #End Region
 
 #Region "Log System"
+    ''' <summary>Erstellt einen Logeintrag mit Info-Präfix.</summary>
     Public Sub Log_MsgInfo(_Message As String)
         Log_Msg(PRÄFIX.INFO, _Message)
     End Sub
 
-    ''' <summary>Adds a string to the log followed by a new line.</summary>
+    ''' <summary>Erstellt einen Logeintrag, gefolgt von einer neuen Zeile.</summary>
     Public Sub Log_Msg(_Präfix As PRÄFIX, _Message As String)
+        '// Debugmessages werden nicht verarbeitet, wenn nicht aktiviert.
+        If _Präfix = PRÄFIX.DEBUG AndAlso Not My.Settings.DebugMode Then Return
+
         Dim _LogMsg As String = GetSyntax(_Präfix) + _Message
         _Log.AppendLine(_LogMsg)
 
@@ -86,7 +90,7 @@ Module Mod_Log
     End Function
 #End Region
     
-#Region "SECOND"
+#Region "Header, Body and Footer"
     ''' <summary>Erstellt den Header für den Main Prozesses und speichert diesen im Log.</summary>
     Public Sub GenLogfileHeader(_StartTime As Date)
         Log_MsgInfo("╔════════════════════════════╦══════════════════════════════════════════════════════════════╦════════════════════╦═══════════════════════════════════╗")
@@ -108,6 +112,10 @@ Module Mod_Log
 
     ''' <summary>Erstellt für jeden Charakter die Logeinträge und speichert diese im Log. Ausserdem werden alle Total-Werte errechnet.</summary>
     Public Sub GenLogfileBody(_FullCharacterList As List(Of Character), ByRef _MainProcess As MainProcessing)
+        '// Das Aktualisierungsobjekt erstellen.
+        Dim _tsMain As New StatusStripInvoker(_MainProcess.fmMain.tsPbStatusPercent, _MainProcess.fmMain.tsSlStatusPercent, _MainProcess.fmMain.tsSlStatusText)
+        Dim _ProgressCnt As Integer = 0
+
         For Each _Character In _FullCharacterList
             '// Für jeden einzelnen Charakter.
             Dim _RemovedCnt As Integer = 0
@@ -159,6 +167,9 @@ Module Mod_Log
             _MainProcess.TotalAffected += _Character.AffectedTitles.Count
             _MainProcess.TotalRemoved += _RemovedCnt
             _MainProcess.TotalLeft += _LeftCnt
+            _ProgressCnt += 1
+
+            _tsMain.setAll(CInt((_ProgressCnt / _FullCharacterList.Count) * 100), "Generate Logfile... " + _ProgressCnt.ToString + " of " + _FullCharacterList.Count.ToString)
         Next
     End Sub
 

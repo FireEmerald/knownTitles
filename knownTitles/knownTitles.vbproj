@@ -92,7 +92,6 @@
   <ItemGroup>
     <Compile Include="Klassen\Cls_Clipboard.vb" />
     <Compile Include="Klassen\Cls_ExtendedView.vb" />
-    <Compile Include="Klassen\Cls_Log.vb" />
     <Compile Include="DataSets\dsResults.Designer.vb">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

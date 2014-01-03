@@ -71,10 +71,12 @@ Public Class fmMain
         '// Prüfen ob der Input bereits validiert wurde.
         If tbPlayerInput.Text = _LastApprovedPlayerInput Then
             Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = _MainProcessingID,
-                                                                       .ValidatedPlayerInput = tbPlayerInput.Text})
+                                                                       .ValidatedPlayerInput = tbPlayerInput.Text,
+                                                                       .fmMain = Me})
         Else
             Process_ValidatePlayerInput_Start(New MainProcessing With {.ID = _MainProcessingID,
-                                                                       .PlayerInput = tbPlayerInput.Text})
+                                                                       .PlayerInput = tbPlayerInput.Text,
+                                                                       .fmMain = Me})
         End If
     End Sub
 
@@ -233,6 +235,10 @@ Public Class fmMain
                 GenLogfileHeader(_StartTime)
             End If
 
+            '// Dem Main Prozess die selektierten Titel hinzufügen.
+            Dim _MainProcess As MainProcessing = e.P_MainProcess
+            _MainProcess.SelectedTitles = GetSelectedTitles(CType(dgvSelectedTitles.DataSource, DataTable))
+
             '// Hauptprozess starten
             Select Case e.P_MainProcess.ID
                 Case MainProcessingID.PROCESS_ADD
@@ -240,14 +246,8 @@ Public Class fmMain
                 Case MainProcessingID.PROCESS_LOOKUP
                     Process_LookupTitles_Start(e.P_MainProcess)
                 Case MainProcessingID.PROCESS_REMOVE
-                    Dim _MainProcess As New MainProcessing With {.ID = e.P_MainProcess.ID,
-                                                                 .SelectedTitles = GetSelectedTitles(CType(dgvSelectedTitles.DataSource, DataTable)),
-                                                                 .ValidatedPlayerInput = e.P_MainProcess.ValidatedPlayerInput}
                     Process_RemoveTitles_Start(_MainProcess)
                 Case MainProcessingID.PROCESS_SEARCH
-                    Dim _MainProcess As New MainProcessing With {.ID = e.P_MainProcess.ID,
-                                                                 .SelectedTitles = GetSelectedTitles(CType(dgvSelectedTitles.DataSource, DataTable)),
-                                                                 .ValidatedPlayerInput = e.P_MainProcess.ValidatedPlayerInput}
                     Process_SearchTitles_Start(_MainProcess)
             End Select
         Else
@@ -524,21 +524,21 @@ Public Class fmMain
                 Case Keys.S
                     '// Alle ausgewählten aktivieren.
                     For Each _SelectedRow As DataGridViewRow In dgvSelectedTitles.SelectedRows
-                        DebugMessage(_SelectedRow.Cells.Item(0).ToString)
+                        Log_Msg(PRÄFIX.DEBUG, "Row with """ + _SelectedRow.Cells.Item(0).ToString + """ was checked. (Control + S)")
                         Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_SelectedRow.Index).Cells(0), DataGridViewCheckBoxCell)
                         _dgvCheckBoxCell.Value = "True"
                     Next
                 Case Keys.R
                     '// Alle Deaktivieren.
                     For Each _Row As DataGridViewRow In dgvSelectedTitles.Rows
-                        DebugMessage(_Row.Cells.Item(0).ToString)
+                        Log_Msg(PRÄFIX.DEBUG, "Row with """ + _Row.Cells.Item(0).ToString + """ was unchecked. (Control + R)")
                         Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_Row.Index).Cells(0), DataGridViewCheckBoxCell)
                         _dgvCheckBoxCell.Value = "False"
                     Next
                 Case Keys.U
                     '// Alle ausgewählten Deaktivieren.
                     For Each _Row As DataGridViewRow In dgvSelectedTitles.SelectedRows
-                        DebugMessage(_Row.Cells.Item(0).ToString)
+                        Log_Msg(PRÄFIX.DEBUG, "Row with """ + _Row.Cells.Item(0).ToString + """ was unchecked. (Control + U)")
                         Dim _dgvCheckBoxCell As DataGridViewCheckBoxCell = CType(dgvSelectedTitles.Rows(_Row.Index).Cells(0), DataGridViewCheckBoxCell)
                         _dgvCheckBoxCell.Value = "False"
                     Next

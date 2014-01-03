@@ -1,6 +1,7 @@
 ﻿Option Explicit On
 Option Strict On
 
+Imports System.Text
 Imports System.Text.RegularExpressions
 
 Module Mod_Functions
@@ -18,45 +19,63 @@ Module Mod_Functions
         Return _Bits
     End Function
 
-    ''' <summary>Zeigt eine Debugnachricht, falls Debug Mode enabled.</summary>
-    Public Sub DebugMessage(_Message As String, Optional _Icon As MessageBoxIcon = MessageBoxIcon.Information)
-        If My.Settings.DebugMode Then
-            MessageBox.Show(_Message, "Debug message.", MessageBoxButtons.OK, _Icon)
-        End If
-    End Sub
+    ''' <summary>Erstellt die SQL Update/Backup Querys, anhand einer Charakterliste und der Variable NothingChanged bei jedem Character.</summary>
+    Public Function GenSQLUpdateQuery(_CharacterFullList As List(Of Character)) As String
+        Dim _SQLUpdateQuerys As New StringBuilder
+        Dim _SQLBackupQuerys As New StringBuilder
 
-    ''' <summary>Generiert SQL Update Querys, anhand einer Character Full List und der Variable NothingChanged bei jedem Character.</summary>
-    Public Function GenerateSQLUpdateQuery(_CharacterFullList As List(Of Character)) As String
-        Dim _SQLQuery As String = ""
+        '// SQL Header
+        _SQLUpdateQuerys.AppendLine("/* ******************************************************************************" + vbCrLf + _
+                                    " * This *.sql file contains all SQL Update Query's AND all SQL Backup Query's." + vbCrLf + _
+                                    " *" + vbCrLf + _
+                                    " * Note: Don't use the whole *.sql script!" + vbCrLf + _
+                                    " *" + vbCrLf + _
+                                    " *     - If you would like to delete the selected titles, use the UPDATE query's." + vbCrLf + _
+                                    " *     - If you would like to reset the changes, use the BACKUP query's." + vbCrLf + _
+                                    " * *****************************************************************************/" + vbCrLf + vbCrLf + _
+                                    "-- SQL Update Query's")
+        _SQLBackupQuerys.AppendLine("-- SQL Backup Query's")
+
         For Each _Character In _CharacterFullList
             If Not _Character.NothingChanged Then
-                '// Allgemeine Informationen zu dem Charakter auflisten
-                _SQLQuery += "/* Character: " + _Character.Name +
-                             " | GUID: " + _Character.GUID.ToString +
-                             " | Account ID: " + _Character.AccountID.ToString +
-                             " | Last Bitmask: """ + _Character.KnownTitlesBackup + """" + vbCrLf
+                '// Informationen zu dem Charakter auflisten
+                _SQLUpdateQuerys.Append("/* Name: " + _Character.Name +
+                                        " | GUID: " + _Character.GUID.ToString +
+                                        " | Account ID: " + _Character.AccountID.ToString)
+                _SQLBackupQuerys.AppendLine("-- Name: " + _Character.Name +
+                                            " | GUID: " + _Character.GUID.ToString +
+                                            " | Account ID: " + _Character.AccountID.ToString)
 
                 '// Alle gebannten Titel auflisten
                 For _i As Integer = 0 To _Character.AffectedTitles.Count - 1
-                    _SQLQuery += "REMOVED | INT: " + _Character.AffectedTitles.Item(_i).IntID.ToString + _
-                                 " | BIT: " + _Character.AffectedTitles.Item(_i).Bit.ToString + _
-                                 " | TitleID: " + _Character.AffectedTitles.Item(_i).TitleID.ToString + _
-                                 " | Title: " + _Character.AffectedTitles.Item(_i).MaleTitle
-                    If _i = (_Character.AffectedTitles.Count - 1) Then _SQLQuery += " */"
-                    _SQLQuery += vbCrLf
+                    If _Character.AffectedTitles(_i).State = State.REMOVED Then
+                        _SQLUpdateQuerys.Append(vbCrLf + "REMOVED | TitleID: " + _Character.AffectedTitles.Item(_i).TitleID.ToString + _
+                                                         " | IntID: " + _Character.AffectedTitles.Item(_i).IntID.ToString + _
+                                                         " | MaleTitle: " + _Character.AffectedTitles.Item(_i).MaleTitle + _
+                                                         " | Bit: " + _Character.AffectedTitles.Item(_i).Bit.ToString)
+
+                    End If
+                    If _i = (_Character.AffectedTitles.Count - 1) Then _SQLUpdateQuerys.AppendLine(" */")
                 Next
 
-                '// Den Update Query für den Charakter erstellen
-                _SQLQuery += "UPDATE `characters` SET `knownTitles`=""" + _Character.INT_0.ToString + " " + _
-                                                                          _Character.INT_1.ToString + " " + _
-                                                                          _Character.INT_2.ToString + " " + _
-                                                                          _Character.INT_3.ToString + " " + _
-                                                                          _Character.INT_4.ToString + " " + _
-                                                                          _Character.INT_5.ToString + """ WHERE `guid`=" + _
-                                                                          _Character.GUID.ToString + ";" + vbCrLf
+                '// Update & Backup Query für den Charakter erstellen
+                _SQLUpdateQuerys.AppendLine("UPDATE `characters` SET `knownTitles`=""" + _Character.INT_0.ToString + " " + _
+                                                                                         _Character.INT_1.ToString + " " + _
+                                                                                         _Character.INT_2.ToString + " " + _
+                                                                                         _Character.INT_3.ToString + " " + _
+                                                                                         _Character.INT_4.ToString + " " + _
+                                                                                         _Character.INT_5.ToString + " "" WHERE `guid`=" + _Character.GUID.ToString + ";" + vbCrLf)
+
+                _SQLBackupQuerys.AppendLine("UPDATE `characters` SET `knownTitles`=""" + _Character.KnownTitlesBackup + """ WHERE `guid`=" + _Character.GUID.ToString + ";" + vbCrLf)
             End If
         Next
-        Return _SQLQuery
+
+        Return _SQLUpdateQuerys.ToString + vbCrLf + "/* ******************************************************************************" + vbCrLf + _
+                                                    " * Note: The following query's are ONLY a backup of each character!" + vbCrLf + _
+                                                    " *" + vbCrLf + _
+                                                    " *     - If you would like to reset the changes, use these BACKUP query's." + vbCrLf + _
+                                                    " * *****************************************************************************/" + vbCrLf + vbCrLf + _
+                                                    _SQLBackupQuerys.ToString()
     End Function
 
     ''' <summary>Speichert eine Datei mit einem OpenFileDialog. Falls ein Fehler auftritt, wird dieser angezeigt.</summary>
@@ -96,7 +115,7 @@ Module Mod_Functions
         ReDim Preserve _TextBox.Lines(_TextBox.Lines.Count - 1)
     End Sub
 
-    ''' <summary>Eine Liste aller aktuell ausgewählten Titel bekommen.</summary>
+    ''' <summary>Erstellt eine Liste mit allen aktuell ausgewählten Titeln.</summary>
     Public Function GetSelectedTitles(_DataTable As DataTable) As List(Of CharTitle)
         Dim _SelectedTitles As New List(Of CharTitle)
 
@@ -110,7 +129,7 @@ Module Mod_Functions
         '// http://regexhero.net/tester/
     End Function
 
-    ''' <summary>Alle markierten (Choosen) Zeilen grün hinterlegen.</summary>
+    ''' <summary>Alle markierten Zeilen grün hinterlegen.</summary>
     Public Sub RefreshVisualRowColor(_dgv As DataGridView)
         For Each _Row As DataGridViewRow In _dgv.Rows
             If CType(_Row.Cells(0).Value, Boolean) = True Then

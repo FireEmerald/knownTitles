@@ -20,7 +20,7 @@ Public Class EArgs_ValidationProcessCompleted
 
 #Region "Deklarationen"
     '// Informationen zu dem Hauptprozess (Add/Remove/Lookup)
-    Private _MainProcess As New MainProcessing
+    Private _MainProcess As MainProcessing
 
     '// Informationen zu dem Clipboard Content
     Private _ValidatedClipboardContent As String
@@ -30,14 +30,12 @@ Public Class EArgs_ValidationProcessCompleted
     Private _ErrorProcess As New ErrorProcessing
 #End Region
 
-
     '// Nur für den Hauptprozess (Add/Remove/Lookup)
     Sub New(MainProcess As MainProcessing, ErrorProcess As ErrorProcessing)
         '// Informationen zu dem Hauptprozess.
-        _MainProcess.Guid = MainProcess.Guid
+        _MainProcess = MainProcess
         _Guid = MainProcess.Guid
-        _MainProcess.ID = MainProcess.ID
-        _MainProcess.ValidatedPlayerInput = MainProcess.ValidatedPlayerInput
+
         '// Für die Fehler bei der Validierung.
         _ErrorProcess.ID = ErrorProcess.ID
         _ErrorProcess.WrongContent = ErrorProcess.WrongContent
@@ -49,6 +47,7 @@ Public Class EArgs_ValidationProcessCompleted
         '// Informationen zu dem Clipboard Content.
         _ValidatedClipboardContent = ValidatedClipboardContent
         _Guid = Guid
+
         '// Für die Fehler bei der Validierung.
         _ErrorProcess.ID = ErrorProcess.ID
         _ErrorProcess.WrongContent = ErrorProcess.WrongContent

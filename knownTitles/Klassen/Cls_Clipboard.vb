@@ -51,7 +51,7 @@ Public Class Cls_Clipboard
                             Dim _ToCheck As String = _Replaced.Substring(73, _Replaced.Length - (73 + ((_Replaced.Length - 1) - _Replaced.LastIndexOf("0"))))
                             If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
                                 _ValidatedClipboardContent.AppendLine(_ToCheck)
-                                DebugMessage("Clipboard Line Added: """ + _ToCheck + """")
+                                Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _ToCheck + """.")
                             Else
                                 _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
                                 _ErrorProcess.WrongCounter += 1
@@ -65,7 +65,7 @@ Public Class Cls_Clipboard
                             Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 1)
 
                             _ValidatedClipboardContent.AppendLine(_Checked)
-                            DebugMessage("Clipboard Line Added: """ + _Checked + """")
+                            Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _Checked + """.")
                         Else
                             _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
                             _ErrorProcess.WrongCounter += 1

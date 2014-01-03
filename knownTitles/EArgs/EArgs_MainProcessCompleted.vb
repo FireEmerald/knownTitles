@@ -9,7 +9,7 @@ Public Class EArgs_MainProcessCompleted
 
 #Region "Deklarationen"
     '// Der Hauptprozess
-    Private _MainProcess As New MainProcessing
+    Private _MainProcess As MainProcessing
 
     '// Variablen
     Private _SQLUpdateQuery As String

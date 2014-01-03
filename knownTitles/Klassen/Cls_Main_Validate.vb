@@ -16,6 +16,7 @@ Public Structure MainProcessing
         ValidatedPlayerInput As String
     Dim SelectedTitles As List(Of CharTitle)
     Dim TotalAffected, TotalRemoved, TotalLeft As Integer
+    Dim fmMain As fmMain
     Dim ID As MainProcessingID
     Dim Guid As Guid
 End Structure
@@ -24,7 +25,7 @@ Public Class Cls_Main_Validate
 
 #Region "Deklarationen"
     '// Hauptprozessstruktur mit einem eindeutigen Bezeichner für diesen Task.
-    Private _MainProcess As New MainProcessing With {.Guid = Guid.NewGuid}
+    Private _MainProcess As MainProcessing
 
     '// Events
     Public Event StatusReport(sender As Object, e As EArgs_StatusReport)
@@ -40,9 +41,10 @@ Public Class Cls_Main_Validate
 #End Region
 
     Sub New(MainProcess As MainProcessing)
-        _MainProcess.ValidatedPlayerInput = MainProcess.ValidatedPlayerInput
-        _MainProcess.PlayerInput = MainProcess.PlayerInput
-        _MainProcess.ID = MainProcess.ID
+        _MainProcess = MainProcess
+
+        '// Neue GUID für Thread erstellen.
+        _MainProcess.Guid = Guid.NewGuid
     End Sub
 
     ''' <summary>Überprüft den PlayerInput auf kritische Fehler, die im Prozess selbst nicht geprüft würden und somit zu Abstürzen führen könnten.</summary>
@@ -55,7 +57,7 @@ Public Class Cls_Main_Validate
 
         '// Validation Prozess überspringen, wenn bereits validiert wurde.
         If Not IsNothing(_MainProcess.ValidatedPlayerInput) OrElse My.Settings.DebugMode Then
-            DebugMessage("PlayerInput validation skipped. This could lead to errors while processing!", MessageBoxIcon.Warning)
+            Log_Msg(PRÄFIX.WARNING, "PlayerInput validation was skipped due to debug mode. This could lead to errors while processing!")
             RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
             Return
         End If

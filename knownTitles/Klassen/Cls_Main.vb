@@ -41,7 +41,7 @@ Public Class Cls_Main
 
 #Region "Deklarationen"
     '// Hauptprozessstruktur mit einem eindeutigen Bezeichner für diesen Task.
-    Private _MainProcess As New MainProcessing With {.Guid = Guid.NewGuid}
+    Private _MainProcess As MainProcessing
 
     Private _SQLQueryPath As String = ""
 
@@ -77,13 +77,14 @@ Public Class Cls_Main
 
     '// Sub New - Informationen die von der Form an die Klasse übergeben werden.
     Public Sub New(MainProcess As MainProcessing, SQLQueryPath As String)
-        _MainProcess.SelectedTitles = MainProcess.SelectedTitles
-        _MainProcess.ValidatedPlayerInput = MainProcess.ValidatedPlayerInput
+        _MainProcess = MainProcess
         _SQLQueryPath = SQLQueryPath
+
+        '// Neue GUID für Thread erstellen.
+        _MainProcess.Guid = Guid.NewGuid
     End Sub
     Public Sub New(MainProcess As MainProcessing)
-        _MainProcess.SelectedTitles = MainProcess.SelectedTitles
-        _MainProcess.ValidatedPlayerInput = MainProcess.ValidatedPlayerInput
+        _MainProcess = MainProcess
     End Sub
 
 #Region "Titel auflisten"
@@ -404,14 +405,14 @@ Public Class Cls_Main
         Dim _SQLUpdateQuery As String = ""
         '// SQL Query erstellen.
         If My.Settings.SaveSQLUpdateQuery Then
-            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Running... Generate SQL update querys...", _MainProcess.Guid))
-            _SQLUpdateQuery = GenerateSQLUpdateQuery(_FullCharacterList)
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(100, "Generate SQL update querys...", _MainProcess.Guid))
+            _SQLUpdateQuery = GenSQLUpdateQuery(_FullCharacterList)
             My.Computer.FileSystem.WriteAllText(_SQLQueryPath, _SQLUpdateQuery.ToString, False)
         End If
 
         '// Logfile erstellen.
         If My.Settings.SaveLogfile Then
-            RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Running... Generate Logfile...", _MainProcess.Guid))
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(0, "Generate Logfile...", _MainProcess.Guid))
             GenLogfileBody(_FullCharacterList, _MainProcess)
         End If
 
@@ -489,9 +490,6 @@ Public Class Cls_Main
 
     End Sub
 #End Region
-
-
-
 
 #Region "Delay Sub Backup"
     'Private Sub Delay(ByVal dblSecs As Double)

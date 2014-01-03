@@ -520,7 +520,7 @@ Partial Class fmMain
         Me.MainMenuStrip = Me.msMain
         Me.MaximizeBox = False
         Me.Name = "fmMain"
-        Me.Text = "kownTitles | A Tool for the TrinityCore Title System"
+        Me.Text = "kownTitles | For TrinityCore"
         Me.gbSelectedTitles.ResumeLayout(False)
         CType(Me.dgvSelectedTitles, System.ComponentModel.ISupportInitialize).EndInit()
         Me.gbPlayerInput.ResumeLayout(False)

@@ -88,10 +88,10 @@ Public Class DataGridViewInvoker
     Private Sub InvokeColumnNames()
         With _fmMain
             '// Charakterdaten.
-            SetColumnHeaderTextAndWidth(.dgvCharacters, 0, "Name", DataGridViewAutoSizeColumnMode.Fill)
-            SetColumnHeaderTextAndWidth(.dgvCharacters, 1, "GUID", DataGridViewAutoSizeColumnMode.Fill)
-            SetColumnHeaderTextAndWidth(.dgvCharacters, 2, "Account ID", DataGridViewAutoSizeColumnMode.Fill)
-            SetColumnHeaderTextAndWidth(.dgvCharacters, 3, "KnownTitles", DataGridViewAutoSizeColumnMode.Fill)
+            SetColumnHeaderTextAndWidth(.dgvCharacters, 0, "Name", DataGridViewAutoSizeColumnMode.AllCells)
+            SetColumnHeaderTextAndWidth(.dgvCharacters, 1, "GUID", DataGridViewAutoSizeColumnMode.AllCells)
+            SetColumnHeaderTextAndWidth(.dgvCharacters, 2, "Account ID", DataGridViewAutoSizeColumnMode.AllCells)
+            SetColumnHeaderTextAndWidth(.dgvCharacters, 3, "KnownTitles", DataGridViewAutoSizeColumnMode.AllCells)
             SetColumnHeaderTextAndWidth(.dgvCharacters, 4, "Affected", DataGridViewAutoSizeColumnMode.Fill)
             SetColumnHeaderTextAndWidth(.dgvCharacters, 5, "Removed", DataGridViewAutoSizeColumnMode.Fill)
             SetColumnHeaderTextAndWidth(.dgvCharacters, 6, "Left", DataGridViewAutoSizeColumnMode.Fill)

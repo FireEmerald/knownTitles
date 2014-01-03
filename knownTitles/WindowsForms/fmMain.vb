@@ -114,7 +114,7 @@ Public Class fmMain
 
     Private Sub Process_LookupTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Objekt erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text) '// LOGFILE oder SQL Update Query????
+        Dim _Process As New Cls_Main(_MainProcess)
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
@@ -138,7 +138,7 @@ Public Class fmMain
 
     Private Sub Process_SearchTitles_Start(_MainProcess As MainProcessing)
         '// Das Task-Object erstellen.
-        Dim _Process As New Cls_Main(_MainProcess, miLogfile_Path.Text) '// LOGFILE oder SQL Update Query????
+        Dim _Process As New Cls_Main(_MainProcess)
         AddHandler _Process.StatusReport, AddressOf StatusReport_Handler
         AddHandler _Process.MainProcess_Completed, AddressOf MainProcess_Completed_Handler
 
@@ -240,11 +240,11 @@ Public Class fmMain
             _MainProcess.SelectedTitles = GetSelectedTitles(CType(dgvSelectedTitles.DataSource, DataTable))
 
             '// Hauptprozess starten
-            Select Case e.P_MainProcess.ID
+            Select Case _MainProcess.ID
                 Case MainProcessingID.PROCESS_ADD
 
                 Case MainProcessingID.PROCESS_LOOKUP
-                    Process_LookupTitles_Start(e.P_MainProcess)
+                    Process_LookupTitles_Start(_MainProcess)
                 Case MainProcessingID.PROCESS_REMOVE
                     Process_RemoveTitles_Start(_MainProcess)
                 Case MainProcessingID.PROCESS_SEARCH

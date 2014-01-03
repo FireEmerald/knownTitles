@@ -90,158 +90,158 @@ Namespace My
             End Set
         End Property
         
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property ExtendedView() As Boolean
             Get
-                Return CType(Me("ExtendedView"), Boolean)
+                Return CType(Me("ExtendedView"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("ExtendedView") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property Shortcuts() As Boolean
             Get
-                Return CType(Me("Shortcuts"), Boolean)
+                Return CType(Me("Shortcuts"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Shortcuts") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property SaveLogfile() As Boolean
             Get
-                Return CType(Me("SaveLogfile"), Boolean)
+                Return CType(Me("SaveLogfile"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("SaveLogfile") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property SaveSQLUpdateQuery() As Boolean
             Get
-                Return CType(Me("SaveSQLUpdateQuery"), Boolean)
+                Return CType(Me("SaveSQLUpdateQuery"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("SaveSQLUpdateQuery") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property SearchMode_Normal() As Boolean
             Get
-                Return CType(Me("SearchMode_Normal"), Boolean)
+                Return CType(Me("SearchMode_Normal"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("SearchMode_Normal") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property SearchMode_SQLSyntax() As Boolean
             Get
-                Return CType(Me("SearchMode_SQLSyntax"), Boolean)
+                Return CType(Me("SearchMode_SQLSyntax"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("SearchMode_SQLSyntax") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property Columns_Normal() As Boolean
             Get
-                Return CType(Me("Columns_Normal"), Boolean)
+                Return CType(Me("Columns_Normal"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Columns_Normal") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property Columns_Specified() As Boolean
             Get
-                Return CType(Me("Columns_Specified"), Boolean)
+                Return CType(Me("Columns_Specified"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Columns_Specified") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("False")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("False")>  _
         Public Property Columns_All() As Boolean
             Get
-                Return CType(Me("Columns_All"), Boolean)
+                Return CType(Me("Columns_All"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Columns_All") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property Transparency() As Boolean
             Get
-                Return CType(Me("Transparency"), Boolean)
+                Return CType(Me("Transparency"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Transparency") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("True")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("True")>  _
         Public Property Wildcraft() As Boolean
             Get
-                Return CType(Me("Wildcraft"), Boolean)
+                Return CType(Me("Wildcraft"),Boolean)
             End Get
-            Set(value As Boolean)
+            Set
                 Me("Wildcraft") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
         Public Property LogfilePath() As String
             Get
-                Return CType(Me("LogfilePath"), String)
+                Return CType(Me("LogfilePath"),String)
             End Get
-            Set(value As String)
+            Set
                 Me("LogfilePath") = value
             End Set
         End Property
-
-        <Global.System.Configuration.UserScopedSettingAttribute(), _
-         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(), _
-         Global.System.Configuration.DefaultSettingValueAttribute("")> _
+        
+        <Global.System.Configuration.UserScopedSettingAttribute(),  _
+         Global.System.Diagnostics.DebuggerNonUserCodeAttribute(),  _
+         Global.System.Configuration.DefaultSettingValueAttribute("")>  _
         Public Property SQLUpdateQueryPath() As String
             Get
-                Return CType(Me("SQLUpdateQueryPath"), String)
+                Return CType(Me("SQLUpdateQueryPath"),String)
             End Get
-            Set(value As String)
+            Set
                 Me("SQLUpdateQueryPath") = value
             End Set
         End Property

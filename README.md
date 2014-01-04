@@ -10,7 +10,7 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Preview image
 
-...
+![preview](http://fire-emerald.com/custom/github/knownTitles.jpg)
 
 
 ## Requirements
@@ -28,19 +28,31 @@ No installation required.
 
 ## How to use
 
-...
+- Start the knownTitles.exe
+- Use your favourite sql client to collect the following data of each character on your server:
+- Full: "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'NAME', '0 0 0 0 0 0 ');"
+- Short: "1 1 NAME 0 0 0 0 0"
+- Make sure that you have the character lines in your clipboard.
+- Click "Import" -> "Import from Clipboard"
+- Now choose which title(s) you would like to. You can lookup all titles of each character or only the selected title(s).
+- Use the "Lookup", "Search", "Add" (not implemented) and "Remove" buttons.
+
+Note: If you would like to get a logfile and/or sql update querys (to remove the title(s)) check "Settings" -> "Logfile"/"SQL Update Querys" -> "Generate and save a Logfile"/"Generate and save a SQL Update Query".
 
 
 ## Reporting issues
 
-Use the Bitbucket Issuetracker to report a bug.
+Use the Github Issue tracker to report a bug.
 
 
 ## Submitting fixes
 
-Fixes are submitted as pull request via Bitbucket.
+Fixes are submitted as pull request via Github.
 
 
 ## Copyright
 
 Copyright (C) 2013-2014 by [FireEmerald](https://github.com/FireEmerald)
+
+
+License: [GPL 3.0](https://github.com/FireEmerald/knownTitles/blob/master/doc/GPL_3_0.txt)

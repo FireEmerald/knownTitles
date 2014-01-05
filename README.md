@@ -22,13 +22,13 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Install
 
-Just run the knownTitels.exe in the \knownTitels\bin\Release folder.
+Just run the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/0.4.0/knownTitles.exe) in the \release\<latest> folder.
 No installation required.
 
 
 ## How to use
 
-- Start the knownTitles.exe
+- Start the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/0.4.0/knownTitles.exe)
 - Use your favourite sql client to collect the following data of each character on your server:
 - Full: "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'NAME', '0 0 0 0 0 0 ');"
 - Short: "1 1 NAME 0 0 0 0 0"

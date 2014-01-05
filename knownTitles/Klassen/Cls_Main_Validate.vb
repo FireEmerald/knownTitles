@@ -21,6 +21,7 @@
 Option Strict On
 Option Explicit On
 
+Imports System.Text
 Imports System.Text.RegularExpressions
 
 '// Unterscheidung zwischen Add/Remove/Lookup
@@ -75,36 +76,45 @@ Public Class Cls_Main_Validate
                                                        .WrongContent = "",
                                                        .WrongCounter = 0}
 
+        Dim _ValidatedInput As New StringBuilder
+
         '// Validation Prozess überspringen, wenn bereits validiert wurde.
         If Not IsNothing(_MainProcess.ValidatedPlayerInput) OrElse My.Settings.DebugMode Then
-            Log_Msg(PRÄFIX.WARNING, "PlayerInput validation was skipped due to debug mode. This could lead to errors while processing!")
+            If My.Settings.DebugMode AndAlso IsNothing(_MainProcess.ValidatedPlayerInput) Then
+                Log_Msg(PRÄFIX.DEBUG, "PlayerInput validation was skipped due to debug mode. This could lead to errors while processing!")
+            Else
+                Log_Msg(PRÄFIX.WARNING, "PlayerInput validation was skipped because the input was already validated.")
+            End If
             RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))
             Return
         End If
 
-        Dim _ProgressCounter As Integer = 0
+        Dim _ProgressCnt As Integer = 0
+        Dim _EachCharacter() As String = Regex.Split(_MainProcess.PlayerInput, vbCrLf)
 
-        Dim _SplittedPlayerInput() As String = Regex.Split(_MainProcess.PlayerInput, vbCrLf)
+        For _i As Integer = 0 To _EachCharacter.Count - 1
 
-        For _i As Integer = 0 To _SplittedPlayerInput.Count - 1
-
-            If Regex.IsMatch(_SplittedPlayerInput(_i), "^[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0$", RegexOptions.None) Then
-                _MainProcess.ValidatedPlayerInput += _SplittedPlayerInput(_i)
+            If Regex.IsMatch(_EachCharacter(_i), "^[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0$", RegexOptions.None) Then
+                _ProgressCnt += 1
 
                 '// Verhindern, dass bei der letzten Zeile ein vbCrLf hinzugefügt wird.
-                If Not _i = (_SplittedPlayerInput.Count - 1) Then
-                    _MainProcess.ValidatedPlayerInput += vbCrLf
+                If _i = _EachCharacter.Count - 1 Then
+                    _ValidatedInput.Append(_EachCharacter(_i))
+                    Exit For
                 End If
 
-                _ProgressCounter += 1
+                _ValidatedInput.AppendLine(_EachCharacter(_i))
             Else
                 _ErrorProcess.WrongCounter += 1
-                _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _SplittedPlayerInput(_i) + """") + vbCrLf
+                _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _EachCharacter(_i) + """") + vbCrLf
             End If
 
             '// Statusbar aktualisieren.
-            RaiseEvent StatusReport(Me, New EArgs_StatusReport(CInt(((_ProgressCounter + _ErrorProcess.WrongCounter) / _SplittedPlayerInput.Count) * 100), "Validation running... " + (_ProgressCounter + _ErrorProcess.WrongCounter).ToString + " of " + _SplittedPlayerInput.Count.ToString + "  | Syntax error: " + _ErrorProcess.WrongCounter.ToString, _MainProcess.Guid))
+            RaiseEvent StatusReport(Me, New EArgs_StatusReport(CInt(((_ProgressCnt + _ErrorProcess.WrongCounter) / _EachCharacter.Count) * 100), "Validation running... " + (_ProgressCnt + _ErrorProcess.WrongCounter).ToString + " of " + _EachCharacter.Count.ToString + "  | Syntax error: " + _ErrorProcess.WrongCounter.ToString, _MainProcess.Guid))
         Next
+
+        '// Validierte Charakterdaten an Mainprozess übertragen.
+        _MainProcess.ValidatedPlayerInput = _ValidatedInput.ToString
 
         '// Abschließendes Event
         RaiseEvent MainProcess_ValidationCompleted(Me, New EArgs_ValidationProcessCompleted(_MainProcess, _ErrorProcess))

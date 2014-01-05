@@ -39,6 +39,11 @@ Module Mod_Functions
         Return _Bits
     End Function
 
+    ''' <summary>Gibt True zurück, wenn die Bitmask das Bit enthält. Anderenfalls wird False geliefert.</summary>
+    Function HasBit(_Bitmask As Integer, _Bit As Integer) As Boolean
+        Return ((_Bitmask And _Bit) > 0)
+    End Function
+
     ''' <summary>Erstellt die SQL Update/Backup Querys, anhand einer Charakterliste und der Variable NothingChanged bei jedem Character.</summary>
     Public Function GenSQLUpdateQuery(_CharacterFullList As List(Of Character)) As String
         Dim _SQLUpdateQuerys As New StringBuilder

@@ -26,8 +26,8 @@ Module Mod_MenuStrip
 
 #Region "Deklarationen"
     Public Enum CLIPBOARD_SYNTAX
-        INSERT_INTO = 0
-        ONLY_WITH_SPACES = 1
+        INSERT_INTO = 1
+        ONLY_WITH_SPACES = 2
     End Enum
 
     Private _fmMain As fmMain
@@ -55,23 +55,25 @@ Module Mod_MenuStrip
     Public Sub SetClipboardSyntax(Optional _SetNewState As Integer = -1)
         If Not _SetNewState = -1 Then
             With My.Settings
-                .ClipboardSyntax = _SetNewState
+                .ClipboardSyntax = My.Settings.ClipboardSyntax Xor _SetNewState
                 .Save()
                 .Reload()
             End With
         End If
-        Select Case My.Settings.ClipboardSyntax
-            Case CLIPBOARD_SYNTAX.INSERT_INTO  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
-                With _fmMain
-                    SetForeColor_CheckState(.miSelectSyntax_1, False)
-                    SetForeColor_CheckState(.miSelectSyntax_0, True)
-                End With
-            Case CLIPBOARD_SYNTAX.ONLY_WITH_SPACES '// "1 1 ABC 0 0 0 0 0 "
-                With _fmMain
-                    SetForeColor_CheckState(.miSelectSyntax_0, False)
-                    SetForeColor_CheckState(.miSelectSyntax_1, True)
-                End With
-        End Select
+
+        '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
+        If HasBit(My.Settings.ClipboardSyntax, CLIPBOARD_SYNTAX.INSERT_INTO) Then
+            SetForeColor_CheckState(_fmMain.miSelectSyntax_0, True)
+        Else
+            SetForeColor_CheckState(_fmMain.miSelectSyntax_0, False)
+        End If
+
+        '// "1 1 ABC 0 0 0 0 0 0 "
+        If HasBit(My.Settings.ClipboardSyntax, CLIPBOARD_SYNTAX.ONLY_WITH_SPACES) Then
+            SetForeColor_CheckState(_fmMain.miSelectSyntax_1, True)
+        Else
+            SetForeColor_CheckState(_fmMain.miSelectSyntax_1, False)
+        End If
     End Sub
 
     ''' <summary>Einzelnes MenuItem neu festlegen bzw. laden.</summary>

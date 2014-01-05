@@ -64,33 +64,32 @@ Public Class Cls_Clipboard
 
         For _i As Integer = 0 To _ClipboardLines.Count - 1
             If Not _ClipboardLines(_i) = "" Then
-                Select Case My.Settings.ClipboardSyntax
-                    Case 0  '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
-                        If _ClipboardLines(_i).Contains("INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (") Then
-                            Dim _Replaced As String = _ClipboardLines(_i).Replace(",", "").Replace("'", "")
-                            Dim _ToCheck As String = _Replaced.Substring(73, _Replaced.Length - (73 + ((_Replaced.Length - 1) - _Replaced.LastIndexOf("0"))))
-                            If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
-                                _ValidatedClipboardContent.AppendLine(_ToCheck)
-                                Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _ToCheck + """.")
-                            Else
-                                _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                                _ErrorProcess.WrongCounter += 1
-                            End If
-                        Else
-                            _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                            _ErrorProcess.WrongCounter += 1
-                        End If
-                    Case 1 '// "1 1 ABC 0 0 0 0 0 "
-                        If Regex.IsMatch(_ClipboardLines(_i), "^[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0 $", RegexOptions.None) Then
-                            Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 1)
+                Dim _WrongSyntax As Boolean = True
 
-                            _ValidatedClipboardContent.AppendLine(_Checked)
-                            Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _Checked + """.")
-                        Else
-                            _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
-                            _ErrorProcess.WrongCounter += 1
-                        End If
-                End Select
+                '// "INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'ABC', '0 0 0 0 0 0 ');"
+                If HasBit(My.Settings.ClipboardSyntax, CLIPBOARD_SYNTAX.INSERT_INTO) AndAlso _ClipboardLines(_i).Contains("INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (") Then
+                    Dim _Replaced As String = _ClipboardLines(_i).Replace(",", "").Replace("'", "")
+                    Dim _ToCheck As String = _Replaced.Substring(73, _Replaced.Length - (73 + ((_Replaced.Length - 1) - _Replaced.LastIndexOf("0"))))
+                    If Regex.IsMatch(_ToCheck, "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0", RegexOptions.None) Then
+                        _WrongSyntax = False
+                        _ValidatedClipboardContent.AppendLine(_ToCheck)
+                        Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _ToCheck + """.")
+                    End If
+                End If
+
+                '// "1 1 ABC 0 0 0 0 0 0 "
+                If HasBit(My.Settings.ClipboardSyntax, CLIPBOARD_SYNTAX.ONLY_WITH_SPACES) AndAlso _WrongSyntax AndAlso Regex.IsMatch(_ClipboardLines(_i), "[0-9]+? [0-9]+? [a-z|A-Z]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? [0-9]+? 0 $", RegexOptions.None) Then
+                    Dim _Checked As String = _ClipboardLines(_i).Substring(0, _ClipboardLines(_i).Length - 1)
+
+                    _WrongSyntax = False
+                    _ValidatedClipboardContent.AppendLine(_Checked)
+                    Log_Msg(PRÄFIX.DEBUG, "Clipboard line added """ + _Checked + """.")
+                End If
+
+                If _WrongSyntax Then
+                    _ErrorProcess.WrongContent += ((_i + 1).ToString + ": """ + _ClipboardLines(_i) + """") + vbCrLf
+                    _ErrorProcess.WrongCounter += 1
+                End If
             End If
 
             '// Statusbar aktualisieren.

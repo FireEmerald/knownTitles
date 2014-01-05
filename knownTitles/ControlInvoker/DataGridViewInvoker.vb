@@ -35,6 +35,9 @@ Public Class DataGridViewInvoker
 
     '// Alle Charakterdaten den DataTablen hinzufügen.
     Public Sub AddCharacterData(_FullCharacterList As List(Of Character))
+        '// Das Aktualisierungsobjekt erstellen.
+        Dim _tsMain As New StatusStripInvoker(_fmMain.tsPbStatusPercent, _fmMain.tsSlStatusPercent, _fmMain.tsSlStatusText)
+
         '// Alte Zeilen löschen.
         With _fmMain.DsResults
             .dtCharacters.Rows.Clear()
@@ -89,6 +92,9 @@ Public Class DataGridViewInvoker
 
             '// Den Charakter zum DataTable hinzufügen.
             _fmMain.DsResults.dtCharacters.Rows.Add(_NewCharacterRow)
+
+            '// Statusbar aktualisieren.
+            _tsMain.setAll(CInt((_fmMain.DsResults.dtCharacters.Rows.Count / _FullCharacterList.Count) * 100), "Process character data... " + _fmMain.DsResults.dtCharacters.Rows.Count.ToString + " of " + _FullCharacterList.Count.ToString)
         Next
     End Sub
 

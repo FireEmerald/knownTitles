@@ -401,13 +401,15 @@ Public Class fmMain
         miSQlQuery_NewPath.Click
 
         '// Können währen eines Prozesses aufgerufen werden.
-        Dim _NotProcessAffectedItems As New List(Of System.Windows.Forms.ToolStripMenuItem)({miInfo_About,
+        Dim _NotProcessAffectedItems As New List(Of System.Windows.Forms.ToolStripMenuItem)({miSettings_Shortcuts,
+                                                                                             miSettings_ExtendedTitles,
+                                                                                             miInfo_About,
                                                                                              miInfo_TrinityCoreWiki,
                                                                                              miFile_Exit})
 
         '// Prüfen ob ein Prozess läuft | Ausnahmen, siehe oben.
         If ThreadIsRunning(_Hashtable) AndAlso Not _NotProcessAffectedItems.Contains(CType(sender, System.Windows.Forms.ToolStripMenuItem)) Then
-            MessageBox.Show("You can't change the settings, while processing..." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished.", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
+            MessageBox.Show("You can't change the settings, while processing." + vbCrLf + "Threads running: " + _Hashtable.Count.ToString, "Wait until finished", MessageBoxButtons.OK, MessageBoxIcon.Exclamation)
             Return
         End If
 
@@ -437,9 +439,9 @@ Public Class fmMain
                 Process.Start("http://collab.kpsn.org/display/tc/Characters+tc2#Characterstc2-knownTitles")
             Case sender Is miLanguage_Save '// Sprache ändern.
                 Select Case miLanguage_ComboBox.SelectedIndex
-                    Case 0
+                    Case LANGUAGE.ENGLISH
                         ReloadLanguage(LANGUAGE.ENGLISH)
-                    Case 1
+                    Case LANGUAGE.GERMAN
                         ReloadLanguage(LANGUAGE.GERMAN)
                 End Select
                 _ExtendedView_Handler.SwitchExtendedTitlesLanguage(My.Settings.ExtendedView)

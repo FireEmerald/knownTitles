@@ -10,7 +10,7 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Preview image
 
-![preview](http://fire-emerald.com/custom/github/knownTitles.jpg)
+![preview](http://fire-emerald.com/custom/github/knownTitles.JPG)
 
 
 ## Requirements

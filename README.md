@@ -34,20 +34,25 @@ No installation required.
   SELECT guid, account, name, knownTitles FROM `characters` WHERE knownTitles != '0 0 0 0 0 0 ';
   ```
 
-3. Exporte the affected rows as 'INSERT INTO' querys or as plain text as shown below:
+3. Export the affected rows as 'INSERT INTO' queries or as plain text as shown below:
   ```sql
   INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (1, 1, 'Fire', '1 0 0 0 0 0 ');
+  INSERT INTO `characters` (`guid`, `account`, `name`, `knownTitles`) VALUES (2, 2, 'Mandele', '1 0 0 0 0 0 ');
   ```
   ```
   1 1 Fire 1 0 0 0 0
+  2 2 Mandele 1 0 0 0 0
   ```
 
 4. Copy all exported rows to your clipboard. Make sure each line looks like shown above. (Full/Short)
 5. Click "Import" -> "Import from Clipboard"
-6. Now choose which title(s) you would like to. You can lookup all titles of each character or only the selected title(s).
-7. Use the "Lookup", "Search", "Add" (not implemented) and "Remove" buttons.
+6. Now choose which title(s) you would like to remove or search for. With *Lookup* you get all titles of each character.
+7. Use the *Lookup*, *Search*, *Add* (not implemented) or *Remove* button.
 
-Note: If you would like to get a logfile and/or sql update querys (to remove the title(s)) check "Settings" -> "Logfile"/"SQL Update Querys" -> "Generate and save a Logfile"/"Generate and save a SQL Update Query".
+**Note:** If you would like to get a logfile and/or sql update queries (to remove the title(s)) check:
+* *Settings*
+  * *Logfile* or *SQL Update Queries*
+    * *Generate and save a Logfile* or *Generate and save a SQL Update Query*.
 
 
 ## Reporting issues

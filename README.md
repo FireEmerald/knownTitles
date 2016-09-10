@@ -10,7 +10,7 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Preview image
 
-![preview](http://fs1.directupload.net/images/user/150221/eox8j8pz.jpg)
+![preview](/img/preview.jpg)
 
 
 ## Requirements
@@ -22,13 +22,13 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Install
 
-Just run the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/0.4.0/knownTitles.exe) in the \release\<latest> folder.
+Just run the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/knownTitles.exe) in the \release\<latest> folder.
 No installation required.
 
 
 ## How to use
 
-1. Start the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/0.4.0/knownTitles.exe)
+1. Start the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/knownTitles.exe)
 2. Use your favourite sql client to execute the following query to gather the needed informations:
   ```sql
   SELECT guid, account, name, knownTitles FROM `characters` WHERE knownTitles != '0 0 0 0 0 0 ';
@@ -67,7 +67,6 @@ Fixes are submitted as pull request via Github.
 
 ## Copyright
 
-Copyright (C) 2013-2015 by [FireEmerald](https://github.com/FireEmerald)
+Copyright (C) 2013-2016 by [FireEmerald](https://github.com/FireEmerald)
 
-
-License: [GPL 3.0](https://github.com/FireEmerald/knownTitles/blob/master/doc/GPL_3_0.txt)
+License: [GPL 3.0](/LICENSE)

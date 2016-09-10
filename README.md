@@ -10,7 +10,7 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Preview image
 
-![preview](/img/preview.jpg)
+![preview](img/preview.jpg)
 
 
 ## Requirements
@@ -22,13 +22,12 @@ You can select which title should be added or deleted. It's also possible to gen
 
 ## Install
 
-Just run the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/knownTitles.exe) in the \release\<latest> folder.
-No installation required.
+Just run the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/pre-compiled/knownTitles.exe). No installation required.
 
 
 ## How to use
 
-1. Start the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/release/knownTitles.exe)
+1. Start the [knownTitels.exe](https://github.com/FireEmerald/knownTitles/raw/master/pre-compiled/knownTitles.exe).
 2. Use your favourite sql client to execute the following query to gather the needed informations:
   ```sql
   SELECT guid, account, name, knownTitles FROM `characters` WHERE knownTitles != '0 0 0 0 0 0 ';
@@ -69,4 +68,4 @@ Fixes are submitted as pull request via Github.
 
 Copyright (C) 2013-2016 by [FireEmerald](https://github.com/FireEmerald)
 
-License: [GPL 3.0](/LICENSE)
+License: [GPL 3.0](LICENSE)

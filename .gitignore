@@ -1,7 +1,7 @@
-#Windows Thumbnails ignorieren
+#Ignore Windows Thumbnails
 Thumbs.db
 
-#Visual Studio Dateien ignorieren
+#Ignore Visual Studio Files
 *.obj
 *.pdb
 *.user
@@ -25,3 +25,5 @@ Thumbs.db
 obj/
 [Rr]elease*/
 _ReSharper*/
+
+#Repository specific

@@ -66,6 +66,6 @@ Fixes are submitted as pull request via Github.
 
 ## Copyright
 
-Copyright (C) 2013-2016 by [FireEmerald](https://github.com/FireEmerald)
+Copyright (C) 2013-2017 by [FireEmerald](https://github.com/FireEmerald)
 
 License: [GPL 3.0](LICENSE)
